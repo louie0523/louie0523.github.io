@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects | 벨로</title>
+    <link rel="stylesheet" href="projects.css">
+</head>
+<body>
+
+<div class="gallery-container">
+
+    <h1 class="page-title">Projects</h1>
+
+    <div class="carousel" id="carousel">
+        <!-- 카드 반복 -->
+        <div class="card" data-id="1">
+            <span class="index-tag">01</span>
+            <img src="project1.jpg">
+            <p>액션 로그라이크 프로젝트</p>
+        </div>
+
+        <div class="card" data-id="2">
+            <span class="index-tag">02</span>
+            <img src="project2.jpg">
+            <p>서바이벌 호러 프로젝트</p>
+        </div>
+
+        <div class="card" data-id="3">
+            <span class="index-tag">03</span>
+            <img src="project3.jpg">
+            <p>퍼즐 어드벤처 프로젝트</p>
+        </div>
+
+        <div class="card" data-id="4">
+            <span class="index-tag">04</span>
+            <img src="project4.jpg">
+            <p>멀티플레이 실험작</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 상세 모달 ===== -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeModal">◀ Back</span>
+
+        <img id="modalImg">
+        <h2 id="modalTitle"></h2>
+        <p id="modalDesc"></p>
+    </div>
+</div>
+
+<script src="projects.js"></script>
+
+</body>
+</html>
