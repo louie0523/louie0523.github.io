@@ -1,0 +1,91 @@
+/* ===== 기본 스타일 ===== */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #f0f0f0;
+    color: #1a1a1a;
+}
+
+.container {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* ===== 카드 UI ===== */
+.card {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.1);
+    transform: translateY(12px);
+    opacity: 0;
+}
+
+/* 카드 등장 애니메이션 */
+.fade-in {
+    animation: fadeUp 0.45s ease-out forwards;
+}
+
+@keyframes fadeUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===== 프로필 이미지 ===== */
+.profile-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 20px;
+}
+
+/* ===== 타이포그래피 ===== */
+.title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+/* ===== 게임 버튼 스타일 ===== */
+.g-btn {
+    display: block;
+    text-align: center;
+    background: #202020;
+    color: #fff;
+    padding: 16px;
+    border-radius: 16px;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 14px 0;
+
+    /* 게임 UI 애니메이션 */
+    transform: translateY(0);
+    transition: 
+        transform .18s cubic-bezier(.2, .8, .2, 1),
+        box-shadow .18s ease,
+        opacity .18s ease;
+}
+
+/* Hover: 살짝 위로 떠오름 + Glow 효과 */
+.g-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.28);
+    opacity: 0.95;
+}
+
+/* Click: 누르는 느낌 */
+.g-btn.pressed {
+    transform: scale(0.94);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}

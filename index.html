@@ -1,2 +1,50 @@
-<h1>Hello World</h1>
-<p>My first GitHub Blog</p>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>벨로 | Game Developer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card fade-in">
+        <img src="profile.jpg" class="profile-img">
+        <h1 class="title">벨로 | Game Developer</h1>
+
+        <a href="https://instagram.com/..." class="g-btn">Instagram</a>
+        <a href="https://youtube.com/..." class="g-btn">YouTube</a>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:0.15s">
+        <h2>Projects</h2>
+        <p>개발한 프로젝트와 그 뒷이야기</p>
+        <a class="g-btn" href="projects.html">프로젝트 보러가기</a>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:0.3s">
+        <h2>Devlog</h2>
+        <p>게임 개발 일지</p>
+        <a class="g-btn" href="devlog.html">데브로그 보기</a>
+    </div>
+
+</div>
+
+<script>
+    // 클릭 시 버튼 눌림 효과
+    document.querySelectorAll('.g-btn').forEach(btn => {
+        btn.addEventListener('mousedown', () => {
+            btn.classList.add('pressed');
+        });
+        btn.addEventListener('mouseup', () => {
+            btn.classList.remove('pressed');
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.classList.remove('pressed');
+        });
+    });
+</script>
+
+</body>
+</html>
