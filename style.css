@@ -2,8 +2,8 @@
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: #f0f0f0;
-    color: #1a1a1a;
+    background: #212121; /* 딥그레이 배경 */
+    color: #e0e0e0; /* 밝은 회색 텍스트 */
 }
 
 .container {
@@ -14,16 +14,15 @@ body {
 
 /* ===== 카드 UI ===== */
 .card {
-    background: #ffffff;
+    background: #2c2c2c; /* 약간 밝은 다크 카드 */
     padding: 32px;
     border-radius: 20px;
     margin-bottom: 32px;
-    box-shadow: 0 5px 14px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 14px rgba(0,0,0,0.35);
     transform: translateY(12px);
     opacity: 0;
 }
 
-/* 카드 등장 애니메이션 */
 .fade-in {
     animation: fadeUp 0.45s ease-out forwards;
 }
@@ -49,19 +48,30 @@ body {
     margin: 0 auto 20px;
 }
 
-/* ===== 타이포그래피 ===== */
+/* ===== 텍스트 ===== */
 .title {
     text-align: center;
     font-size: 26px;
     font-weight: 600;
     margin-bottom: 24px;
+    color: #ffffff;
 }
 
-/* ===== 게임 버튼 스타일 ===== */
+.card h2 {
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.card p {
+    color: #bdbdbd;
+    line-height: 1.6;
+}
+
+/* ===== 게임 버튼 ===== */
 .g-btn {
     display: block;
     text-align: center;
-    background: #202020;
+    background: #1a1a1a;
     color: #fff;
     padding: 16px;
     border-radius: 16px;
@@ -69,23 +79,12 @@ body {
     font-weight: 600;
     margin: 14px 0;
 
-    /* 게임 UI 애니메이션 */
+    /* 부드러운 게임 UI 느낌 */
     transform: translateY(0);
-    transition: 
+    transition:
         transform .18s cubic-bezier(.2, .8, .2, 1),
         box-shadow .18s ease,
         opacity .18s ease;
 }
 
-/* Hover: 살짝 위로 떠오름 + Glow 효과 */
-.g-btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.28);
-    opacity: 0.95;
-}
-
-/* Click: 누르는 느낌 */
-.g-btn.pressed {
-    transform: scale(0.94);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-}
+/* Hover: 부드럽게 위로 +*
