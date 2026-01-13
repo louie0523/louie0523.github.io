@@ -1,92 +1,394 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>Projects | 벨로</title>
-    <link rel="stylesheet" href="projects.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects | 벨로</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0f0f0f;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Inter", sans-serif;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+
+    /* Fixed Navigation */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #2a2a2a;
+      padding: 16px 24px;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      display: inline-block;
+      background: transparent;
+      color: #a0a0a0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      background: #1a1a1a;
+      color: #fff;
+      border-color: #2a2a2a;
+    }
+
+    /* Header */
+    .header {
+      max-width: 900px;
+      margin: 100px auto 50px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 16px;
+      color: #a0a0a0;
+      font-weight: 400;
+    }
+
+    /* Projects Grid */
+    .projects {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 120px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .project-card {
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #2a2a2a;
+    }
+
+    .project-card:hover {
+      transform: translateY(-8px);
+      border-color: #3a3a3a;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+    }
+
+    .project-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .project-info {
+      padding: 20px;
+    }
+
+    .project-info h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .project-info p {
+      font-size: 14px;
+      color: #a0a0a0;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+      color: #b0b0b0;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1px solid #333;
+      white-space: nowrap;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal-content {
+      background: #1a1a1a;
+      width: 90%;
+      max-width: 580px;
+      padding: 32px;
+      border-radius: 16px;
+      border: 1px solid #2a2a2a;
+      animation: modalFadeIn 0.3s ease;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    @keyframes modalFadeIn {
+      from { 
+        transform: scale(0.9) translateY(20px); 
+        opacity: 0; 
+      }
+      to { 
+        transform: scale(1) translateY(0); 
+        opacity: 1; 
+      }
+    }
+
+    .modal-content h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .modal-content > p {
+      font-size: 15px;
+      color: #c0c0c0;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .modal-btn {
+      background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+      color: #e0e0e0;
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #333;
+    }
+
+    .modal-btn:hover {
+      background: linear-gradient(135deg, #333 0%, #2a2a2a 100%);
+      border-color: #444;
+      transform: translateY(-2px);
+    }
+
+    .close-btn {
+      width: 100%;
+      margin-top: 20px;
+      background: transparent;
+      color: #808080;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #2a2a2a;
+    }
+
+    .close-btn:hover {
+      background: #1a1a1a;
+      color: #a0a0a0;
+      border-color: #333;
+    }
+
+    /* Social Footer */
+    .social-footer {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px;
+      border-radius: 14px;
+      display: flex;
+      gap: 8px;
+      border: 1px solid #2a2a2a;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .social-btn {
+      background: transparent;
+      color: #a0a0a0;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .social-btn:hover {
+      background: #2a2a2a;
+      color: #fff;
+      border-color: #3a3a3a;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 32px;
+      }
+
+      .projects {
+        grid-template-columns: 1fr;
+        padding-bottom: 100px;
+      }
+
+      .modal-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .social-footer {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="gallery-container">
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <a class="nav-btn" href="index.html">← 프로필</a>
+  </nav>
 
-    <h1 class="page-title">Projects</h1>
+  <!-- Header -->
+  <header class="header">
+    <h1>My Projects</h1>
+    <p>제가 개발한 프로젝트들입니다</p>
+  </header>
 
-    <div class="carousel" id="carousel">
-        <!-- 카드 반복 -->
-        <div class="card" data-id="1">
-            <span class="index-tag">01</span>
-            <img src="project1.png">
-            <p>삼도천 - 나폴리탄 괴담</p>
-        </div>
+  <!-- Projects Grid -->
+  <main class="projects" id="projectList"></main>
 
-        <div class="card" data-id="2">
-            <span class="index-tag">02</span>
-            <img src="project2.png">
-            <p>Straight line slash!</p>
-        </div>
-
-        <div class="card" data-id="3">
-            <span class="index-tag">03</span>
-            <img src="project3.png">
-            <p>Be not Afraid...</p>
-        </div>
-
-        <div class="card" data-id="4">
-            <span class="index-tag">04</span>
-            <img src="project4.png">
-            <p>Turn & Tack!</p>
-        </div>
-
-        <div class="card" data-id="5">
-            <span class="index-tag">05</span>
-            <img src="project5.png">
-            <p>2025 부산 기능경기대회</p>
-        </div>
-
-        <div class="card" data-id="6">
-            <span class="index-tag">06</span>
-            <img src="project6.png">
-            <p>인간농장</p>
-        </div>
-
-        <div class="card" data-id="7">
-            <span class="index-tag">07</span>
-            <img src="project7.png">
-            <p>Rider & Gunner</p>
-        </div>
-
-        <div class="card" data-id="8">
-            <span class="index-tag">08</span>
-            <img src="project8.png">
-            <p>2025 전국기능경기대회</p>
-        </div>
-
-        <div class="card" data-id="9">
-            <span class="index-tag">09</span>
-            <img src="project9.png">
-            <p>순풍순풍 도티낳기</p>
-        </div>
-
-        <div class="card" data-id="10">
-            <span class="index-tag">10</span>
-            <img src="project10.png">
-            <p>존 스노우의 완벽한 크리스마스 이브</p>
-        </div>
-    </div>
-</div>
-
-<!-- ===== 상세 모달 ===== -->
-<div class="modal" id="modal">
+  <!-- Modal -->
+  <div class="modal" id="modal">
     <div class="modal-content">
-        <span class="close-btn" id="closeModal">◀ Back</span>
+      <h2 id="modalTitle"></h2>
+      <p id="modalDesc"></p>
 
-        <img id="modalImg">
-        <h2 id="modalTitle"></h2>
-        <p id="modalDesc"></p>
+      <div class="modal-buttons">
+        <div class="modal-btn" id="devBtn">개발 비화 보러가기</div>
+        <div class="modal-btn" id="gameBtn">게임 링크</div>
+      </div>
+
+      <div class="tags" id="modalTags"></div>
+
+      <div class="close-btn" onclick="closeModal()">닫기</div>
     </div>
-</div>
+  </div>
 
-<script src="projects.js"></script>
+  <!-- Social Links -->
+  <aside class="social-footer">
+    <div class="social-btn" onclick="window.open('https://www.instagram.com/bellocitygames/')">Instagram</div>
+    <div class="social-btn" onclick="window.open('https://www.youtube.com/@bellow3270')">YouTube</div>
+    <div class="social-btn" onclick="window.open('https://github.com/louie0523')">GitHub</div>
+  </aside>
 
+  <script>
+    const projects = [
+      { img: "Image/project1.png", title: "Stygian Road", desc: "나폴리탄 괴담에서 영감을 받아, 정해진 규칙을 지키며 생존해야 하는 3D 공포 게임입니다.", tags: ["Unity", "3D", "Horror"], dev:"dev/dev1.html", link:"https://bellocity.itch.io/stygian-road-neapolitan-ghost-story"},
+      { img: "Image/project2.png", title: "Straight line slash!", desc: "직선을 그어 공격하거나 적의 탄막을 막아내며, 강력한 보스와 전투를 펼치는 2D 게임입니다.", tags: ["Unity", "2D", "Bullet Hell"], dev:"dev/dev2.html", link:"#"},
+      { img: "Image/project3.png", title: "Be not Afraid...", desc: "마을에 숨겨진 흑마법사와 마법진을 찾아 해주하는 것이 목표인 2D 오컬트 퍼즐 게임입니다.", tags: ["Unity", "2D", "Occult", "Puzzle"], dev:"dev/dev3.html", link:"#"},
+      { img: "Image/project4.png", title: "Turn & Tact!", desc: "탑뷰와 종스크롤뷰를 번갈아 가며, 각 뷰의 다른 요소를 이용하며 스테이지를 클리어 하는 2D 퍼즐 게임입니다.", tags: ["Unity", "2D", "Puzzle", "Top View", "Side View"], dev:"dev/dev4.html", link:"#"},
+      { img: "Image/project5.png", title: "2025 부산 기능경기대회", desc: "부산 기능경기대회 게임개발 기획서 기반으로 제작한 3D 어드벤처 게임입니다.", tags: ["Unity", "3D", "Adventure", "competition"], dev:"dev/dev5.html", link:"#"},
+      { img: "Image/project6.png", title: "인간농장", desc: "나폴리탄 괴담과 조지 오웰의 '동물 농장'에서 영감을 받아 제작한 3D 공포 게임입니다.", tags: ["Unity", "3D","Horror", "Story"], dev:"dev/dev6.html", link:"#"},
+      { img: "Image/project7.png", title: "Gunner & Rider", desc: "한명은 쫒아오는 적을 처리하는 거너, 한명은 말을 조종하는 라이더로 나눠 플레이하는 3D 협동 게임입니다.", tags: ["Unity", "3D", "collaboration"], dev:"dev/dev7.html", link:"#"},
+      { img: "Image/project8.png", title: "2025 전국기능경기대회", desc: "전국 기능경기대회 게임개발의 기획서 기반으로 제작한 3D 농장 게임입니다.", tags: ["Unity", "3D", "Farm"], dev:"dev/dev8.html", link:"#"},
+      { img: "Image/project9.png", title: "순풍순풍 도티낳기", desc: "'개웃겨서 도티 낳음' 대회 출품작으로, 도티를 낳아 저출산을 극복한다는 컨셉의 2D 병맛 클리커 게임입니다.", tags: ["Unity", "2D", "Bottle taste", "Clicker"], dev:"dev/dev9.html", link:"#"},
+      { img: "Image/project10.png", title: "붕괴 스타레일 : 영웅 대난투", desc: "원신의 '별바다 세계'로 제작한, 붕괴 스타레일 요소들을 ARPG 형식으로 구현한 유즈맵입니다.", tags: ["Use Map", "Miliastra Wonderland", "Fan Game"], dev:"dev/dev10.html", link:"#"},
+      { img: "Image/project11.png", title: "존 스노우의 완벽한 크리스마스 이브", desc: "크리스마스 이브에 완벽한 하루를 만들기 위해 고군분투하는 존의 3D 병맛 스토리 게임입니다.", tags: ["Unity", "3D", "Bottle taste", "Story"], dev:"dev/dev11.html", link:"#"}
+    ];
+
+    const projectList = document.getElementById("projectList");
+
+    projects.forEach((p) => {
+      const card = document.createElement("div");
+      card.className = "project-card";
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.title}">
+        <div class="project-info">
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+          <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+        </div>
+      `;
+      card.onclick = () => openModal(p);
+      projectList.appendChild(card);
+    });
+
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+    const modalTags = document.getElementById("modalTags");
+    const devBtn = document.getElementById("devBtn");
+    const gameBtn = document.getElementById("gameBtn");
+
+    function openModal(p) {
+      modal.style.display = "flex";
+      modalTitle.textContent = p.title;
+      modalDesc.textContent = p.desc;
+      modalTags.innerHTML = p.tags.map(t => `<span class="tag">${t}</span>`).join("");
+
+      devBtn.onclick = () => window.location.href = p.dev;
+      gameBtn.onclick = () => window.open(p.link, "_blank");
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
+
+    modal.onclick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+  </script>
 </body>
 </html>

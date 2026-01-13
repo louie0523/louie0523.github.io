@@ -1,90 +1,98 @@
-/* ===== 기본 스타일 ===== */
+/* 기본 */
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: #212121; /* 딥그레이 배경 */
-    color: #e0e0e0; /* 밝은 회색 텍스트 */
+    background: #1c1c1c;
+    color: #e0e0e0;
 }
 
 .container {
-    max-width: 840px;
+    max-width: 850px;
     margin: 0 auto;
     padding: 40px 20px;
 }
 
-/* ===== 카드 UI ===== */
+/* 카드 */
 .card {
-    background: #2c2c2c; /* 약간 밝은 다크 카드 */
-    padding: 32px;
-    border-radius: 20px;
-    margin-bottom: 32px;
-    box-shadow: 0 5px 14px rgba(0,0,0,0.35);
-    transform: translateY(12px);
+    background: #2a2a2a;
+    padding: 30px;
+    border-radius: 18px;
+    margin-bottom: 28px;
+    border: 1px solid #3a3a3a;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.25);
     opacity: 0;
+    transform: translateY(20px);
 }
 
+/* 등장 애니메이션 */
 .fade-in {
-    animation: fadeUp 0.45s ease-out forwards;
+    animation: fadeUp 0.45s ease forwards;
 }
 
 @keyframes fadeUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-/* ===== 프로필 이미지 ===== */
+/* 프로필 이미지 */
 .profile-img {
-    width: 130px;
-    height: 130px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
     display: block;
     margin: 0 auto 20px;
 }
 
-/* ===== 텍스트 ===== */
+/* 텍스트 */
 .title {
     text-align: center;
     font-size: 26px;
     font-weight: 600;
-    margin-bottom: 24px;
-    color: #ffffff;
+    margin-bottom: 18px;
+    color: #fff;
+}
+
+.intro {
+    text-align: center;
+    color: #cfcfcf;
+    opacity: 0.9;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
 }
 
 .card h2 {
-    color: #ffffff;
-    margin-bottom: 12px;
+    color: #fff;
+    margin-bottom: 10px;
 }
 
 .card p {
-    color: #bdbdbd;
+    color: #cfcfcf;
     line-height: 1.6;
 }
 
-/* ===== 게임 버튼 ===== */
+/* 버튼 */
 .g-btn {
     display: block;
     text-align: center;
-    background: #1a1a1a;
+    background: #3a3a3a;
     color: #fff;
-    padding: 16px;
-    border-radius: 16px;
+    padding: 14px;
+    border-radius: 14px;
     text-decoration: none;
     font-weight: 600;
-    margin: 14px 0;
+    margin: 12px 0;
+    border: 1px solid #4a4a4a;
 
-    /* 부드러운 게임 UI 느낌 */
-    transform: translateY(0);
-    transition:
-        transform .18s cubic-bezier(.2, .8, .2, 1),
-        box-shadow .18s ease,
-        opacity .18s ease;
+    transition: 0.2s ease;
 }
 
-/* Hover: 부드럽게 위로 +*
+.g-btn:hover {
+    background: #4a4a4a;
+}
+
+.g-btn.pressed {
+    transform: scale(0.96);
+    opacity: 0.8;
+}

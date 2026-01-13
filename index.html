@@ -2,49 +2,224 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>벨로 | Game Developer</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f0f0f;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Inter", sans-serif;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 650px;
+            width: 100%;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #3a3a3a;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        /* Profile Card */
+        .profile-card {
+            text-align: center;
+            padding: 40px 32px;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2a2a2a;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+
+        .intro {
+            font-size: 14px;
+            color: #a0a0a0;
+            line-height: 1.8;
+            margin-bottom: 28px;
+            text-align: left;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .g-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+            color: #e0e0e0;
+            padding: 10px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #333;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .g-btn:hover {
+            background: linear-gradient(135deg, #333 0%, #2a2a2a 100%);
+            border-color: #444;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .g-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Section Cards */
+        .section-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .section-card p {
+            font-size: 14px;
+            color: #a0a0a0;
+            margin-bottom: 20px;
+        }
+
+        .section-card .g-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Staggered Animation */
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .fade-in:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .fade-in:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .fade-in:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .card {
+                padding: 24px;
+            }
+
+            .profile-card {
+                padding: 32px 24px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .intro {
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
 
-    <div class="card fade-in">
-        <img src="profile.jpg" class="profile-img">
+    <!-- Profile Card -->
+    <div class="card profile-card fade-in">
+        <img src="Image/profile.jpg" class="profile-img" alt="Profile">
+
         <h1 class="title">벨로 | Game Developer</h1>
 
-        <a href="https://www.instagram.com/bellocitygames/" class="g-btn">Instagram</a>
-        <a href="https://www.youtube.com/@bellow3270" class="g-btn">YouTube</a>
+        <p class="intro">
+            Unity 기반 게임 개발을 중심으로 프로젝트를 제작중이며, 다양한 장르와 기술을 배우고 있습니다.<br>
+            새로운 매커니즘을 구현하는 것과, 세계관을 구축하는 것을 좋아합니다.<br>
+            추후 저만의 독특한 세계관의 JRPG류 게임을 제작하고 싶습니다.
+        </p>
+
+        <div class="social-links">
+            <a href="https://www.instagram.com/bellocitygames/" class="g-btn" target="_blank">Instagram</a>
+            <a href="https://www.youtube.com/@bellow3270" class="g-btn" target="_blank">YouTube</a>
+            <a href="https://github.com/louie0523" class="g-btn" target="_blank">GitHub</a>
+        </div>
     </div>
 
-    <div class="card fade-in" style="animation-delay:0.15s">
+    <!-- Projects Section -->
+    <div class="card section-card fade-in">
         <h2>Projects</h2>
         <p>개발한 프로젝트와 그 뒷이야기</p>
         <a class="g-btn" href="projects.html">프로젝트 보러가기</a>
     </div>
 
-    <div class="card fade-in" style="animation-delay:0.3s">
+    <!-- Devlog Section -->
+    <div class="card section-card fade-in">
         <h2>Devlog</h2>
         <p>게임 개발 일지</p>
         <a class="g-btn" href="devlog.html">데브로그 보기</a>
     </div>
 
 </div>
-
-<script>
-    // 클릭 시 버튼 눌림 효과
-    document.querySelectorAll('.g-btn').forEach(btn => {
-        btn.addEventListener('mousedown', () => {
-            btn.classList.add('pressed');
-        });
-        btn.addEventListener('mouseup', () => {
-            btn.classList.remove('pressed');
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.classList.remove('pressed');
-        });
-    });
-</script>
 
 </body>
 </html>
