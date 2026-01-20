@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Be Not Afraid... 개발 비화</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0f0f0f;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Inter", sans-serif;
+      color: #e0e0e0;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* Navigation */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #2a2a2a;
+      padding: 16px 24px;
+      display: flex;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: #a0a0a0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-btn:hover {
+      background: #1a1a1a;
+      color: #fff;
+      border-color: #2a2a2a;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 100px 24px 80px;
+    }
+
+    /* Header Section */
+    .header {
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .meta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      font-size: 14px;
+      color: #808080;
+    }
+
+    .meta-divider {
+      width: 1px;
+      height: 14px;
+      background: #2a2a2a;
+    }
+
+    /* Image Gallery */
+    .gallery {
+      margin: 40px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .gallery img {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #2a2a2a;
+      transition: transform 0.2s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.02);
+    }
+
+    /* Content Sections */
+    .content {
+      margin-top: 48px;
+    }
+
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #2a2a2a;
+    }
+
+    .section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #b0b0b0;
+      margin: 24px 0 12px;
+    }
+
+    .section p {
+      color: #c0c0c0;
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+
+    .highlight {
+      background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.08) 100%);
+      border-left: 3px solid #4a4a4a;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: #d0d0d0;
+    }
+
+    .story-img {
+      width: 100%;
+      margin: 24px 0;
+      border-radius: 10px;
+      border: 1px solid #2a2a2a;
+    }
+
+    /* Collapsible Image Toggle */
+    .image-toggle-container {
+      margin: 24px 0;
+    }
+
+    .toggle-btn {
+      background: transparent;
+      color: #a0a0a0;
+      padding: 10px 0;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-btn:hover {
+      color: #fff;
+    }
+
+    .toggle-arrow {
+      transition: transform 0.3s ease;
+      font-size: 12px;
+    }
+
+    .toggle-arrow.active {
+      transform: rotate(180deg);
+    }
+
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .collapsible-content.active {
+      max-height: 2000px;
+    }
+
+    .collapsible-content img {
+      width: 100%;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #2a2a2a;
+    }
+
+    /* Tech Tags */
+    .tech-section {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    .tech-section h2 {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 16px;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tech-tag {
+      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+      color: #e0e0e0;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid #333;
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+
+    .tech-tag:hover {
+      background: linear-gradient(135deg, #252525 0%, #2a2a2a 100%);
+      border-color: #444;
+      transform: translateY(-2px);
+    }
+
+    /* Social Links - Fixed Bottom Right */
+    .social-fixed {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 50;
+    }
+
+    .social-icon {
+      width: 48px;
+      height: 48px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: #e0e0e0;
+      font-size: 20px;
+    }
+
+    .social-icon:hover {
+      background: #252525;
+      border-color: #3a3a3a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 80px 20px 60px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .social-fixed {
+        bottom: 20px;
+        right: 20px;
+      }
+
+      .social-icon {
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-btn" onclick="location.href='../projects.html'">← 프로젝트</div>
+    <div class="nav-btn" onclick="location.href='../index.html'">← 프로필</div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Be Not Afraid... 개발 비화</h1>
+      <div class="meta">
+        <span>2025. 1. 24 ~ 2025. 1. 27</span>
+        <div class="meta-divider"></div>
+        <span>게임 개발 프로젝트</span>
+      </div>
+    </header>
+
+    <!-- Image Gallery -->
+    <section class="gallery">
+      <img src="Dimage3/1.png" alt="Screenshot 1">
+      <img src="Dimage3/2.png" alt="Screenshot 2">
+      <img src="Dimage3/3.png" alt="Screenshot 3">
+      <img src="Dimage3/4.png" alt="Screenshot 4">
+    </section>
+
+    <!-- Content -->
+    <article class="content">
+      <div class="highlight">
+        마법진을 해주하여 괴이한 것이 강림하는 것을 막는 게임
+      </div>
+
+      <!-- Introduction -->
+      <section class="section">
+        <h2>소개</h2>
+        <p>
+          이 게임은 웨루 게임잼 2R 제출작입니다. 
+        </p>
+        <p>
+          지금 보면 단순한 로직밖에 없었지만, 그때는 정말 그 단순한 로직도 어려워서 밤을 새우고도 저녁 7시쯤 되어서야 잔 것이 기억나네요.
+        </p>
+        <p>
+          2R는 남은 참가자끼리 서로 지목하여 같은 주제를 두고 대결하는 방식이었습니다.
+        </p>
+        <p>
+          저는 <b>노 텍스트</b>라는 주제를 받았습니다. 저와 대결한 분이 훌륭한 작품을 만드셔서 패배했지만, 다행히 소수점 차이로 패자부활전으로 3R에 진출할 수 있었습니다.
+        </p>
+        <p>
+          여담이지만, 게임 제목인 <b>Be Not Afraid...</b>는 오컬트 분위기에 맞는 음성을 찾다가 Be Not Afraid...만 반복되는 음성 팩을 발견해 그대로 제목으로 사용했습니다.
+        </p>
+        <p>
+          또 한 가지, 당시에는 제공된 에셋 외에는 스프라이트 한 장도 가져오면 안 된다고 잘못 생각해 제 눈과 팔을 포토샵으로 합성해 강림하는 괴이한 것의 형체를 만들었습니다....
+        </p>
+
+        <!-- Collapsible Image Section -->
+        <div class="image-toggle-container">
+          <button class="toggle-btn" onclick="toggleImage()">
+            <span class="toggle-arrow" id="toggleArrow">▼</span>
+            <span id="toggleText">이미지 보기(보는 사람에 따라 혐 + 공포 주의)</span>
+          </button>
+          <div class="collapsible-content" id="collapsibleImage">
+            <img src="Dimage3/5.png" alt="내 눈깔...">
+          </div>
+        </div>
+      </section>
+
+      <!-- Initial Planning -->
+      <section class="section">
+        <h2>초기 기획</h2>
+        <p>
+          이번 주제는 1R과 다르게 너무나도 많은 아이디어가 떠올라서 문제였습니다.
+        </p>
+        <p>
+          노 텍스트… 즉 텍스트 없이 진행되는 게임이라면, 플레이어가 빠르게 규칙을 이해하고 몰입할 수 있는 형태가 적합하다고 생각했습니다.
+        </p>
+        <p>
+          그러던 중 <a href="https://drawer15.itch.io/dungeon-detective-asset-pack" style="color: #888; text-decoration: underline;"><b>이 에셋</b></a>을 발견하게 되었습니다.
+        </p>
+        <p>
+          아트 실력이 없는 개발자는 에셋의 분위기에 맞는 게임을 만들어야 하는 법... 그래서 저는 이 에셋을 활용해 <b>오컬트</b> 콘셉트를 잡고, 마을 곳곳에 펼쳐진 마법진을 플레이어가 직접 해주하는 게임을 만들기로 했습니다.
+        </p>
+        <p>
+          여기에 빠르게 규칙을 파악하지 못하여도 진행할 수 있도록 타임 루프 요소도 넣으려 했습니다.
+        </p>
+      </section>
+
+      <!-- Design Change -->
+      <section class="section">
+        <h2>기획 중 실패한 부분</h2>
+        <p>
+          타임 루프 콘셉트에서 중요한 부분을 간과했습니다.
+        </p>
+        <h3>타임 루프는 ‘시간이 반복되고 있다’는 인지가 필요하다</h3>
+        <p>
+          게임이 완성된 후 보니, 타임 루프라기보다는 대부분의 게임에 있던 <b>RETRY</b> 버튼과 크게 다르지 않은 흐름이 되어버렸습니다.
+        </p>
+        <p>
+          플레이어(주인공)가 “이번엔 이렇게 해보자” 같은 힌트 문장이라도 말해줬다면 루프가 성립되겠지만, 제 주제는 <b>노 텍스트</b>였습니다.
+        </p>
+      </section>
+
+      <!-- Development Issues -->
+      <section class="section">
+        <h2>개발 중 있었던 문제들</h2>
+        <p>
+          개발 자체의 문제는 거의 없었지만, 아직 미숙한 코딩 실력 때문에 시간이 매우 오래 걸렸습니
+        </p>
+        <p>
+          결국 밤을 새웠어도 제출 마감 2시간 전에서야 완성할 수 있었습니다.
+        </p>
+      </section>
+
+      <!-- Post-Build Issues -->
+      <section class="section">
+        <h2>빌드 완성 후 발견한 문제들</h2>
+        
+        <h3>1. 초반 플레이어 유도 실패</h3>
+        <p>
+          제 게임에서는 왼쪽 맵 끝에 있는 NPC에게서 열쇠를 훔쳐야 본격적인 진행이 가능합니다.
+        </p>
+        <p>
+          그러나 플레이어의 시작 위치가 중앙이 아닌 오른쪽에 배치되어 있어, 초반 진행까지의 시간이 불필요하게 길어지는 문제가 있었습니다.
+        </p>
+      </section>
+
+      <!-- Conclusion -->
+      <section class="section">
+        <h2>느낀 점</h2>
+        <p>
+          앞선 두 작품에 비해 확실한 엔딩을 만들어서 꽤 만족스러웠습니다.<br>
+          다만 이때 개발 과정이 워낙 고됐던 탓인지, 제 게임에 쓰인 BGM을 다른 게임에서 들었는데 1년이 지났음에도 어지럽더군요.
+        </p>
+      </section>
+
+      <!-- Tech Stack -->
+      <section class="tech-section">
+        <h2>사용한 기술</h2>
+        <div class="tech-tags">
+          <span class="tech-tag">C#</span>
+          <span class="tech-tag">Unity</span>
+          <span class="tech-tag">Post-Processing</span>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <!-- Fixed Social Links -->
+  <div class="social-fixed">
+    <a href="https://www.youtube.com/@bellow3270" class="social-icon" target="_blank" title="YouTube">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+    </a>
+    <a href="https://github.com/louie0523" class="social-icon" target="_blank" title="GitHub">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+    </a>
+    <a href="https://www.instagram.com/bellocitygames/" class="social-icon" target="_blank" title="Instagram">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    </a>
+  </div>
+
+  <script>
+    function toggleImage() {
+      const content = document.getElementById('collapsibleImage');
+      const arrow = document.getElementById('toggleArrow');
+      const text = document.getElementById('toggleText');
+      
+      content.classList.toggle('active');
+      arrow.classList.toggle('active');
+      
+      if (content.classList.contains('active')) {
+        text.textContent = '이미지 숨기기';
+      } else {
+        text.textContent = '이미지 보기(보는 사람에 따라 혐 + 공포 주의)';
+      }
+    }
+  </script>
+</body>
+</html>
