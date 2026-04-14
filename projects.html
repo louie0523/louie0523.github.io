@@ -356,7 +356,7 @@
     { img: "Image/project2.png", title: "Straight line slash!", desc: "직선을 그어 공격하거나 적의 탄막을 막아내며, 강력한 보스와 전투를 펼치는 2D 게임입니다.", tags: ["Unity", "2D", "Bullet Hell"], dev:"dev/dev2.html", link:"https://bellocity.itch.io/straight-line-slash"},
     { img: "Image/project3.png", title: "Be not Afraid...", desc: "마을에 숨겨진 흑마법사와 마법진을 찾아 해주하는 것이 목표인 2D 오컬트 퍼즐 게임입니다.", tags: ["Unity", "2D", "Occult", "Puzzle"], dev:"dev/dev3.html", link:"https://bellocity.itch.io/be-not-afraid"},
     { img: "Image/project4.png", title: "Turn & Tact!", desc: "탑뷰와 종스크롤뷰를 번갈아 가며, 각 뷰의 다른 요소를 이용하며 스테이지를 클리어 하는 2D 퍼즐 게임입니다.", tags: ["Unity", "2D", "Puzzle", "Top View", "Side View"], dev:"dev/dev4.html", link:"https://superjoy.itch.io/turnandtact"},
-    { img: "Image/project5.png", title: "2025 부산 기능경기대회", desc: "부산 기능경기대회 게임개발 기획서 기반으로 제작한 3D 어드벤처 게임입니다.", tags: ["Unity", "3D", "Adventure", "competition"], dev:"#", link:"https://bellocity.itch.io/adventure250410"},
+    { img: "Image/project5.png", title: "2025 부산 기능경기대회", desc: "부산 기능경기대회 게임개발 기획서 기반으로 제작한 3D 어드벤처 게임입니다.", tags: ["Unity", "3D", "Adventure", "Competition"], dev:"#", link:"https://bellocity.itch.io/adventure250410"},
     { img: "Image/project6.png", title: "인간농장", desc: "나폴리탄 괴담과 조지 오웰의 '동물 농장'에서 영감을 받아 제작한 3D 공포 게임입니다.", tags: ["Unity", "3D","Horror", "Story"], dev:"dev/dev6.html", link:"https://bellocity.itch.io/humanfarm"},
     { img: "Image/project7.png", title: "Gunner & Rider", desc: "한명은 쫒아오는 적을 처리하는 거너, 한명은 말을 조종하는 라이더로 나눠 플레이하는 3D 협동 게임입니다.", tags: ["Unity", "3D", "collaboration"], dev:"dev/dev7.html", link:"https://bellocity.itch.io/ridder-gunner"},
     { img: "Image/project8.png", title: "2025 전국기능경기대회", desc: "전국 기능경기대회 게임개발의 기획서 기반으로 제작한 3D 농장 게임입니다.", tags: ["Unity", "3D", "Farm"], dev:"#", link:"#"},
@@ -364,6 +364,8 @@
     { img: "Image/project10.png", title: "붕괴 스타레일 : 영웅 대난투", desc: "원신의 '별바다 세계'로 제작한, 붕괴 스타레일 요소들을 ARPG 형식으로 구현한 유즈맵입니다.게임 UID : 16338722770", tags: ["Use Map", "Miliastra Wonderland", "Fan Game"], dev:"dev/dev10.html", link:"#"},
     { img: "Image/project11.png", title: "존 스노우의 완벽한 크리스마스 이브", desc: "크리스마스 이브에 완벽한 하루를 만들기 위해 고군분투하는 존의 3D 병맛 스토리 게임입니다.", tags: ["Unity", "3D", "Bottle taste", "Story"], dev:"dev/dev11.html", link:"https://bellocity.itch.io/johnsnowsperpectday"},
     { img: "Image/project12.png", title: "Blood Chain", desc: "캐릭터끼리의 조합을 맞춰 최대한 연속적인 콤보를 만드는 2D 오토 배틀러 게임입니다.", tags: ["Unity", "2D", "Auto Chess", "Combo", "Temu GameJam"], dev:"dev/dev12.html", link:"https://bellocity.itch.io/blood-chain"}
+    { img: "Image/project13.png", title: "2026 부산 기능경기대회", desc: "부산 기능경기대회 게임 개발 기획서 기반으로 제작한 3D 슈팅 게임입니다.", tags: ["Unity", "3D", "Shooting", "Competition"], dev:"#", link:"https://bellocity.itch.io/2026busangigang"}
+    { img: "Image/project14.png", title: "RANDOM ARENA", desc: "사다리타기나 롤렛, 너무 단순하지 않으신가요? 그런 분들을 위해 만들었습니다!", tags: ["Web", "Vibe Coding", "Tool"], dev:"dev/dev14.html", link:"https://louie0523.github.io/RNDArena"}
   ];
 
   const projectList = document.getElementById("projectList");
@@ -415,7 +417,8 @@
       gameBtn.style.cursor = "not-allowed";
       gameBtn.style.opacity = "0.5";
       gameBtn.onclick = null;
-    } else {
+    }
+    else {
       gameBtn.textContent = "게임 링크";
       gameBtn.style.cursor = "pointer";
       gameBtn.style.opacity = "1";
