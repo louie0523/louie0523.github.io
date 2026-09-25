@@ -56,7 +56,12 @@ devlog/post-template.html  데브로그 상세 글 템플릿
 - 길게 쓰고 싶으면 `devlog/post-template.html`을 복사해 `devlog/43.html`로 만들고 `url: "devlog/43.html"`을 추가하세요.
 - 새 프로젝트 이름을 `project`에 쓰면 필터에 자동으로 생깁니다.
 
-## 5. 자주 바꿀 것
+## 5. 시즌
+- 데브로그는 `seasons`에 적힌 시즌 단위로 나뉘고, 페이지에 들어가면 가장 최근 시즌이 먼저 보입니다.
+- 로그는 날짜로 자동 분류됩니다. 새 시즌을 열려면 `seasons` 맨 위에 `{ id: 3, name: "Season 3", title: "...", start: "YYYY.MM.DD", desc: "..." }`를 추가하고, 이전 시즌에 `end`를 적으세요.
+- 긴 공백은 `kind: "interlude"` 로그 하나로 요약할 수 있습니다 (events 목록 포함).
+
+## 6. 자주 바꿀 것
 - 소속: `profile.affiliation`
 - 메인 대표작: `featured` (첫 번째가 가장 크게 표시)
 - 수상 / 게임잼: `awards`, `jams`

@@ -25,11 +25,22 @@ window.SITE = {
   /* 메인 상단에 크게 걸리는 프로젝트 (projects의 id). 첫 번째가 가장 크게 나옵니다. */
   featured: ["random-br", "private-detective-v", "human-farm"],
 
-  /* ---------- 수상 ---------- tier: gold | silver | bronze | merit */
+  /* ---------- 데브로그 시즌 ----------
+     데브로그 페이지는 가장 최근 시즌을 먼저 보여줍니다.
+     로그는 날짜로 시즌이 자동 분류됩니다 (start 이후 ~ 다음 시즌 start 이전). */
+  seasons: [
+    { id: 2, name: "Season 2", title: "랜덤 초능력자 배틀로얄", start: "2026.06.01",
+      desc: "대회 시즌을 마치고 돌아왔습니다. 이번 시즌은 1인칭 멀티플레이 배틀로얄을 주력으로 개발합니다." },
+    { id: 1, name: "Season 1", title: "Baldo Master", start: "2026.01.01", end: "2026.05.31",
+      desc: "2D 액션 게임 Baldo Master를 중심으로 거의 매일 작업을 기록한 첫 시즌입니다. 중간에 게임잼 2회에 참가했습니다." }
+  ],
+
+  /* ---------- 수상 ---------- tier: gold | silver | bronze | excel(우수) | merit(장려) */
   awards: [
-    /* level: national(전국) > regional(지방) > school(교내) — 등급이 높은 대회가 위에, 더 강조되어 표시됩니다 */
+    /* level: national(전국) > contest(공모전) > regional(지방) > school(교내) — 등급이 높은 대회가 위에, 더 강조되어 표시됩니다 */
     { level: "national", year: 2026, event: "전국기능경기대회",   field: "게임개발 직종", result: "동메달", tier: "bronze" },
     { level: "national", year: 2025, event: "전국기능경기대회",   field: "게임개발 직종", result: "장려상", tier: "merit",  project: "national-2025" },
+    { level: "contest",  year: 2026, event: "청강게임대전",       field: "게임 공모전",   result: "우수상", tier: "excel" },
     { level: "regional", year: 2026, event: "부산 기능경기대회", field: "게임개발 직종", result: "금상",   tier: "gold",   project: "busan-2026" },
     { level: "regional", year: 2025, event: "부산 기능경기대회", field: "게임개발 직종", result: "은상",   tier: "silver", project: "busan-2025" },
     { level: "school",   year: 2024, event: "교내 전공실기 대회", field: "게임 개발 동아리", result: "금상", tier: "gold",   project: "stygian-road" }
@@ -46,36 +57,37 @@ window.SITE = {
   ],
 
   /* ---------- 프로젝트 ----------
-     status: "dev"(개발 중) | "done"(완료)
+     status: "dev"(개발 중) | "paused"(일시 중지) | "done"(완료)
      dim: "2D" | "3D" | "Web" | "UGC"
      dev: 개발 비화 페이지 경로 ("#" = 없음) / link: 게임 링크 ("#" = 없음)          */
   projects: [
     {
-      id: "random-br", no: 17, status: "dev", dim: "3D", year: 2026, period: "2026 ~ 개발 중",
+      id: "random-br", no: 17, status: "dev", main: true, dim: "3D", year: 2026, period: "2026 ~ 주력 개발 중",
       title: "랜덤 초능력자 배틀로얄", sub: "1인칭 카툰 배틀로얄 · 멀티플레이 · 가제",
       img: "Image/project-br.png",
       desc: "죽을 때마다 초능력이 무작위로 바뀌는 1인칭 카툰 배틀로얄입니다.",
       long: "죽을 때마다 초능력이 무작위로 바뀌는 1인칭 카툰 배틀로얄입니다. '영혼'이 상점 재화이면서 동시에 승리 조건이라, 써서 강해질지 모아서 이길지 계속 고민하게 만드는 것이 핵심입니다. 기획부터 네트워크까지 혼자 개발하고 있습니다.",
       points: ["영혼 = 상점 재화 + 승리 조건", "사망 시 초능력 무작위 재배정", "10~12인 캐주얼 파티 게임 목표"],
       tags: ["Unity 6", "URP", "Photon Fusion 2", "Multiplayer", "FPS"],
-      dev: "#", link: "#", pendingLabel: "공개 예정"
+      dev: "devlogs.html?project=%EB%9E%9C%EB%8D%A4%20%EC%B4%88%EB%8A%A5%EB%A0%A5%EC%9E%90%20%EB%B0%B0%ED%8B%80%EB%A1%9C%EC%96%84", devLabel: "개발 일지", link: "#", pendingLabel: "공개 예정",
+      logKey: "랜덤 초능력자 배틀로얄"
     },
     {
       id: "private-detective-v", no: 16, status: "done", dim: "2D", year: 2026, period: "2026.05.01 ~ 05.03",
       title: "Private Detective V", sub: "게임잼 출품작 · 탐정",
       img: "devlog/Thumb/42.gif", jam: "게임잼 출품",
-      desc: "3일간의 게임잼에서 기획, 일러스트, 인트로 컷씬까지 직접 작업한 탐정 게임입니다.",
+      desc: "3일간의 게임잼에서 기획, 일러스트, 인트로 컷씬까지 직접 작업한 탐정 게임입니다. 완성했지만 현재 빌드는 비공개입니다.",
       tags: ["Unity", "Cutscene", "Game Jam"],
-      dev: "devlogs.html?project=Private%20Detective%20V", devLabel: "개발 일지", link: "#", pendingLabel: "빌드 준비 중",
+      dev: "devlogs.html?project=Private%20Detective%20V", devLabel: "개발 일지", link: "#", pendingLabel: "빌드 비공개",
       logKey: "Private Detective V"
     },
     {
-      id: "baldo-master", no: 15, status: "dev", dim: "2D", year: 2026, period: "2026.01 ~ 개발 중",
+      id: "baldo-master", no: 15, status: "paused", dim: "2D", year: 2026, period: "2026.01 ~ 05 · 일시 중지",
       title: "Baldo Master", sub: "2D 액션 · 발도",
       img: "devlog/Thumb/41.gif",
-      desc: "'발도'를 핵심 액션으로 한 2D 액션 게임입니다. 증강, 상점, 보스 패턴, 컷씬 시스템을 직접 설계하며 개발하고 있습니다.",
+      desc: "'발도'를 핵심 액션으로 한 2D 액션 게임입니다. 증강, 상점, 보스 패턴, 컷씬 시스템을 직접 설계했습니다. 지금은 배틀로얄 개발에 집중하기 위해 잠시 멈춘 상태입니다.",
       tags: ["Unity", "2D", "Action", "Cinemachine", "LuaFlow"],
-      dev: "devlogs.html?project=Baldo%20Master", devLabel: "개발 일지", link: "#", pendingLabel: "데모 준비 중",
+      dev: "devlogs.html?project=Baldo%20Master", devLabel: "개발 일지", link: "#", pendingLabel: "개발 일시 중지",
       logKey: "Baldo Master"
     },
     { id: "random-arena", no: 14, status: "done", dim: "Web", title: "RANDOM ARENA", img: "Image/project14.png",
@@ -136,6 +148,15 @@ window.SITE = {
      새 글은 맨 위에 추가하세요.
      { no, date:"YYYY.MM.DD", end:(선택), title, desc(HTML 가능), project, tags:[], thumb:"파일명" (devlog/Thumb/ 안), url:(선택, 상세 글 경로) } */
   devlogs: [
+    { no: 43, date: "2026.09.26", project: "랜덤 초능력자 배틀로얄", tags: ["Season 2", "Multiplayer"], thumb: "",
+      title: "Season 2 시작 — 랜덤 초능력자 배틀로얄", desc: "대회 시즌을 마치고 다시 돌아왔습니다. Baldo Master는 잠시 멈추고, 이번 시즌은 죽을 때마다 초능력이 무작위로 바뀌는 1인칭 멀티플레이 배틀로얄을 주력으로 개발합니다. Unity 6 + Photon Fusion 2로 혼자 만들고 있습니다." },
+    { kind: "interlude", date: "2026.06.01", end: "2026.09.25", project: "", tags: [], thumb: "",
+      title: "대회 시즌", desc: "5개월 동안 데브로그는 멈췄지만, 대회 준비와 출전에 집중한 기간이었습니다.",
+      events: [
+        { date: "2026.06", name: "BIC 출품 준비", result: "이번엔 불발" },
+        { date: "2026.07", name: "청강게임대전", result: "우수상", tier: "excel" },
+        { date: "2026.08", name: "전국기능경기대회 게임개발 직종", result: "동메달", tier: "bronze" }
+      ] },
     { no: 42, date: "2026.05.01", end: "2026.05.03", project: "Private Detective V", tags: ["Game Jam", "Cutscene", "Game System"], thumb: "42.gif",
       title: "게임잼 참가 3일차", desc: "1일차는 기획, 2~3일차는 그림만 죽어라 그리다가 인트로 컷씬을 만들어봤습니다." },
     { no: 41, date: "2026.04.27", project: "Baldo Master", tags: ["UI", "Game System"], thumb: "41.gif",

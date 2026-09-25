@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>데브로그 · 벨로</title>
-  <meta name="description" content="벨로의 개발 일지 — Baldo Master 등 진행 중인 프로젝트의 작업 기록.">
+  <meta name="description" content="벨로의 개발 일지 — 시즌별로 정리한 작업 기록 (Season 2: 랜덤 초능력자 배틀로얄).">
   <meta name="theme-color" content="#0b0b0c">
   <link rel="icon" href="Image/profile.jpg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -20,7 +20,7 @@
     <header class="page-head">
       <p class="px-label">Patch Notes</p>
       <h1>개발 일지</h1>
-      <p>진행 중인 프로젝트의 작업 기록입니다. 총 <b id="logTotal"></b>개 중 <b id="logShown"></b>개 표시 중.</p>
+      <p>작업 기록을 시즌 단위로 정리했습니다. 이 시즌 <b id="logTotal"></b>개 중 <b id="logShown"></b>개 표시 중.</p>
     </header>
 
     <div class="log-layout">
@@ -43,6 +43,7 @@
       </aside>
 
       <div>
+        <div class="season-tabs" id="seasonTabs" role="tablist" aria-label="시즌"></div>
         <div id="projInfo"></div>
         <div id="timeline"></div>
       </div>

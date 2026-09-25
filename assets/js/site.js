@@ -28,8 +28,16 @@
   var byId = {};
   projects.forEach(function (p) { byId[p.id] = p; });
   var logs = (S.devlogs || []).slice().sort(function (a, b) {
-    return a.date < b.date ? 1 : a.date > b.date ? -1 : b.no - a.no;
+    return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.no || 0) - (a.no || 0);
   });
+  function isCounted(d) { return !d.minor && d.kind !== "interlude"; }
+  function logId(d) { return "log-" + (d.no != null ? String(d.no).replace(".", "-") : (d.kind || "x") + "-" + d.date.replace(/\./g, "")); }
+  function logLabel(d) { return d.kind === "interlude" ? "INTERLUDE" : "#" + d.no; }
+  var seasons = (S.seasons || []).slice().sort(function (a, b) { return a.start < b.start ? 1 : -1; });
+  function seasonOf(d) {
+    for (var i = 0; i < seasons.length; i++) if (d.date >= seasons[i].start) return seasons[i].id;
+    return seasons.length ? seasons[seasons.length - 1].id : null;
+  }
 
   var ICON = {
     youtube: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.87.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>',
@@ -49,7 +57,8 @@
     return '<div class="tags">' + (first || "") + (list || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>';
   }
   function statusChip(p) {
-    if (p.status === "dev") return '<span class="status dev"><i></i>개발 중</span>';
+    if (p.status === "dev") return '<span class="status dev"><i></i>' + (p.main ? "주력 개발 중" : "개발 중") + '</span>';
+    if (p.status === "paused") return '<span class="status paused"><i></i>일시 중지</span>';
     if (url(p.link)) return '<span class="status live"><i></i>플레이 가능</span>';
     return '<span class="status"><i></i>완료</span>';
   }
@@ -115,7 +124,7 @@
   /* ---------- home ---------- */
   function home() {
     var P = S.profile || {};
-    var logCount = logs.filter(function (d) { return !d.minor; }).length;
+    var logCount = logs.filter(isCounted).length;
 
     set("pcStats",
       '<div><dt>PROJECTS</dt><dd>' + projects.length + '</dd></div>' +
@@ -147,9 +156,10 @@
     }).join(""));
 
     // awards
-    var medalChar = { gold: "금", silver: "은", bronze: "동", merit: "장" };
+    var medalChar = { gold: "금", silver: "은", bronze: "동", excel: "우", merit: "장" };
     var LEVELS = [
       ["national", "전국 대회", "National"],
+      ["contest", "공모전 · 게임대전", "Contest"],
       ["regional", "지방 대회", "Regional"],
       ["school", "교내 대회", "School"]
     ];
@@ -186,9 +196,9 @@
 
     // recent logs
     set("recentLogs", logs.filter(function (d) { return !d.minor; }).slice(0, 5).map(function (d) {
-      var href = d.url ? url(d.url) : BASE + "devlogs.html#log-" + String(d.no).replace(".", "-");
+      var href = d.url ? url(d.url) : BASE + "devlogs.html#" + logId(d);
       return '<li class="rlog rv"><time>' + esc(d.date) + '</time>' +
-        '<a href="' + esc(href) + '">' + media(d.thumb ? "devlog/Thumb/" + d.thumb : "", "#" + d.no) + '</a>' +
+        '<a href="' + esc(href) + '">' + media(d.thumb ? "devlog/Thumb/" + d.thumb : "", logLabel(d)) + '</a>' +
         '<div><h3><a href="' + esc(href) + '">' + esc(d.title) + '</a></h3><p>' + esc(stripHtml(d.desc)) + '</p></div>' +
         (d.project ? '<span class="tag proj">' + esc(d.project) + '</span>' : "<span></span>") + '</li>';
     }).join(""));
@@ -282,85 +292,137 @@
   /* ---------- devlogs page ---------- */
   function devlogsPage() {
     var params = new URLSearchParams(location.search);
-    var st = { project: params.get("project") || "all", tag: params.get("tag") || "all", q: "", asc: false };
-
-    var projNames = [];
-    logs.forEach(function (d) { var k = d.project || "기타"; if (projNames.indexOf(k) < 0) projNames.push(k); });
-    projNames.sort(function (a, b) {
-      if (a === "기타") return 1; if (b === "기타") return -1;
-      return count("project", b) - count("project", a);
-    });
-    function count(kind, v) {
-      return logs.filter(function (d) { return kind === "project" ? (d.project || "기타") === v : (d.tags || []).indexOf(v) >= 0; }).length;
+    var st = { project: params.get("project") || "all", tag: params.get("tag") || "all", q: "", asc: false, season: params.get("season") };
+    if (!st.season) {
+      // 특정 프로젝트/로그로 들어오면 그 로그가 있는 시즌을, 아니면 최신 시즌을 보여줌
+      var target = null;
+      if (location.hash) logs.forEach(function (d) { if ("#" + logId(d) === location.hash) target = d; });
+      if (target) st.season = String(seasonOf(target));
+      else if (st.project !== "all") {
+        var ss = []; logs.forEach(function (d) { if (d.project === st.project && ss.indexOf(seasonOf(d)) < 0) ss.push(seasonOf(d)); });
+        st.season = ss.length === 1 ? String(ss[0]) : "all";
+      } else st.season = seasons.length ? String(seasons[0].id) : "all";
     }
-    var tagCounts = {};
-    logs.forEach(function (d) { (d.tags || []).forEach(function (t) { tagCounts[t] = (tagCounts[t] || 0) + 1; }); });
-    var tagList = Object.keys(tagCounts).filter(function (t) { return tagCounts[t] >= 2; })
-      .sort(function (a, b) { return tagCounts[b] - tagCounts[a]; });
 
-    set("logTotal", logs.length);
+    function pool() { return st.season === "all" ? logs : logs.filter(function (d) { return String(seasonOf(d)) === st.season; }); }
+    function seasonObj() { var o = null; seasons.forEach(function (x) { if (String(x.id) === st.season) o = x; }); return o; }
+    function periodOf(list) {
+      if (!list.length) return "";
+      var first = list[list.length - 1], last = list[0];
+      return first.date.slice(0, 7) + " – " + (last.end || last.date).slice(0, 7);
+    }
 
     function sync() {
       var p = new URLSearchParams();
+      if (st.season !== (seasons.length ? String(seasons[0].id) : "all")) p.set("season", st.season);
       if (st.project !== "all") p.set("project", st.project);
       if (st.tag !== "all") p.set("tag", st.tag);
       var qs = p.toString();
-      history.replaceState(null, "", location.pathname + (qs ? "?" + qs : ""));
+      history.replaceState(null, "", location.pathname + (qs ? "?" + qs : "") + location.hash);
+    }
+
+    function drawSeasons() {
+      if (!seasons.length) return;
+      set("seasonTabs", seasons.map(function (x) {
+        var list = logs.filter(function (d) { return seasonOf(d) === x.id; });
+        var n = list.filter(isCounted).length;
+        return '<button class="season' + (st.season === String(x.id) ? " on" : "") + '" data-season="' + x.id + '">' +
+          '<span class="px-label">' + esc(x.name) + (x === seasons[0] ? ' · Now' : "") + '</span>' +
+          '<strong>' + esc(x.title) + '</strong>' +
+          '<small>' + esc(x.end ? periodOf(list) : x.start.slice(0, 7) + " – 진행 중") + ' · ' + n + ' logs</small></button>';
+      }).join("") +
+        '<button class="season all' + (st.season === "all" ? " on" : "") + '" data-season="all"><span class="px-label">All</span><strong>전체 기록</strong><small>' + logs.filter(isCounted).length + ' logs</small></button>');
     }
 
     function drawSide() {
-      set("projList", '<button data-p="all" class="' + (st.project === "all" ? "on" : "") + '"><span>전체</span><small>' + logs.length + '</small></button>' +
-        projNames.map(function (n) {
-          return '<button data-p="' + esc(n) + '" class="' + (st.project === n ? "on" : "") + '"><span>' + esc(n) + '</span><small>' + count("project", n) + '</small></button>';
+      var P = pool();
+      function cnt(kind, v) {
+        return P.filter(function (d) { return kind === "project" ? (d.project || "기타") === v : (d.tags || []).indexOf(v) >= 0; }).length;
+      }
+      var names = [];
+      P.forEach(function (d) { if (d.kind === "interlude") return; var k = d.project || "기타"; if (names.indexOf(k) < 0) names.push(k); });
+      if (st.project !== "all" && names.indexOf(st.project) < 0) names.push(st.project);
+      names.sort(function (a, b) { if (a === "기타") return 1; if (b === "기타") return -1; return cnt("project", b) - cnt("project", a); });
+      set("projList", '<button data-p="all" class="' + (st.project === "all" ? "on" : "") + '"><span>전체</span><small>' + P.filter(isCounted).length + '</small></button>' +
+        names.map(function (n) {
+          return '<button data-p="' + esc(n) + '" class="' + (st.project === n ? "on" : "") + '"><span>' + esc(n) + '</span><small>' + cnt("project", n) + '</small></button>';
         }).join(""));
+
+      var tc = {};
+      P.forEach(function (d) { (d.tags || []).forEach(function (t) { tc[t] = (tc[t] || 0) + 1; }); });
+      var tl = Object.keys(tc).filter(function (t) { return tc[t] >= 2 || t === st.tag; }).sort(function (a, b) { return tc[b] - tc[a]; });
       set("tagList", '<button class="chip' + (st.tag === "all" ? " on" : "") + '" data-t="all">전체</button>' +
-        tagList.map(function (t) {
-          return '<button class="chip' + (st.tag === t ? " on" : "") + '" data-t="' + esc(t) + '">' + esc(t) + '<small>' + tagCounts[t] + '</small></button>';
+        tl.map(function (t) {
+          return '<button class="chip' + (st.tag === t ? " on" : "") + '" data-t="' + esc(t) + '">' + esc(t) + '<small>' + (tc[t] || 0) + '</small></button>';
         }).join(""));
       set("sortBox", '<button class="chip' + (!st.asc ? " on" : "") + '" data-s="desc">최신순</button><button class="chip' + (st.asc ? " on" : "") + '" data-s="asc">처음부터</button>');
     }
 
-    function drawInfo(items) {
+    function drawInfo() {
       var p = null;
       projects.forEach(function (x) { if (x.logKey && x.logKey === st.project) p = x; });
-      if (!p) { set("projInfo", ""); return; }
-      var all = logs.filter(function (d) { return d.project === st.project; });
-      var first = all[all.length - 1], last = all[0];
-      set("projInfo", '<div class="proj-info">' + media(p.img, p.title) +
-        '<div><div style="display:flex;gap:8px;flex-wrap:wrap">' + statusChip(p) + badge(p) + '</div>' +
-        '<h2>' + esc(p.title) + '</h2><p>' + esc(p.desc) + '</p>' +
-        '<div class="proj-stats"><span>LOGS <b>' + all.length + '</b></span><span>FIRST <b>' + esc(first.date) + '</b></span><span>LATEST <b>' + esc(last.end || last.date) + '</b></span></div>' +
-        '<a class="log-more" href="' + BASE + 'projects.html#' + esc(p.id) + '">프로젝트 정보 →</a></div></div>');
+      if (p) {
+        var all = logs.filter(function (d) { return d.project === st.project; });
+        var first = all[all.length - 1], last = all[0];
+        set("projInfo", '<div class="proj-info">' + media(p.img, p.title) +
+          '<div><div style="display:flex;gap:8px;flex-wrap:wrap">' + statusChip(p) + badge(p) + '</div>' +
+          '<h2>' + esc(p.title) + '</h2><p>' + esc(p.desc) + '</p>' +
+          '<div class="proj-stats"><span>LOGS <b>' + all.length + '</b></span><span>FIRST <b>' + esc(first.date) + '</b></span><span>LATEST <b>' + esc(last.end || last.date) + '</b></span></div>' +
+          '<a class="log-more" href="' + BASE + 'projects.html#' + esc(p.id) + '">프로젝트 정보 →</a></div></div>');
+        return;
+      }
+      var so = seasonObj();
+      if (so && st.project === "all") {
+        var list = pool();
+        set("projInfo", '<div class="season-info"><span class="px-label">' + esc(so.name) + (so === seasons[0] ? " · Now Playing" : " · Cleared") + '</span>' +
+          '<h2>' + esc(so.title) + '</h2>' + (so.desc ? '<p>' + esc(so.desc) + '</p>' : "") +
+          '<div class="proj-stats"><span>LOGS <b>' + list.filter(isCounted).length + '</b></span><span>PERIOD <b>' + esc(so.end ? periodOf(list) : so.start.slice(0, 7) + " – 진행 중") + '</b></span></div></div>');
+        return;
+      }
+      set("projInfo", "");
+    }
+
+    function interlude(d) {
+      return '<section class="interlude rv" id="' + logId(d) + '">' +
+        '<div class="il-head"><span class="px-label">Interlude</span><time>' + esc(dateRange(d)) + '</time></div>' +
+        '<h3>' + esc(d.title) + '</h3>' + (d.desc ? '<p>' + d.desc + '</p>' : "") +
+        (d.events ? '<ol class="il-events">' + d.events.map(function (e) {
+          return '<li><time>' + esc(e.date) + '</time><span>' + esc(e.name) + '</span><b class="' + esc(e.tier || "none") + '">' + esc(e.result) + '</b></li>';
+        }).join("") + '</ol>' : "") + '</section>';
     }
 
     function drawList() {
       var q = st.q.trim().toLowerCase();
-      var items = logs.filter(function (d) {
+      var P = pool();
+      var items = P.filter(function (d) {
+        if (d.kind === "interlude") return st.project === "all" && st.tag === "all" && !q;
         if (st.project !== "all" && (d.project || "기타") !== st.project) return false;
         if (st.tag !== "all" && (d.tags || []).indexOf(st.tag) < 0) return false;
         if (q && (d.title + " " + stripHtml(d.desc) + " " + (d.project || "")).toLowerCase().indexOf(q) < 0) return false;
         return true;
       });
       if (st.asc) items = items.slice().reverse();
-      drawInfo(items);
-      set("logShown", items.length);
+      drawInfo();
+      set("logTotal", P.filter(isCounted).length);
+      set("logShown", items.filter(isCounted).length);
       if (!items.length) { set("timeline", '<div class="empty">조건에 맞는 로그가 없습니다.</div>'); return; }
 
       var groups = [], key = null;
       items.forEach(function (d) {
+        if (d.kind === "interlude") { groups.push({ il: d }); key = null; return; }
         var k = d.date.slice(0, 7);
         if (k !== key) { groups.push({ k: k, items: [] }); key = k; }
         groups[groups.length - 1].items.push(d);
       });
       set("timeline", groups.map(function (g) {
+        if (g.il) return interlude(g.il);
         return '<section class="month"><h2 class="month-label">' + esc(g.k) + '<small>' + g.items.length + ' logs</small></h2>' +
           g.items.map(function (d) {
             var href = d.url ? url(d.url) : null;
-            var id = "log-" + String(d.no).replace(".", "-");
-            var thumb = media(d.thumb ? "devlog/Thumb/" + d.thumb : "", "#" + d.no);
-            return '<article class="log rv' + (d.minor ? " minor" : "") + '" id="' + id + '">' +
+            var thumb = media(d.thumb ? "devlog/Thumb/" + d.thumb : "", logLabel(d));
+            return '<article class="log rv' + (d.minor ? " minor" : "") + '" id="' + logId(d) + '">' +
               (href ? '<a href="' + esc(href) + '">' + thumb + '</a>' : thumb) +
-              '<div class="log-body"><div class="log-meta"><span class="log-no">#' + esc(d.no) + '</span><time>' + esc(dateRange(d)) + '</time></div>' +
+              '<div class="log-body"><div class="log-meta"><span class="log-no">' + esc(logLabel(d)) + '</span><time>' + esc(dateRange(d)) + '</time></div>' +
               '<h3>' + (href ? '<a href="' + esc(href) + '">' + esc(d.title) + '</a>' : esc(d.title)) + '</h3>' +
               '<p>' + (d.desc || "") + '</p>' +
               tags(d.tags, d.project ? '<span class="tag proj">' + esc(d.project) + '</span>' : "") +
@@ -371,8 +433,13 @@
       reveal();
     }
 
-    function redraw() { drawSide(); drawList(); sync(); }
+    function redraw() { drawSeasons(); drawSide(); drawList(); sync(); }
 
+    var tabs = $("#seasonTabs");
+    if (tabs) tabs.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-season]"); if (!b) return;
+      st.season = b.getAttribute("data-season"); st.project = "all"; st.tag = "all"; redraw();
+    });
     $("#projList").addEventListener("click", function (e) {
       var b = e.target.closest("[data-p]"); if (!b) return;
       st.project = b.getAttribute("data-p"); redraw();
