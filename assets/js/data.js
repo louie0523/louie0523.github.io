@@ -1,7 +1,7 @@
 /* =========================================================
    사이트 데이터 — 관리자 페이지(admin/)에서 편집하거나 직접 수정하세요.
    이미지 경로는 사이트 루트(index.html 위치) 기준입니다.
-   마지막 저장: 2026. 9. 26. 오전 6:45:56
+   마지막 저장: 2026. 9. 26. 오전 6:49:40
    ========================================================= */
 window.SITE = {
 
@@ -48,7 +48,7 @@ window.SITE = {
   /* 데브로그 시즌 (최신 시즌이 위). 로그는 날짜로 자동 분류 */
   seasons: [
     {"id":2,"name":"Season 2","title":"랜덤 초능력자 배틀로얄","start":"2026.06.01","desc":"대회 시즌을 마치고 돌아왔습니다."},
-    {"id":1,"name":"Season 1","title":"Baldo Master","start":"2026.01.01","end":"2026.05.31","desc":"2D 액션 게임 Baldo Master를 중심으로 거의 매일 작업을 기록한 첫 시즌입니다. 중간에 게임잼 2회에 참가했습니다."}
+    {"id":1,"name":"Season 1","title":"Baldo Master","start":"2026.01.01","end":"2026.05.31","desc":"2D 액션 게임 Baldo Master를 중심으로 거의 매일 작업을 기록한 첫 시즌입니다. 중간에 게임잼 2회에 참가했습니다. \n대회 참여러 공백기가 길어져 시즌을 나눴습니다."}
   ],
 
   /* 수상 — level: national > contest > regional > school / tier: gold silver bronze excel merit */
@@ -63,9 +63,10 @@ window.SITE = {
 
   /* 게임잼 */
   jams: [
-    {"date":"2025.12","event":"월별 웨루 게임잼 25년 12월","theme":"겨울","result":"출품","project":"john-snow"},
     {"date":"2026.05","event":"월별 게임잼 26년 5월","theme":"128x128","result":"출품","project":"private-detective-v"},
     {"date":"2026.01","event":"웨루 게임잼 26년 1월","theme":"연쇄반응","result":"출품","project":"blood-chain"},
+    {"date":"2025.12","event":"월별 웨루 게임잼 25년 12월","theme":"겨울","result":"출품","project":"john-snow"},
+    {"date":"2025.07","event":"청강하이게임잼","theme":"협동","result":"아이디어상","project":"gunner-rider"},
     {"date":"2025.02","event":"웨루 게임잼 3R","theme":"설계도","result":"3R 진출 · 팀","project":"turn-and-tact"},
     {"date":"2025.01","event":"웨루 게임잼 2R","theme":"노 텍스트","result":"패자부활 3R 진출","project":"be-not-afraid","highlight":true},
     {"date":"2025.01","event":"웨루 게임잼 1R","theme":"직선","result":"2R 진출","project":"straight-line-slash","highlight":true},
@@ -79,7 +80,7 @@ window.SITE = {
     {"id":"parallax","no":17,"status":"done","dim":"2D","year":2026,"title":"Parallax","desc":"시점을 바꾸며 소코반 류 퍼즐을 클리어 하는 게임입니다!","tags":["Unity"],"dev":"#","link":"#","main":true,"sub":"시점을 바꾸는 2d 퍼즐 소코반 게임","pendingLabel":"공개 예정","logKey":"Parallax","award":"청강게임대전","awardTier":"bronze","jam":"우수"},
     {"id":"private-detective-v","no":16,"status":"done","dim":"2D","year":2026,"period":"2026.05.01 ~ 05.03","title":"Private Detective V","sub":"게임잼 출품작 · 탐정","img":"devlog/Thumb/42.gif","jam":"게임잼 출품","desc":"3일간의 게임잼에서 기획, 일러스트, 인트로 컷씬까지 직접 작업한 탐정 게임입니다. 완성했지만 현재 빌드는 비공개입니다.","tags":["Unity","Cutscene","Game Jam"],"dev":"devlogs.html?project=Private%20Detective%20V","devLabel":"개발 일지","link":"#","pendingLabel":"빌드 비공개","logKey":"Private Detective V"},
     {"id":"baldo-master","no":15,"status":"paused","dim":"2D","year":2026,"period":"2026.01 ~ 05 · 일시 중지","title":"Baldo Master","sub":"2D 액션 · 발도","img":"devlog/Thumb/41.gif","desc":"'발도'를 핵심 액션으로 한 2D 액션 게임입니다. 증강, 상점, 보스 패턴, 컷씬 시스템을 직접 설계했습니다. 지금은 배틀로얄 개발에 집중하기 위해 잠시 멈춘 상태입니다.","tags":["Unity","2D","Action","Cinemachine","LuaFlow"],"dev":"devlogs.html?project=Baldo%20Master","devLabel":"개발 일지","link":"#","pendingLabel":"개발 일시 중지","logKey":"Baldo Master","imgPoster":"devlog/Thumb/41.still.webp"},
-    {"id":"random-arena","no":14,"status":"done","dim":"Web","title":"RANDOM ARENA","img":"Image/project14.png","desc":"사다리타기나 룰렛, 너무 단순하지 않으신가요? 그런 분들을 위해 만들었습니다!","tags":["Web","Vibe Coding","Tool"],"dev":"dev/dev14.html","link":"https://louie0523.github.io/RNDArena","linkLabel":"열어보기"},
+    {"id":"random-arena","no":14,"status":"done","dim":"Web","title":"RANDOM ARENA","img":"Image/project14.png","desc":"사다리타기나 룰렛, 너무 단순하지 않으신가요? 그런 분들을 위해 만들었습니다!","tags":["Web","Vibe Coding","Tool"],"dev":"dev/dev14.html","pendingLabel":"빌드 종료","link":"#"},
     {"id":"busan-2026","no":13,"status":"done","dim":"3D","year":2026,"title":"2026 부산 기능경기대회","img":"Image/project13.png","award":"부산 금상","awardTier":"gold","desc":"부산 기능경기대회 게임개발 기획서를 기반으로 제작한 3D 슈팅 게임입니다.","tags":["Unity","3D","Shooting","Competition"],"dev":"#","link":"https://bellocity.itch.io/2026busangigang"},
     {"id":"blood-chain","no":12,"status":"done","dim":"2D","year":2026,"period":"2026.01.23 ~ 01.27","title":"Blood Chain","img":"Image/project12.png","jam":"테무산 게임잼","desc":"캐릭터끼리의 조합을 맞춰 최대한 연속적인 콤보를 만드는 2D 오토 배틀러 게임입니다.","tags":["Unity","2D","Auto Chess","Combo"],"dev":"dev/dev12.html","link":"https://bellocity.itch.io/blood-chain","logKey":"Blood Chain"},
     {"id":"john-snow","no":11,"status":"done","dim":"3D","title":"존 스노우의 완벽한 크리스마스 이브","img":"Image/project11.png","desc":"크리스마스 이브에 완벽한 하루를 만들기 위해 고군분투하는 존의 3D 병맛 스토리 게임입니다.","tags":["Unity","3D","Comedy","Story"],"dev":"dev/dev11.html","link":"https://bellocity.itch.io/johnsnowsperpectday"},
