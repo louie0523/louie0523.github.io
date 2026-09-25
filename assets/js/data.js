@@ -1,7 +1,7 @@
 /* =========================================================
    사이트 데이터 — 관리자 페이지(admin/)에서 편집하거나 직접 수정하세요.
    이미지 경로는 사이트 루트(index.html 위치) 기준입니다.
-   마지막 저장: 2026. 9. 26. 오전 6:30:51
+   마지막 저장: 2026. 9. 26. 오전 6:37:42
    ========================================================= */
 window.SITE = {
 
@@ -63,8 +63,9 @@ window.SITE = {
 
   /* 게임잼 */
   jams: [
-    {"date":"2026.05","event":"게임잼 (3일)","theme":"","result":"출품","project":"private-detective-v"},
-    {"date":"2026.01","event":"월간 웨루 테무산 게임잼","theme":"연쇄반응","result":"출품","project":"blood-chain"},
+    {"date":"2025.12","event":"월별 웨루 게임잼 25년 12월","theme":"겨울","result":"출품","project":"john-snow"},
+    {"date":"2026.05","event":"월별 게임잼 26년 5월","theme":"128x128","result":"출품","project":"private-detective-v"},
+    {"date":"2026.01","event":"웨루 게임잼 26년 1월","theme":"연쇄반응","result":"출품","project":"blood-chain"},
     {"date":"2025.02","event":"웨루 게임잼 3R","theme":"설계도","result":"3R 진출 · 팀","project":"turn-and-tact"},
     {"date":"2025.01","event":"웨루 게임잼 2R","theme":"노 텍스트","result":"패자부활 3R 진출","project":"be-not-afraid","highlight":true},
     {"date":"2025.01","event":"웨루 게임잼 1R","theme":"직선","result":"2R 진출","project":"straight-line-slash","highlight":true},
@@ -73,7 +74,9 @@ window.SITE = {
 
   /* 프로젝트 — status: dev | paused | done / dim: 2D 3D Web UGC */
   projects: [
-    {"id":"random-br","no":17,"status":"dev","main":true,"dim":"3D","year":2026,"period":"2026 ~ 주력 개발 중","title":"랜덤 초능력자 배틀로얄","sub":"1인칭 카툰 배틀로얄 · 멀티플레이 · 가제","img":"Image/project-br.png","desc":"죽을 때마다 초능력이 무작위로 바뀌는 1인칭 카툰 배틀로얄입니다.","long":"죽을 때마다 초능력이 무작위로 바뀌는 1인칭 카툰 배틀로얄입니다. '영혼'이 상점 재화이면서 동시에 승리 조건이라, 써서 강해질지 모아서 이길지 계속 고민하게 만드는 것이 핵심입니다. 기획부터 네트워크까지 혼자 개발하고 있습니다.","points":["영혼 = 상점 재화 + 승리 조건","사망 시 초능력 무작위 재배정","10~12인 캐주얼 파티 게임 목표"],"tags":["Unity 6","URP","Photon Fusion 2","Multiplayer","FPS"],"dev":"devlogs.html?project=%EB%9E%9C%EB%8D%A4%20%EC%B4%88%EB%8A%A5%EB%A0%A5%EC%9E%90%20%EB%B0%B0%ED%8B%80%EB%A1%9C%EC%96%84","devLabel":"개발 일지","link":"#","pendingLabel":"공개 예정","logKey":"랜덤 초능력자 배틀로얄"},
+    {"id":"random-br","no":19,"status":"dev","main":true,"dim":"3D","year":2026,"period":"2026 ~ 주력 개발 중","title":"랜덤 초능력자 배틀로얄","sub":"1인칭 카툰 배틀로얄 · 멀티플레이 · 가제","img":"Image/project-br.png","desc":"죽을 때마다 초능력이 무작위로 바뀌는 1인칭 카툰 배틀로얄입니다.","long":"죽을 때마다 초능력이 무작위로 바뀌는 1인칭 카툰 배틀로얄입니다. '영혼'이 상점 재화이면서 동시에 승리 조건이라, 써서 강해질지 모아서 이길지 계속 고민하게 만드는 것이 핵심입니다. 기획부터 네트워크까지 혼자 개발하고 있습니다.","points":["영혼 = 상점 재화 + 승리 조건","사망 시 초능력 무작위 재배정","10~12인 캐주얼 파티 게임 목표"],"tags":["Unity 6","URP","Photon Fusion 2","Multiplayer","FPS"],"dev":"devlogs.html?project=%EB%9E%9C%EB%8D%A4%20%EC%B4%88%EB%8A%A5%EB%A0%A5%EC%9E%90%20%EB%B0%B0%ED%8B%80%EB%A1%9C%EC%96%84","devLabel":"개발 일지","link":"#","pendingLabel":"공개 예정","logKey":"랜덤 초능력자 배틀로얄"},
+    {"id":"Project_P","no":18,"status":"paused","dim":"2D","year":2026,"title":"Project P","desc":"실시간 턴제 게임과 ai 기반 스킬 생성 게임","tags":["Unity","2D","Unity 6","AI","Turn","Action"],"dev":"#","link":"#","period":"2026.07.13 ~ 2026.08.07","sub":"실시간 턴제와 ai 기반 스킬 생성","pendingLabel":"비공개","logKey":"프로젝트 P"},
+    {"id":"parallax","no":17,"status":"done","dim":"2D","year":2026,"title":"Parallax","desc":"시점을 바꾸며 소코반 류 퍼즐을 클리어 하는 게임입니다!","tags":["Unity"],"dev":"#","link":"#","main":true,"sub":"시점을 바꾸는 2d 퍼즐 소코반 게임","pendingLabel":"공개 예정","logKey":"Parallax","award":"청강게임대전","awardTier":"bronze","jam":"우수"},
     {"id":"private-detective-v","no":16,"status":"done","dim":"2D","year":2026,"period":"2026.05.01 ~ 05.03","title":"Private Detective V","sub":"게임잼 출품작 · 탐정","img":"devlog/Thumb/42.gif","jam":"게임잼 출품","desc":"3일간의 게임잼에서 기획, 일러스트, 인트로 컷씬까지 직접 작업한 탐정 게임입니다. 완성했지만 현재 빌드는 비공개입니다.","tags":["Unity","Cutscene","Game Jam"],"dev":"devlogs.html?project=Private%20Detective%20V","devLabel":"개발 일지","link":"#","pendingLabel":"빌드 비공개","logKey":"Private Detective V"},
     {"id":"baldo-master","no":15,"status":"paused","dim":"2D","year":2026,"period":"2026.01 ~ 05 · 일시 중지","title":"Baldo Master","sub":"2D 액션 · 발도","img":"devlog/Thumb/41.gif","desc":"'발도'를 핵심 액션으로 한 2D 액션 게임입니다. 증강, 상점, 보스 패턴, 컷씬 시스템을 직접 설계했습니다. 지금은 배틀로얄 개발에 집중하기 위해 잠시 멈춘 상태입니다.","tags":["Unity","2D","Action","Cinemachine","LuaFlow"],"dev":"devlogs.html?project=Baldo%20Master","devLabel":"개발 일지","link":"#","pendingLabel":"개발 일시 중지","logKey":"Baldo Master","imgPoster":"devlog/Thumb/41.still.webp"},
     {"id":"random-arena","no":14,"status":"done","dim":"Web","title":"RANDOM ARENA","img":"Image/project14.png","desc":"사다리타기나 룰렛, 너무 단순하지 않으신가요? 그런 분들을 위해 만들었습니다!","tags":["Web","Vibe Coding","Tool"],"dev":"dev/dev14.html","link":"https://louie0523.github.io/RNDArena","linkLabel":"열어보기"},
