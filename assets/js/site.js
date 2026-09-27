@@ -47,10 +47,14 @@
   };
 
   /* ---------- shared UI pieces ---------- */
-  function media(src, label, extra) {
+  /* GIF는 평소에 정지 이미지(poster)로 보여주고, 마우스를 올렸을 때만 재생합니다. */
+  function media(src, label, extra, poster) {
     var u = url(src);
+    var isGif = u && /\.gif(\?|$)/i.test(u);
+    var still = isGif && poster ? url(poster) : null;
+    var attrs = isGif ? ' data-gif="' + esc(u) + '"' + (still ? ' data-still="' + esc(still) + '"' : "") : "";
     return '<div class="media' + (u ? "" : " is-empty") + '">' +
-      (u ? '<img src="' + esc(u) + '" alt="' + esc(label) + '" loading="lazy" decoding="async" onerror="this.parentNode.classList.add(\'is-empty\');this.remove()">' : "") +
+      (u ? '<img src="' + esc(still || u) + '"' + attrs + ' alt="' + esc(label) + '" loading="lazy" decoding="async" onerror="window.__imgErr&&window.__imgErr(this)">' : "") +
       '<span class="media-empty"><b>' + esc(label) + '</b>SCREENSHOT SOON</span>' + (extra || "") + '</div>';
   }
   function tags(list, first) {
@@ -86,7 +90,7 @@
     var foot = badge(p) || statusChip(p);
     if (badge(p) && p.status === "dev") foot = statusChip(p) + badge(p);
     return '<a class="pcard rv" href="' + esc(BASE + "projects.html#" + p.id) + '" data-id="' + esc(p.id) + '">' +
-      media(p.img, p.title) +
+      media(p.img, p.title, "", p.imgPoster) +
       '<div class="pcard-body"><div class="pcard-meta">' + meta + '</div>' +
       '<h3>' + esc(p.title) + '</h3><p>' + esc(p.desc) + '</p>' +
       '<div class="pcard-foot">' + foot + '</div></div></a>';
@@ -143,7 +147,7 @@
       var p = byId[id];
       if (!p) { console.warn('[data.js] featured에 있는 "' + id + '" 와 같은 id의 프로젝트가 없습니다.'); return ""; }
       return '<article class="feat rv' + (i === 0 ? " main" : "") + '" id="f-' + esc(p.id) + '">' +
-        media(p.img, p.title) +
+        media(p.img, p.title, "", p.imgPoster) +
         '<div class="feat-body">' +
         '<div class="feat-top">' + statusChip(p) + '<span class="mono dim" style="font-size:12px">' + esc(p.period || p.year || "") + '</span></div>' +
         '<h3>' + esc(p.title) + '</h3>' +
@@ -198,7 +202,7 @@
     set("recentLogs", logs.filter(function (d) { return !d.minor; }).slice(0, 5).map(function (d) {
       var href = d.url ? url(d.url) : BASE + "devlogs.html#" + logId(d);
       return '<li class="rlog rv"><time>' + esc(d.date) + '</time>' +
-        '<a href="' + esc(href) + '">' + media(d.thumb ? "devlog/Thumb/" + d.thumb : "", logLabel(d)) + '</a>' +
+        '<a href="' + esc(href) + '">' + media(d.thumb ? "devlog/Thumb/" + d.thumb : "", logLabel(d), "", d.poster ? "devlog/Thumb/" + d.poster : "") + '</a>' +
         '<div><h3><a href="' + esc(href) + '">' + esc(d.title) + '</a></h3><p>' + esc(stripHtml(d.desc)) + '</p></div>' +
         (d.project ? '<span class="tag proj">' + esc(d.project) + '</span>' : "<span></span>") + '</li>';
     }).join(""));
@@ -259,7 +263,7 @@
     function open(id) {
       var p = byId[id]; if (!p) return;
       var meta = ["No." + pad(p.no), p.dim, p.period || p.year].filter(Boolean).join(" · ");
-      set("modalBox", media(p.img, p.title) +
+      set("modalBox", media(p.img, p.title, "", p.imgPoster) +
         '<div class="modal-body">' +
         '<div class="modal-top"><span class="mono dim" style="font-size:12.5px">' + esc(meta) + '</span>' +
         '<button class="modal-close" data-close aria-label="닫기">×</button></div>' +
@@ -268,6 +272,7 @@
         '<p>' + esc(p.long || p.desc) + '</p>' +
         tags(p.tags) + actions(p) + '</div>');
       modal.classList.add("open");
+      gifs(modal);
       document.documentElement.style.overflow = "hidden";
       var c = modal.querySelector("[data-close]"); if (c) c.focus();
     }
@@ -364,7 +369,7 @@
       if (p) {
         var all = logs.filter(function (d) { return d.project === st.project; });
         var first = all[all.length - 1], last = all[0];
-        set("projInfo", '<div class="proj-info">' + media(p.img, p.title) +
+        set("projInfo", '<div class="proj-info">' + media(p.img, p.title, "", p.imgPoster) +
           '<div><div style="display:flex;gap:8px;flex-wrap:wrap">' + statusChip(p) + badge(p) + '</div>' +
           '<h2>' + esc(p.title) + '</h2><p>' + esc(p.desc) + '</p>' +
           '<div class="proj-stats"><span>LOGS <b>' + all.length + '</b></span><span>FIRST <b>' + esc(first.date) + '</b></span><span>LATEST <b>' + esc(last.end || last.date) + '</b></span></div>' +
@@ -419,7 +424,7 @@
         return '<section class="month"><h2 class="month-label">' + esc(g.k) + '<small>' + g.items.length + ' logs</small></h2>' +
           g.items.map(function (d) {
             var href = d.url ? url(d.url) : null;
-            var thumb = media(d.thumb ? "devlog/Thumb/" + d.thumb : "", logLabel(d));
+            var thumb = media(d.thumb ? "devlog/Thumb/" + d.thumb : "", logLabel(d), "", d.poster ? "devlog/Thumb/" + d.poster : "");
             return '<article class="log rv' + (d.minor ? " minor" : "") + '" id="' + logId(d) + '">' +
               (href ? '<a href="' + esc(href) + '">' + thumb + '</a>' : thumb) +
               '<div class="log-body"><div class="log-meta"><span class="log-no">' + esc(logLabel(d)) + '</span><time>' + esc(dateRange(d)) + '</time></div>' +
@@ -505,11 +510,70 @@
     }
   }
 
+  /* ---------- GIF: 정지 이미지 + 호버 재생 ---------- */
+  var stillCache = {};
+  var reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var noHover = window.matchMedia && matchMedia("(hover: none)").matches;
+  window.__imgErr = function (img) {
+    var gif = img.getAttribute("data-gif"), still = img.getAttribute("data-still");
+    if (still && img.src.indexOf(still) >= 0 && gif) { img.removeAttribute("data-still"); img.src = gif; return; } // 정지 이미지가 없으면 GIF로
+    img.parentNode.classList.add("is-empty"); img.remove();
+  };
+  function freeze(img) {
+    // 정지 이미지 파일이 없는 GIF: 로드되면 첫 화면을 캡처해서 멈춰 둠 (재생 부담 제거)
+    var gif = img.getAttribute("data-gif");
+    function cap() {
+      if (img._playing || img.getAttribute("data-still")) return;
+      try {
+        var w = img.naturalWidth, h = img.naturalHeight; if (!w) return;
+        var k = Math.min(1, 480 / w), c = document.createElement("canvas");
+        c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        stillCache[gif] = c.toDataURL("image/jpeg", 0.82);
+        img.src = stillCache[gif];
+      } catch (e) { /* 다른 도메인 이미지면 그대로 둠 */ }
+    }
+    if (stillCache[gif]) { img.src = stillCache[gif]; return; }
+    if (img.complete && img.naturalWidth) cap(); else img.addEventListener("load", cap, { once: true });
+  }
+  function play(img) {
+    if (reduceMotion || img._playing) return;
+    img._playing = true; img.src = img.getAttribute("data-gif");
+  }
+  function stop(img) {
+    if (!img._playing) return;
+    img._playing = false;
+    var s = img.getAttribute("data-still") || stillCache[img.getAttribute("data-gif")];
+    if (s) img.src = s;
+  }
+  var HOVER_SEL = ".log, .rlog, .pcard, .feat, .proj-info, .modal-box";
+  var gifIO = ("IntersectionObserver" in window && noHover) ? new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) play(e.target); else stop(e.target); });
+  }, { threshold: 0.75 }) : null;
+  function gifs(root) {
+    (root || document).querySelectorAll("img[data-gif]:not([data-gif-ready])").forEach(function (img) {
+      img.setAttribute("data-gif-ready", "");
+      if (!img.getAttribute("data-still")) freeze(img);
+      if (gifIO) gifIO.observe(img);
+    });
+  }
+  if (!noHover) {
+    document.addEventListener("mouseover", function (e) {
+      var card = e.target.closest && e.target.closest(HOVER_SEL); if (!card || card.contains(e.relatedTarget)) return;
+      card.querySelectorAll("img[data-gif]").forEach(play);
+    });
+    document.addEventListener("mouseout", function (e) {
+      var card = e.target.closest && e.target.closest(HOVER_SEL); if (!card || card.contains(e.relatedTarget)) return;
+      card.querySelectorAll("img[data-gif]").forEach(stop);
+    });
+  }
+
   /* ---------- reveal on scroll ---------- */
   var io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (es) {
     es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
   }, { rootMargin: "0px 0px -40px 0px" }) : null;
   function reveal() {
+    gifs();
     document.querySelectorAll(".rv:not(.in)").forEach(function (el) {
       if (io) io.observe(el); else el.classList.add("in");
     });

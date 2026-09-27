@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>BELLO 관리자</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Silkscreen&display=swap">
+<style>
+:root{
+  --bg:#0b0b0c;--bg2:#0f0f11;--panel:#141417;--panel2:#1b1b1f;--line:#26262b;--line2:#36363d;
+  --text:#ece9e4;--text2:#a8a49d;--text3:#6d6a65;--accent:#ff5b2e;--accent2:#ff825a;--accentbg:rgba(255,91,46,.09);
+  --ok:#62d48f;--warn:#e2b545;--err:#ff6b6b;
+  --fb:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+  --fm:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--fp:"Silkscreen","JetBrains Mono",monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14.5px;line-height:1.55;word-break:keep-all;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+a{color:inherit}
+.px{font-family:var(--fp);font-size:10.5px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase}
+.mono{font-family:var(--fm)}
+.muted{color:var(--text2)}.dim{color:var(--text3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 14px;border:1px solid var(--line2);border-radius:4px;font-size:13.5px;font-weight:600;white-space:nowrap;transition:.15s}
+.btn:hover{border-color:var(--text3);background:var(--panel2)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#150803}
+.btn.pri:hover{background:var(--accent2)}
+.btn.sm{height:30px;padding:0 10px;font-size:12.5px;font-weight:500}
+.btn.danger:hover{border-color:var(--err);color:var(--err)}
+.btn:disabled{opacity:.4;pointer-events:none}
+input[type=text],input[type=number],input[type=date],input[type=password],input[type=url],input[type=search],select,textarea{
+  width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:4px;padding:8px 10px;font-size:14px;outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+textarea.code{font-family:var(--fm);font-size:13px}
+label.f{display:flex;flex-direction:column;gap:5px}
+label.f>span{font-size:12.5px;color:var(--text2);font-weight:600}
+label.f>small{font-size:11.5px;color:var(--text3);margin-top:-2px}
+label.chk{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text2);cursor:pointer}
+label.chk input{accent-color:var(--accent);width:16px;height:16px}
+
+/* ---------- connect ---------- */
+.connect{max-width:520px;margin:10vh auto;padding:0 20px}
+.connect h1{font-family:var(--fp);font-size:22px;font-weight:400;letter-spacing:.06em;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.connect h1 i{width:10px;height:10px;background:var(--accent);display:inline-block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;margin-top:16px}
+.card h2{font-size:16px;margin-bottom:4px}
+.card p{font-size:13px;color:var(--text2);margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.err{color:var(--err);font-size:13px}
+details.help{font-size:12.5px;color:var(--text2);margin-top:6px}
+details.help summary{cursor:pointer;color:var(--text3)}
+details.help ol{margin:8px 0 0 18px;display:grid;gap:4px}
+
+/* ---------- app ---------- */
+.app{display:none;grid-template-columns:210px minmax(0,1fr);min-height:100vh}
+.app.on{display:grid}
+.side{border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.logo{font-family:var(--fp);font-size:15px;letter-spacing:.05em;display:flex;align-items:center;gap:8px;padding:0 8px 16px}
+.logo i{width:8px;height:8px;background:var(--accent);display:inline-block}
+.tab{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:4px;font-size:14px;color:var(--text2);text-align:left;width:100%}
+.tab:hover{background:var(--panel);color:var(--text)}
+.tab.on{background:var(--panel);color:var(--text);box-shadow:inset 2px 0 0 var(--accent)}
+.tab small{font-family:var(--fm);font-size:11px;color:var(--text3)}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text3);padding:0 8px}
+.side-foot a{color:var(--text2)}
+.main{min-width:0;display:flex;flex-direction:column}
+.bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:12px 24px;background:rgba(11,11,12,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar h1{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.bar .sp{flex:1}
+.pending{font-family:var(--fm);font-size:12px;color:var(--text3)}
+.pending.has{color:var(--warn)}
+.content{display:grid;grid-template-columns:minmax(280px,380px) minmax(0,1fr);gap:0;flex:1;min-height:0}
+.list{border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.list-items{display:flex;flex-direction:column;gap:6px}
+.item{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:4px;text-align:left;width:100%;transition:.15s}
+.item:hover{border-color:var(--line2);background:var(--panel)}
+.item.on{border-color:var(--accent);background:var(--accentbg)}
+.item.noimg{grid-template-columns:minmax(0,1fr) auto}
+.item .th{width:56px;height:36px;border-radius:2px;background:var(--bg2);overflow:hidden}
+.item .th img{width:100%;height:100%;object-fit:cover}
+.item b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item small{display:block;font-family:var(--fm);font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .ord{display:flex;flex-direction:column;gap:2px}
+.item .ord span{font-size:10px;color:var(--text3);padding:0 4px;border-radius:2px}
+.item .ord span:hover{color:var(--text);background:var(--line2)}
+.chip-new{font-family:var(--fm);font-size:10px;color:var(--warn);margin-left:6px}
+.editor{padding:20px 28px 80px;min-width:0}
+.editor-empty{color:var(--text3);padding:60px 0;text-align:center}
+.ed-head{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.ed-head h2{font-size:20px;font-weight:700;flex:1;min-width:200px}
+.form{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px 12px;max-width:880px}
+.form .c1{grid-column:span 1}.form .c2{grid-column:span 2}.form .c3{grid-column:span 3}.form .c4{grid-column:span 4}.form .c6{grid-column:1/-1}
+.sec-title{grid-column:1/-1;margin-top:10px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--fp);font-size:10.5px;letter-spacing:.1em;color:var(--text3)}
+.tags-in{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px;border:1px solid var(--line2);border-radius:4px;background:var(--bg);min-height:38px}
+.tags-in:focus-within{border-color:var(--accent)}
+.tags-in input{border:0!important;padding:3px 4px!important;flex:1;min-width:120px;background:transparent!important}
+.tg{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:12px;padding:3px 4px 3px 8px;border:1px solid var(--line2);border-radius:2px}
+.tg button{color:var(--text3);font-size:13px;line-height:1;padding:0 3px}
+.tg button:hover{color:var(--err)}
+.sugg{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.sugg button{font-family:var(--fm);font-size:11px;color:var(--text3);padding:2px 6px;border:1px dashed var(--line2);border-radius:2px}
+.sugg button:hover{color:var(--text);border-color:var(--text3)}
+.imgf{display:grid;grid-template-columns:180px minmax(0,1fr);gap:12px;align-items:start}
+.drop{position:relative;aspect-ratio:16/9;border:1px dashed var(--line2);border-radius:4px;background:var(--bg2);overflow:hidden;display:grid;place-items:center;text-align:center;font-size:11.5px;color:var(--text3);cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--accent);color:var(--text2)}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gallery-ed{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.gallery-ed .g{position:relative;aspect-ratio:16/10;border:1px solid var(--line2);border-radius:3px;overflow:hidden;background:var(--bg2)}
+.gallery-ed .g img{width:100%;height:100%;object-fit:cover}
+.gallery-ed .g .x{position:absolute;top:4px;right:4px;display:flex;gap:2px}
+.gallery-ed .g .x button{background:rgba(0,0,0,.7);border-radius:2px;font-size:11px;padding:2px 6px}
+.gallery-ed .add{aspect-ratio:16/10}
+.preview-desc{font-size:13.5px;color:var(--text2);padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--bg2)}
+.note{font-size:12.5px;color:var(--text3);line-height:1.6}
+.note b{color:var(--text2)}
+.hint{grid-column:1/-1;padding:10px 12px;border:1px solid var(--line);border-left:2px solid var(--accent);border-radius:0 4px 4px 0;font-size:12.5px;color:var(--text2);background:var(--panel)}
+
+/* ---------- writer (markdown) ---------- */
+.writer{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column}
+.writer.on{display:flex}
+.w-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.w-bar h2{font-size:16px;flex:1;min-width:160px}
+.w-body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:0}
+.w-left{display:flex;flex-direction:column;border-right:1px solid var(--line);min-height:0;overflow:auto}
+.w-fields{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;border-bottom:1px solid var(--line)}
+.w-fields .full{grid-column:1/-1}
+.w-tools{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.w-tools button{font-size:12px;padding:4px 9px;border:1px solid var(--line2);border-radius:3px;color:var(--text2)}
+.w-tools button:hover{color:var(--text);border-color:var(--text3)}
+.w-md{flex:1;min-height:340px;border:0!important;border-radius:0!important;padding:16px!important;font-family:var(--fm);font-size:13.5px;line-height:1.75;resize:none}
+.w-prev{overflow:auto;padding:28px 36px 80px}
+/* preview article styles (mirror story.css) */
+.art{max-width:720px}
+.art .hl{margin:0 0 36px;padding:16px 20px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);font-size:17px;font-weight:600}
+.art h1{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.25;margin:6px 0 10px}
+.art .meta{font-family:var(--fm);font-size:12.5px;color:var(--text3);margin-bottom:26px}
+.art h2{font-size:21px;font-weight:700;padding-bottom:10px;margin:36px 0 14px;border-bottom:1px solid var(--line)}
+.art h3{font-size:16.5px;font-weight:700;margin:24px 0 8px}
+.art p{color:#c9c5bf;line-height:1.85;margin-bottom:12px}
+.art ul,.art ol{margin:0 0 14px 20px;color:#c9c5bf}
+.art li{margin-bottom:4px}
+.art img{max-width:100%;border:1px solid var(--line);border-radius:2px;margin:14px 0}
+.art code{font-family:var(--fm);font-size:.88em;background:var(--panel2);border:1px solid var(--line);padding:1px 5px;border-radius:2px}
+.art pre{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;overflow:auto;margin:12px 0 16px}
+.art pre code{background:none;border:0;padding:0}
+.art a{text-decoration:underline;text-decoration-color:var(--accent)}
+.art .gal{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
+.art .gal img{margin:0;aspect-ratio:16/10;object-fit:cover;width:100%}
+
+/* ---------- modal / toast ---------- */
+.modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.modal-box{width:100%;max-width:560px;max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:22px}
+.modal-box h2{font-size:18px;margin-bottom:12px}
+.files{list-style:none;font-family:var(--fm);font-size:12px;color:var(--text2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;max-height:220px;overflow:auto;margin:10px 0}
+.files li{padding:2px 0;display:flex;justify-content:space-between;gap:10px}
+.files small{color:var(--text3)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;z-index:300;background:var(--panel2);border:1px solid var(--line2);padding:10px 16px;border-radius:4px;font-size:13.5px;transition:.25s;pointer-events:none;max-width:90vw}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.toast.ok{border-color:rgba(98,212,143,.5)}.toast.bad{border-color:rgba(255,107,107,.6)}
+
+@media (max-width:1000px){
+  .content{grid-template-columns:1fr}
+  .list{border-right:0;border-bottom:1px solid var(--line)}
+  .list-items{max-height:40vh;overflow:auto}
+  .w-body{grid-template-columns:1fr}
+  .w-prev{border-top:1px solid var(--line)}
+}
+@media (max-width:760px){
+  .app.on{grid-template-columns:1fr}
+  .side{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px;border-right:0;border-bottom:1px solid var(--line)}
+  .logo,.side-foot{display:none}
+  .tab{width:auto;white-space:nowrap}
+  .tab small{display:none}
+  .bar{padding:10px 14px;flex-wrap:wrap}
+  .editor{padding:16px 14px 80px}
+  .form{grid-template-columns:1fr 1fr}
+  .form .c1,.form .c2{grid-column:span 1}.form .c3,.form .c4{grid-column:1/-1}
+  .imgf{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 연결 화면 ============ -->
+<section class="connect" id="connect">
+  <h1><i></i>BELLO ADMIN</h1>
+  <p class="muted">데브로그 · 프로젝트 · 수상 기록을 편집하고 사이트에 게시합니다.</p>
+
+  <div class="card">
+    <h2>GitHub로 연결 <span class="px" style="margin-left:6px">추천</span></h2>
+    <p>어디서든 편집하고 [게시]를 누르면 저장소에 바로 커밋됩니다. 토큰은 이 브라우저에만 저장됩니다.</p>
+    <div class="stack">
+      <div class="grid2">
+        <label class="f"><span>계정</span><input type="text" id="ghOwner" value="louie0523" autocomplete="off"></label>
+        <label class="f"><span>저장소</span><input type="text" id="ghRepo" value="louie0523.github.io" autocomplete="off"></label>
+      </div>
+      <div class="grid2">
+        <label class="f"><span>브랜치</span><input type="text" id="ghBranch" value="main" autocomplete="off"></label>
+        <label class="f"><span>사이트 주소 (게시 후 열기)</span><input type="text" id="ghSite" value="https://louie0523.github.io/" autocomplete="off"></label>
+      </div>
+      <label class="f"><span>개인 액세스 토큰</span><input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off"></label>
+      <label class="chk"><input type="checkbox" id="ghRemember" checked> 이 브라우저에 기억하기</label>
+      <div class="row"><button class="btn pri" id="ghConnect">연결</button><span class="err" id="ghErr"></span></div>
+      <details class="help"><summary>토큰 만드는 법 (1분)</summary>
+        <ol>
+          <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained token 만들기</a> 열기</li>
+          <li>Repository access: <b>Only select repositories</b> → 포트폴리오 저장소 하나만 선택</li>
+          <li>Permissions → Repository → <b>Contents: Read and write</b></li>
+          <li>생성된 <span class="mono">github_pat_…</span>를 위 칸에 붙여넣기</li>
+        </ol>
+        <p style="margin-top:8px">이 토큰은 그 저장소 하나만 수정할 수 있습니다. 토큰이 없으면 이 페이지를 누가 열어도 아무것도 저장할 수 없습니다.</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>내 컴퓨터 폴더로 열기</h2>
+    <p>저장소를 클론해 둔 폴더를 직접 수정합니다. 커밋/푸시는 GitHub Desktop 등으로 직접 하세요. (Chrome · Edge 전용)</p>
+    <div class="row"><button class="btn" id="localConnect">폴더 선택</button><span class="err" id="localErr"></span></div>
+  </div>
+</section>
+
+<!-- ============ 앱 ============ -->
+<div class="app" id="app">
+  <nav class="side">
+    <div class="logo"><i></i>BELLO ADMIN</div>
+    <button class="tab" data-tab="devlogs">데브로그<small id="cnt-devlogs"></small></button>
+    <button class="tab" data-tab="projects">프로젝트<small id="cnt-projects"></small></button>
+    <button class="tab" data-tab="awards">수상<small id="cnt-awards"></small></button>
+    <button class="tab" data-tab="jams">게임잼<small id="cnt-jams"></small></button>
+    <button class="tab" data-tab="seasons">시즌<small id="cnt-seasons"></small></button>
+    <button class="tab" data-tab="profile">프로필 · 대표작</button>
+    <button class="tab" data-tab="raw">data.js 직접 편집</button>
+    <div class="side-foot">
+      <span id="connInfo"></span>
+      <a href="#" id="openSite" target="_blank" rel="noopener">사이트 열기 ↗</a>
+      <a href="#" id="logout">연결 해제</a>
+    </div>
+  </nav>
+
+  <div class="main">
+    <header class="bar">
+      <h1 id="tabTitle"></h1>
+      <span class="sp"></span>
+      <span class="pending" id="pendingInfo">변경 없음</span>
+      <button class="btn pri" id="publishBtn" disabled>게시</button>
+    </header>
+    <div class="content" id="content">
+      <aside class="list">
+        <div class="row">
+          <input type="search" id="listSearch" placeholder="검색" style="flex:1">
+          <button class="btn" id="newBtn">+ 새로 만들기</button>
+        </div>
+        <button class="btn sm" id="stillBtn" style="display:none"></button>
+        <div class="list-items" id="listItems"></div>
+      </aside>
+      <section class="editor" id="editor"><div class="editor-empty">왼쪽에서 항목을 고르거나 새로 만드세요.</div></section>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 글쓰기 (마크다운) ============ -->
+<div class="writer" id="writer">
+  <div class="w-bar">
+    <h2 id="wTitle">글쓰기</h2>
+    <span class="dim" style="font-size:12px">이미지는 붙여넣기(Ctrl+V)나 드래그로 넣을 수 있어요</span>
+    <button class="btn" id="wCancel">닫기</button>
+    <button class="btn pri" id="wSave">적용</button>
+  </div>
+  <div class="w-body">
+    <div class="w-left">
+      <div class="w-fields" id="wFields"></div>
+      <div class="w-tools">
+        <button data-md="h2">제목(##)</button><button data-md="h3">소제목(###)</button>
+        <button data-md="b">굵게</button><button data-md="code">코드</button><button data-md="pre">코드 블록</button>
+        <button data-md="ul">목록</button><button data-md="link">링크</button><button data-md="img">이미지 넣기</button>
+      </div>
+      <textarea class="w-md" id="wMd" spellcheck="false" placeholder="## 무엇을 만들었나&#10;이번에 추가한 기능...&#10;&#10;## 문제와 해결&#10;### 1. 문제 이름&#10;..."></textarea>
+    </div>
+    <div class="w-prev"><article class="art" id="wPrev"></article></div>
+  </div>
+</div>
+
+<!-- ============ 게시 확인 ============ -->
+<div class="modal" id="pubModal">
+  <div class="modal-box">
+    <h2>게시하기</h2>
+    <p class="muted" id="pubDesc"></p>
+    <ul class="files" id="pubFiles"></ul>
+    <label class="f"><span>커밋 메시지</span><input type="text" id="pubMsg"></label>
+    <div class="row" style="margin-top:16px;justify-content:flex-end">
+      <span class="err" id="pubErr" style="margin-right:auto"></span>
+      <button class="btn" id="pubCancel">취소</button>
+      <button class="btn pri" id="pubGo">게시</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="filePick" accept="image/*" hidden>
+<input type="file" id="filePickMulti" accept="image/*" multiple hidden>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+"use strict";
+
+/* =========================================================
+   공통 유틸
+   ========================================================= */
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function today() { var d = new Date(); return d.getFullYear() + "." + p2(d.getMonth() + 1) + "." + p2(d.getDate()); }
+function p2(n) { return (n < 10 ? "0" : "") + n; }
+function dotToDash(s) { return (s || "").replace(/\./g, "-"); }
+function dashToDot(s) { return (s || "").replace(/-/g, "."); }
+function extOf(file) {
+  var m = /\.([a-z0-9]+)$/i.exec(file.name || ""); if (m) return m[1].toLowerCase();
+  return ({ "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp" })[file.type] || "png";
+}
+function stripHtml(h) { var d = document.createElement("div"); d.innerHTML = h || ""; return d.textContent || ""; }
+function slug(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
+var toastT;
+function toast(msg, kind) {
+  var t = $("#toast"); t.textContent = msg; t.className = "toast on " + (kind || "");
+  clearTimeout(toastT); toastT = setTimeout(function () { t.className = "toast"; }, 2600);
+}
+function bytesToB64(bytes) {
+  var s = "", CH = 0x8000;
+  for (var i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+  return btoa(s);
+}
+function toBytes(content) { return typeof content === "string" ? new TextEncoder().encode(content) : content; }
+function encPath(p) { return p.split("/").map(encodeURIComponent).join("/"); }
+
+/* =========================================================
+   저장소 백엔드 (GitHub / 로컬 폴더)
+   ========================================================= */
+var backend = null;
+
+function GitHubBackend(cfg) {
+  var base = "https://api.github.com/repos/" + cfg.owner + "/" + cfg.repo + "/";
+  function api(path, opts) {
+    opts = opts || {};
+    var h = { "Authorization": "Bearer " + cfg.token, "Accept": opts.accept || "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+    if (opts.body) h["Content-Type"] = "application/json";
+    return fetch(base + path, { method: opts.method || "GET", headers: h, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: "no-store" })
+      .then(function (r) {
+        if (r.status === 404 && opts.allow404) return null;
+        if (!r.ok) return r.text().then(function (t) {
+          var msg = r.status === 401 ? "토큰이 올바르지 않습니다." : r.status === 403 ? "쓰기 권한이 없습니다. 토큰 설정에서 ① Repository access에 이 저장소가 선택돼 있는지 ② Contents가 \"Read and write\"인지 확인하세요. (공개 저장소라 읽기는 권한 없이도 돼서 연결은 성공한 것처럼 보여요)" : r.status === 404 ? "저장소나 파일을 찾을 수 없습니다." : "GitHub 오류 " + r.status;
+          throw new Error(msg + " " + t.slice(0, 140));
+        });
+        return opts.raw ? r.text() : r.json();
+      });
+  }
+  return {
+    kind: "gh",
+    label: cfg.owner + "/" + cfg.repo + " · " + cfg.branch,
+    siteUrl: cfg.site,
+    read: function (path) {
+      return api("contents/" + encPath(path) + "?ref=" + encodeURIComponent(cfg.branch), { accept: "application/vnd.github.raw", raw: true, allow404: true });
+    },
+    imageUrl: function (path) {
+      return Promise.resolve("https://raw.githubusercontent.com/" + cfg.owner + "/" + cfg.repo + "/" + encodeURIComponent(cfg.branch) + "/" + encPath(path));
+    },
+    writeAll: function (files, message) {
+      var headSha, treeSha;
+      return api("git/ref/heads/" + encodeURIComponent(cfg.branch))
+        .then(function (ref) { headSha = ref.object.sha; return api("git/commits/" + headSha); })
+        .then(function (c) {
+          treeSha = c.tree.sha;
+          return Promise.all(files.map(function (f) {
+            return api("git/blobs", { method: "POST", body: { content: bytesToB64(toBytes(f.content)), encoding: "base64" } })
+              .then(function (b) { return { path: f.path, mode: "100644", type: "blob", sha: b.sha }; });
+          }));
+        })
+        .then(function (tree) { return api("git/trees", { method: "POST", body: { base_tree: treeSha, tree: tree } }); })
+        .then(function (t) { return api("git/commits", { method: "POST", body: { message: message, tree: t.sha, parents: [headSha] } }); })
+        .then(function (c) { return api("git/refs/heads/" + encodeURIComponent(cfg.branch), { method: "PATCH", body: { sha: c.sha } }); });
+    }
+  };
+}
+
+function LocalBackend(dir) {
+  function walk(path, create) {
+    var parts = path.split("/"), name = parts.pop();
+    return parts.reduce(function (pr, seg) {
+      return pr.then(function (d) { return d.getDirectoryHandle(seg, { create: !!create }); });
+    }, Promise.resolve(dir)).then(function (d) { return d.getFileHandle(name, { create: !!create }); });
+  }
+  var urlCache = {};
+  return {
+    kind: "local",
+    label: "로컬 폴더 · " + dir.name,
+    siteUrl: "",
+    read: function (path) {
+      return walk(path).then(function (h) { return h.getFile(); }).then(function (f) { return f.text(); }).catch(function () { return null; });
+    },
+    imageUrl: function (path) {
+      if (urlCache[path]) return Promise.resolve(urlCache[path]);
+      return walk(path).then(function (h) { return h.getFile(); })
+        .then(function (f) { return (urlCache[path] = URL.createObjectURL(f)); }).catch(function () { return ""; });
+    },
+    writeAll: function (files) {
+      return files.reduce(function (pr, f) {
+        return pr.then(function () { return walk(f.path, true); })
+          .then(function (h) { return h.createWritable(); })
+          .then(function (w) { return w.write(toBytes(f.content)).then(function () { return w.close(); }); })
+          .then(function () { delete urlCache[f.path]; });
+      }, Promise.resolve());
+    }
+  };
+}
+
+/* =========================================================
+   상태
+   ========================================================= */
+var DATA_PATH = "assets/js/data.js";
+var S = null;                 // window.SITE 사본
+var dataDirty = false;
+var pendingFiles = {};        // path -> { content, blobUrl, note }
+var changes = [];             // 커밋 메시지용 변경 내역
+var tab = "devlogs";
+var selected = null;          // 현재 편집 중인 항목 (index 또는 key)
+var isNew = false;
+
+function markDirty(msg) {
+  dataDirty = true;
+  if (msg && changes.indexOf(msg) < 0 && !(/ 수정$/.test(msg) && changes.indexOf(msg.replace(/ 수정$/, " 추가")) >= 0)) changes.push(msg);
+  updatePending();
+}
+function addFile(path, content, note) {
+  var prev = pendingFiles[path];
+  if (prev && prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+  var blobUrl = typeof content !== "string" ? URL.createObjectURL(new Blob([content])) : null;
+  pendingFiles[path] = { content: content, blobUrl: blobUrl, note: note || "" };
+  updatePending();
+}
+function updatePending() {
+  var n = Object.keys(pendingFiles).length + (dataDirty ? 1 : 0);
+  var el = $("#pendingInfo");
+  el.textContent = n ? "게시 안 된 변경 " + n + "개 파일" : "변경 없음";
+  el.classList.toggle("has", !!n);
+  $("#publishBtn").disabled = !n;
+}
+window.addEventListener("beforeunload", function (e) {
+  if (dataDirty || Object.keys(pendingFiles).length) { e.preventDefault(); e.returnValue = ""; }
+});
+
+function imgSrc(path) {
+  if (!path) return Promise.resolve("");
+  if (pendingFiles[path] && pendingFiles[path].blobUrl) return Promise.resolve(pendingFiles[path].blobUrl);
+  return backend.imageUrl(path);
+}
+function setImg(img, path) {
+  imgSrc(path).then(function (u) { if (u) img.src = u; else img.remove(); });
+  img.onerror = function () { img.remove(); };
+}
+function hydrateImgs(root) {
+  $$("img[data-path]", root).forEach(function (im) { setImg(im, im.getAttribute("data-path")); im.removeAttribute("data-path"); });
+}
+
+/* =========================================================
+   data.js 읽기 / 쓰기
+   ========================================================= */
+function parseData(src) {
+  var w = {};
+  new Function("window", src)(w);
+  if (!w.SITE) throw new Error("data.js에서 window.SITE를 찾지 못했습니다.");
+  return w.SITE;
+}
+function serializeData(site) {
+  var order = ["profile", "featured", "seasons", "awards", "jams", "projects", "devlogs"];
+  Object.keys(site).forEach(function (k) { if (order.indexOf(k) < 0) order.push(k); });
+  var notes = {
+    profile: "프로필 · 연락처 · 소셜 링크",
+    featured: "메인 상단 대표작 (projects의 id). 첫 번째가 가장 크게 표시",
+    seasons: "데브로그 시즌 (최신 시즌이 위). 로그는 날짜로 자동 분류",
+    awards: "수상 — level: national > contest > regional > school / tier: gold silver bronze excel merit",
+    jams: "게임잼",
+    projects: "프로젝트 — status: dev | paused | done / dim: 2D 3D Web UGC",
+    devlogs: "데브로그 (최신이 위)"
+  };
+  var out = [
+    "/* =========================================================",
+    "   사이트 데이터 — 관리자 페이지(admin/)에서 편집하거나 직접 수정하세요.",
+    "   이미지 경로는 사이트 루트(index.html 위치) 기준입니다.",
+    "   마지막 저장: " + new Date().toLocaleString("ko-KR"),
+    "   ========================================================= */",
+    "window.SITE = {"
+  ];
+  var keys = order.filter(function (k) { return site[k] !== undefined; });
+  keys.forEach(function (k, i) {
+    var v = site[k], body;
+    if (Array.isArray(v) && v.length && v.every(function (x) { return x && typeof x === "object"; })) {
+      body = "[\n" + v.map(function (o) { return "    " + JSON.stringify(o); }).join(",\n") + "\n  ]";
+    } else {
+      body = JSON.stringify(v, null, 2).replace(/\n/g, "\n  ");
+    }
+    out.push("");
+    if (notes[k]) out.push("  /* " + notes[k] + " */");
+    out.push("  " + k + ": " + body + (i < keys.length - 1 ? "," : ""));
+  });
+  out.push("};", "");
+  return out.join("\n");
+}
+function sortLogs() {
+  S.devlogs.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.no || 0) - (a.no || 0); });
+}
+
+/* =========================================================
+   연결
+   ========================================================= */
+function loadCfg() {
+  try { return JSON.parse(localStorage.getItem("bello-admin") || "null"); } catch (e) { return null; }
+}
+function saveCfg(c) { try { localStorage.setItem("bello-admin", JSON.stringify(c)); } catch (e) {} }
+(function initConnect() {
+  var c = loadCfg();
+  if (c) {
+    ["owner", "repo", "branch", "site", "token"].forEach(function (k) {
+      var el = $("#gh" + k.charAt(0).toUpperCase() + k.slice(1)); if (el && c[k]) el.value = c[k];
+    });
+  }
+  if (!window.showDirectoryPicker) {
+    $("#localConnect").disabled = true;
+    $("#localErr").textContent = "이 브라우저는 폴더 열기를 지원하지 않습니다 (Chrome/Edge 필요).";
+  }
+})();
+
+$("#ghConnect").addEventListener("click", function () {
+  var cfg = {
+    owner: $("#ghOwner").value.trim(), repo: $("#ghRepo").value.trim(), branch: $("#ghBranch").value.trim() || "main",
+    site: $("#ghSite").value.trim(), token: $("#ghToken").value.trim()
+  };
+  $("#ghErr").textContent = "";
+  if (!cfg.token) { $("#ghErr").textContent = "토큰을 입력하세요."; return; }
+  var b = GitHubBackend(cfg);
+  this.disabled = true; var btn = this;
+  start(b).then(function () {
+    if ($("#ghRemember").checked) saveCfg(cfg); else saveCfg({ owner: cfg.owner, repo: cfg.repo, branch: cfg.branch, site: cfg.site });
+  }).catch(function (e) { $("#ghErr").textContent = e.message; }).then(function () { btn.disabled = false; });
+});
+$("#localConnect").addEventListener("click", function () {
+  $("#localErr").textContent = "";
+  window.showDirectoryPicker({ mode: "readwrite" }).then(function (dir) { return start(LocalBackend(dir)); })
+    .catch(function (e) { if (e.name !== "AbortError") $("#localErr").textContent = e.message; });
+});
+$("#logout").addEventListener("click", function (e) {
+  e.preventDefault();
+  if ((dataDirty || Object.keys(pendingFiles).length) && !confirm("게시하지 않은 변경이 사라집니다. 계속할까요?")) return;
+  var c = loadCfg(); if (c) { delete c.token; saveCfg(c); }
+  location.reload();
+});
+
+function start(b) {
+  return b.read(DATA_PATH).then(function (src) {
+    if (src == null) throw new Error(DATA_PATH + " 파일을 찾을 수 없습니다. 저장소/폴더를 확인하세요.");
+    backend = b;
+    S = parseData(src);
+    ["projects", "devlogs", "awards", "jams", "seasons", "featured"].forEach(function (k) { if (!S[k]) S[k] = []; });
+    if (!S.profile) S.profile = {};
+    $("#connect").style.display = "none";
+    $("#app").classList.add("on");
+    $("#connInfo").textContent = b.label;
+    var site = $("#openSite");
+    if (b.siteUrl) site.href = b.siteUrl; else site.style.display = "none";
+    switchTab("devlogs");
+  });
+}
+
+/* =========================================================
+   탭
+   ========================================================= */
+var TABS = {
+  devlogs: { title: "데브로그", arr: function () { return S.devlogs; } },
+  projects: { title: "프로젝트", arr: function () { return S.projects; } },
+  awards: { title: "수상", arr: function () { return S.awards; }, ordered: true },
+  jams: { title: "게임잼", arr: function () { return S.jams; }, ordered: true },
+  seasons: { title: "시즌", arr: function () { return S.seasons; }, ordered: true },
+  profile: { title: "프로필 · 대표작", single: true },
+  raw: { title: "data.js 직접 편집", single: true }
+};
+$$(".tab").forEach(function (b) { b.addEventListener("click", function () { switchTab(b.getAttribute("data-tab")); }); });
+function switchTab(t) {
+  tab = t; selected = null; isNew = false;
+  $$(".tab").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === t); });
+  $("#tabTitle").textContent = TABS[t].title;
+  $("#listSearch").value = "";
+  var single = TABS[t].single;
+  $(".list").style.display = single ? "none" : "";
+  $("#content").style.gridTemplateColumns = single ? "1fr" : "";
+  updateCounts();
+  if (single) { t === "profile" ? editProfile() : editRaw(); }
+  else { renderList(); $("#editor").innerHTML = '<div class="editor-empty">왼쪽에서 항목을 고르거나 새로 만드세요.</div>'; }
+}
+function updateCounts() {
+  ["devlogs", "projects", "awards", "jams", "seasons"].forEach(function (k) { $("#cnt-" + k).textContent = (S[k] || []).length; });
+}
+$("#listSearch").addEventListener("input", renderList);
+
+/* ---------- GIF 정지 이미지 일괄 생성 ---------- */
+function stillJobs() {
+  var jobs = [];
+  S.devlogs.forEach(function (d) { if (d.thumb && /\.gif$/i.test(d.thumb) && !d.poster) jobs.push({ obj: d, src: "devlog/Thumb/" + d.thumb, key: "poster", full: false }); });
+  S.projects.forEach(function (p) { if (p.img && /\.gif$/i.test(p.img) && !p.imgPoster) jobs.push({ obj: p, src: p.img, key: "imgPoster", full: true }); });
+  return jobs;
+}
+function updateStillBtn() {
+  var b = $("#stillBtn"), n = stillJobs().length;
+  var show = (tab === "devlogs" || tab === "projects") && n > 0;
+  b.style.display = show ? "" : "none";
+  b.textContent = "GIF 정지 이미지 만들기 (" + n + "개 남음) — 사이트 렉 줄이기";
+}
+$("#stillBtn").addEventListener("click", function () {
+  var jobs = stillJobs(), ok = 0, fail = 0, btn = this;
+  btn.disabled = true;
+  jobs.reduce(function (pr, j, i) {
+    return pr.then(function () {
+      btn.textContent = "만드는 중… " + (i + 1) + " / " + jobs.length;
+      return imgSrc(j.src).then(makeStill).then(function (r) {
+        var sp = stillPath(j.src, r.ext);
+        addFile(sp, r.bytes, "GIF 정지 이미지");
+        j.obj[j.key] = j.full ? sp : sp.split("/").pop();
+        ok++;
+      }).catch(function () { fail++; });
+    });
+  }, Promise.resolve()).then(function () {
+    btn.disabled = false;
+    if (ok) markDirty("GIF 정지 이미지 " + ok + "개 생성");
+    renderList(); updateStillBtn();
+    toast("정지 이미지 " + ok + "개를 만들었어요" + (fail ? " (" + fail + "개 실패)" : "") + ". [게시]하면 반영돼요.", fail ? "bad" : "ok");
+  });
+});
+$("#newBtn").addEventListener("click", function () { createNew(); });
+
+/* ---------- 목록 ---------- */
+function describe(t, it) {
+  if (t === "devlogs") return {
+    img: it.poster ? "devlog/Thumb/" + it.poster : it.thumb ? "devlog/Thumb/" + it.thumb : "", title: it.title,
+    meta: (it.kind === "interlude" ? "INTERLUDE" : "#" + it.no) + " · " + it.date + (it.project ? " · " + it.project : "")
+  };
+  if (t === "projects") return { img: it.imgPoster || it.img || "", title: it.title, meta: "No." + it.no + " · " + ({ dev: "개발 중", paused: "일시 중지", done: "완료" }[it.status] || it.status) + " · " + (it.dim || "") };
+  if (t === "awards") return { title: it.event + " " + it.result, meta: it.year + " · " + ({ national: "전국", contest: "공모전", regional: "지방", school: "교내" }[it.level] || it.level || "") };
+  if (t === "jams") return { title: it.event, meta: (it.date || "—") + " · " + (it.result || "") };
+  if (t === "seasons") return { title: it.name + " · " + it.title, meta: it.start + " ~ " + (it.end || "진행 중") };
+}
+function renderList() {
+  var arr = TABS[tab].arr();
+  var q = $("#listSearch").value.trim().toLowerCase();
+  var html = arr.map(function (it, i) {
+    var d = describe(tab, it);
+    if (q && (d.title + " " + d.meta + " " + stripHtml(it.desc || "")).toLowerCase().indexOf(q) < 0) return "";
+    var hasImg = tab === "devlogs" || tab === "projects";
+    return '<button class="item' + (hasImg ? "" : " noimg") + (selected === i ? " on" : "") + '" data-i="' + i + '">' +
+      (hasImg ? '<span class="th">' + (d.img ? '<img data-path="' + esc(d.img) + '" alt="">' : "") + '</span>' : "") +
+      '<span><b>' + esc(d.title || "(제목 없음)") + '</b><small>' + esc(d.meta) + '</small></span>' +
+      (TABS[tab].ordered ? '<span class="ord"><span data-mv="-1" title="위로">▲</span><span data-mv="1" title="아래로">▼</span></span>' : "<span></span>") +
+      '</button>';
+  }).join("");
+  $("#listItems").innerHTML = html || '<p class="dim" style="padding:20px 4px">항목이 없습니다.</p>';
+  updateStillBtn();
+  hydrateImgs($("#listItems"));
+}
+$("#listItems").addEventListener("click", function (e) {
+  var it = e.target.closest("[data-i]"); if (!it) return;
+  var i = +it.getAttribute("data-i");
+  var mv = e.target.closest("[data-mv]");
+  if (mv) {
+    var arr = TABS[tab].arr(), j = i + +mv.getAttribute("data-mv");
+    if (j < 0 || j >= arr.length) return;
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    if (selected === i) selected = j; else if (selected === j) selected = i;
+    markDirty(TABS[tab].title + " 순서 변경");
+    renderList(); return;
+  }
+  openItem(i);
+});
+function openItem(i) {
+  selected = i; isNew = false;
+  renderList();
+  var item = TABS[tab].arr()[i];
+  EDITORS[tab](clone(item));
+}
+function createNew() {
+  selected = null; isNew = true; renderList();
+  EDITORS[tab](NEW[tab]());
+}
+
+/* =========================================================
+   폼 빌더
+   ========================================================= */
+/* spec: { k, label, type, cls, opts, help, ph } */
+function buildForm(obj, spec, root) {
+  var html = spec.map(function (f) {
+    if (f.type === "section") return '<div class="sec-title">' + esc(f.label) + '</div>';
+    if (f.type === "hint") return '<div class="hint">' + f.label + '</div>';
+    var v = obj[f.k];
+    var id = "f_" + f.k;
+    var cls = f.cls || "c3";
+    var inner;
+    switch (f.type) {
+      case "textarea":
+        inner = '<textarea id="' + id + '" rows="' + (f.rows || 3) + '"' + (f.code ? ' class="code"' : "") + ' placeholder="' + esc(f.ph || "") + '">' + esc(v == null ? "" : v) + '</textarea>'; break;
+      case "number":
+        inner = '<input type="number" id="' + id + '" value="' + esc(v == null ? "" : v) + '" step="any">'; break;
+      case "date":
+        inner = '<input type="date" id="' + id + '" value="' + esc(dotToDash(v)) + '">'; break;
+      case "select":
+        inner = '<select id="' + id + '">' + f.opts.map(function (o) {
+          var val = Array.isArray(o) ? o[0] : o, lab = Array.isArray(o) ? o[1] : o;
+          return '<option value="' + esc(val) + '"' + (String(v == null ? "" : v) === String(val) ? " selected" : "") + '>' + esc(lab) + '</option>';
+        }).join("") + '</select>'; break;
+      case "hidden":
+        return '<input type="hidden" id="' + id + '" value="' + esc(v == null ? "" : v) + '">';
+      case "check":
+        return '<label class="chk ' + cls + '"><input type="checkbox" id="' + id + '"' + (v ? " checked" : "") + '> ' + esc(f.label) + '</label>';
+      case "tags":
+        inner = '<div class="tags-in" id="' + id + '" data-tags="' + esc(JSON.stringify(v || [])) + '"></div>' +
+          (f.sugg ? '<div class="sugg" data-for="' + id + '"></div>' : ""); break;
+      case "lines":
+        inner = '<textarea id="' + id + '" rows="' + (f.rows || 3) + '" placeholder="' + esc(f.ph || "") + '">' + esc((v || []).map(f.toLine || String).join("\n")) + '</textarea>'; break;
+      case "image":
+        inner = '<div class="imgf"><div class="drop" id="' + id + '" data-path="' + esc(f.pathOf(v)) + '">클릭 · 드래그 · 붙여넣기</div>' +
+          '<div class="stack"><input type="text" id="' + id + '_v" value="' + esc(v || "") + '" placeholder="' + esc(f.ph || "") + '">' +
+          '<small class="note">' + (f.help || "") + '</small></div></div>'; break;
+      case "list":
+        inner = '<input type="text" id="' + id + '" list="' + id + '_dl" value="' + esc(v == null ? "" : v) + '" placeholder="' + esc(f.ph || "") + '">' +
+          '<datalist id="' + id + '_dl">' + f.opts.map(function (o) { return '<option value="' + esc(o) + '">'; }).join("") + '</datalist>'; break;
+      default:
+        inner = '<input type="text" id="' + id + '" value="' + esc(v == null ? "" : v) + '" placeholder="' + esc(f.ph || "") + '">';
+    }
+    return '<label class="f ' + cls + '"><span>' + esc(f.label) + '</span>' + inner + (f.help && f.type !== "image" ? '<small>' + f.help + '</small>' : "") + '</label>';
+  }).join("");
+  root.innerHTML = html;
+  spec.forEach(function (f) {
+    if (f.type === "tags") initTags($("#f_" + f.k, root), f.sugg ? f.sugg() : []);
+    if (f.type === "image") initImage(f, root, obj);
+  });
+}
+function readForm(obj, spec, root) {
+  spec.forEach(function (f) {
+    if (!f.k || f.type === "section" || f.type === "hint" || f.readonly) return;
+    var el = $("#f_" + f.k, root); if (!el) return;
+    var v;
+    switch (f.type) {
+      case "number": v = el.value === "" ? undefined : Number(el.value); break;
+      case "date": v = dashToDot(el.value) || undefined; break;
+      case "check": v = el.checked || undefined; break;
+      case "tags": v = JSON.parse(el.getAttribute("data-tags") || "[]"); break;
+      case "lines":
+        v = el.value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+        if (f.fromLine) v = v.map(f.fromLine);
+        break;
+      case "image": v = $("#f_" + f.k + "_v", root).value.trim() || undefined; break;
+      default: v = el.value.trim() === "" ? undefined : el.value.trim();
+    }
+    if (f.type === "select" && v === "") v = undefined;
+    if (v === undefined || (Array.isArray(v) && !v.length && !f.keepEmpty)) delete obj[f.k]; else obj[f.k] = v;
+  });
+  return obj;
+}
+
+/* ---------- 태그 입력 ---------- */
+function initTags(box, suggestions) {
+  var input = document.createElement("input");
+  input.type = "text"; input.placeholder = "입력 후 Enter";
+  function get() { return JSON.parse(box.getAttribute("data-tags") || "[]"); }
+  function set(arr) { box.setAttribute("data-tags", JSON.stringify(arr)); draw(); }
+  function draw() {
+    $$(".tg", box).forEach(function (t) { t.remove(); });
+    get().forEach(function (t, i) {
+      var s = document.createElement("span"); s.className = "tg";
+      s.innerHTML = esc(t) + '<button type="button" aria-label="삭제">×</button>';
+      s.querySelector("button").onclick = function () { var a = get(); a.splice(i, 1); set(a); };
+      box.insertBefore(s, input);
+    });
+    var sg = box.parentNode.querySelector('.sugg[data-for="' + box.id + '"]');
+    if (sg) {
+      var cur = get();
+      sg.innerHTML = suggestions.filter(function (x) { return cur.indexOf(x) < 0; }).slice(0, 14)
+        .map(function (x) { return '<button type="button">' + esc(x) + '</button>'; }).join("");
+      $$("button", sg).forEach(function (b) { b.onclick = function () { add(b.textContent); }; });
+    }
+  }
+  function add(t) { t = t.trim().replace(/,$/, ""); if (!t) return; var a = get(); if (a.indexOf(t) < 0) a.push(t); set(a); }
+  input.addEventListener("keydown", function (e) {
+    if (e.isComposing || e.keyCode === 229) return;
+    if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(input.value); input.value = ""; }
+    else if (e.key === "Backspace" && !input.value) { var a = get(); a.pop(); set(a); }
+  });
+  input.addEventListener("blur", function () { if (input.value.trim()) { add(input.value); input.value = ""; } });
+  box.appendChild(input);
+  box.addEventListener("click", function (e) { if (e.target === box) input.focus(); });
+  draw();
+}
+
+/* ---------- 이미지 필드 ---------- */
+var pickCb = null;
+$("#filePick").addEventListener("change", function () { var f = this.files[0]; this.value = ""; if (f && pickCb) pickCb(f); });
+$("#filePickMulti").addEventListener("change", function () { var fs = Array.prototype.slice.call(this.files); this.value = ""; if (fs.length && pickCb) pickCb(fs); });
+function pickFile(multi, cb) { pickCb = cb; $(multi ? "#filePickMulti" : "#filePick").click(); }
+function readFileBytes(file) { return file.arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
+
+/* GIF 첫 화면을 가벼운 정지 이미지(webp, 최대 480px)로 */
+function makeStill(source) {
+  var load = source instanceof Blob ? createImageBitmap(source) : new Promise(function (res, rej) {
+    var im = new Image(); im.crossOrigin = "anonymous";
+    im.onload = function () { res(im); }; im.onerror = function () { rej(new Error("이미지를 불러오지 못했어요")); };
+    im.src = source;
+  });
+  return load.then(function (bm) {
+    var w = bm.width || bm.naturalWidth, h = bm.height || bm.naturalHeight, k = Math.min(1, 480 / w);
+    var c = document.createElement("canvas"); c.width = Math.round(w * k); c.height = Math.round(h * k);
+    c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height);
+    return new Promise(function (res) {
+      c.toBlob(function (b) {
+        if (b && b.type === "image/webp") res({ blob: b, ext: "webp" });
+        else c.toBlob(function (b2) { res({ blob: b2, ext: "jpg" }); }, "image/jpeg", 0.82);
+      }, "image/webp", 0.8);
+    });
+  }).then(function (r) { return r.blob.arrayBuffer().then(function (ab) { return { bytes: new Uint8Array(ab), ext: r.ext }; }); });
+}
+function stillPath(gifPath, ext) { return gifPath.replace(/\.gif$/i, ".still." + ext); }
+
+function initImage(f, root, obj) {
+  var drop = $("#f_" + f.k, root), txt = $("#f_" + f.k + "_v", root);
+  function show() {
+    drop.innerHTML = "클릭 · 드래그 · 붙여넣기";
+    var path = f.pathOf(txt.value.trim());
+    if (path) { var im = document.createElement("img"); drop.appendChild(im); setImg(im, path); }
+  }
+  function take(file) {
+    if (!file || !/^image\//.test(file.type)) { toast("이미지 파일만 넣을 수 있어요", "bad"); return; }
+    readFileBytes(file).then(function (bytes) {
+      var target = f.target(file, root);        // { path, value }
+      addFile(target.path, bytes, "이미지");
+      txt.value = target.value;
+      show();
+      var pin = f.posterKey ? $("#f_" + f.posterKey, root) : null;
+      if (pin) {
+        if (/\.gif$/i.test(target.path)) {
+          makeStill(file).then(function (r) {
+            var sp = stillPath(target.path, r.ext);
+            addFile(sp, r.bytes, "GIF 정지 이미지");
+            pin.value = f.posterFull ? sp : sp.split("/").pop();
+          }).catch(function () { pin.value = ""; });
+        } else pin.value = "";
+      }
+      toast("이미지 추가: " + target.path, "ok");
+    });
+  }
+  drop.addEventListener("click", function () { pickFile(false, take); });
+  drop.addEventListener("dragover", function (e) { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", function () { drop.classList.remove("over"); });
+  drop.addEventListener("drop", function (e) { e.preventDefault(); drop.classList.remove("over"); take(e.dataTransfer.files[0]); });
+  txt.addEventListener("change", show);
+  drop.tabIndex = 0;
+  drop.addEventListener("paste", function (e) { var it = pasteImage(e); if (it) take(it); });
+  show();
+}
+function pasteImage(e) {
+  var items = (e.clipboardData || {}).items || [];
+  for (var i = 0; i < items.length; i++) if (items[i].type.indexOf("image/") === 0) { e.preventDefault(); return items[i].getAsFile(); }
+  return null;
+}
+
+/* ---------- 편집기 틀 ---------- */
+function editorShell(title, sub, extraBtns) {
+  var ed = $("#editor");
+  ed.innerHTML = '<div class="ed-head"><h2>' + esc(title) + (isNew ? '<span class="chip-new">NEW</span>' : "") + '</h2>' +
+    (extraBtns || "") +
+    (!isNew && !TABS[tab].single ? '<button class="btn danger" id="edDel">삭제</button>' : "") +
+    '<button class="btn pri" id="edApply">' + (isNew ? "추가" : "적용") + '</button></div>' +
+    (sub ? '<p class="note" style="margin:-8px 0 16px">' + sub + '</p>' : "") +
+    '<div class="form" id="edForm"></div>';
+  return $("#edForm");
+}
+function commitItem(obj, label) {
+  var arr = TABS[tab].arr();
+  if (isNew) {
+    if (tab === "devlogs" || tab === "seasons") arr.unshift(obj); else if (tab === "projects") arr.unshift(obj); else arr.unshift(obj);
+    selected = arr.indexOf(obj);
+    markDirty(label + " 추가");
+  } else {
+    arr[selected] = obj;
+    markDirty(label + " 수정");
+  }
+  if (tab === "devlogs") { sortLogs(); selected = S.devlogs.indexOf(obj); }
+  if (tab === "projects") { S.projects.sort(function (a, b) { return (b.no || 0) - (a.no || 0); }); selected = S.projects.indexOf(obj); }
+  if (tab === "seasons") { S.seasons.sort(function (a, b) { return a.start < b.start ? 1 : -1; }); selected = S.seasons.indexOf(obj); }
+  isNew = false;
+  updateCounts(); renderList();
+  EDITORS[tab](clone(obj));
+  toast("적용했어요. 오른쪽 위 [게시]를 눌러야 사이트에 반영됩니다.", "ok");
+}
+function bindDelete(label) {
+  var b = $("#edDel"); if (!b) return;
+  b.onclick = function () {
+    if (!confirm("정말 삭제할까요?\n(이미지 파일은 저장소에 남습니다)")) return;
+    var arr = TABS[tab].arr(); arr.splice(selected, 1);
+    markDirty(label + " 삭제");
+    selected = null; updateCounts(); renderList();
+    $("#editor").innerHTML = '<div class="editor-empty">삭제했어요.</div>';
+  };
+}
+
+/* =========================================================
+   데이터 헬퍼
+   ========================================================= */
+function nextLogNo() { return S.devlogs.reduce(function (m, d) { return typeof d.no === "number" && d.no % 1 === 0 ? Math.max(m, d.no) : m; }, 0) + 1; }
+function nextProjNo() { return S.projects.reduce(function (m, p) { return Math.max(m, p.no || 0); }, 0) + 1; }
+function allTags() {
+  var c = {}; S.devlogs.forEach(function (d) { (d.tags || []).forEach(function (t) { c[t] = (c[t] || 0) + 1; }); });
+  return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
+}
+function allProjTags() {
+  var c = {}; S.projects.forEach(function (d) { (d.tags || []).forEach(function (t) { c[t] = (c[t] || 0) + 1; }); });
+  return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
+}
+function logProjects() {
+  var s = [];
+  S.projects.forEach(function (p) { if (p.logKey && s.indexOf(p.logKey) < 0) s.push(p.logKey); });
+  S.devlogs.forEach(function (d) { if (d.project && s.indexOf(d.project) < 0) s.push(d.project); });
+  return s;
+}
+function projOpts(withEmpty) {
+  return (withEmpty ? [["", "— 없음 —"]] : []).concat(S.projects.map(function (p) { return [p.id, "No." + p.no + " " + p.title]; }));
+}
+
+/* =========================================================
+   데브로그
+   ========================================================= */
+var NEW = {
+  devlogs: function () {
+    var last = S.devlogs.filter(function (d) { return d.project && d.kind !== "interlude"; })[0];
+    return { no: nextLogNo(), date: today(), project: last ? last.project : "", tags: [], title: "", desc: "", thumb: "" };
+  },
+  projects: function () { return { id: "", no: nextProjNo(), status: "dev", dim: "3D", year: new Date().getFullYear(), title: "", desc: "", tags: ["Unity"], dev: "#", link: "#" }; },
+  awards: function () { return { level: "national", year: new Date().getFullYear(), event: "", field: "게임개발 직종", result: "", tier: "gold" }; },
+  jams: function () { return { date: today().slice(0, 7), event: "", theme: "", result: "출품" }; },
+  seasons: function () {
+    var id = S.seasons.reduce(function (m, s) { return Math.max(m, s.id || 0); }, 0) + 1;
+    return { id: id, name: "Season " + id, title: "", start: today(), desc: "" };
+  }
+};
+
+var EDITORS = {};
+
+EDITORS.devlogs = function (d) {
+  var interlude = d.kind === "interlude";
+  if (!interlude && d.no == null) d.no = nextLogNo();
+  var spec = [
+    { k: "no", label: "번호", type: "number", cls: "c1", help: "자동으로 다음 번호" },
+    { k: "date", label: "날짜", type: "date", cls: "c2" },
+    { k: "end", label: "끝 날짜 (여러 날이면)", type: "date", cls: "c2" },
+    { k: "kind", label: "종류", type: "select", cls: "c1", opts: [["", "일반"], ["interlude", "인터루드(공백 요약)"]] },
+    { k: "title", label: "제목", cls: "c6", ph: "예: 영혼 상점 UI 1차 구현" },
+    { k: "project", label: "프로젝트", type: "list", cls: "c3", opts: logProjects(), ph: "목록에서 고르거나 새 이름 입력" },
+    { k: "minor", label: "짧은 기록 (휴식 등, 개수에 안 셈)", type: "check", cls: "c3" },
+    { k: "tags", label: "태그", type: "tags", cls: "c6", sugg: allTags },
+    { k: "desc", label: "요약 (목록에 보이는 글)", type: "textarea", cls: "c6", rows: 4, help: "한두 문단. &lt;br&gt;, &lt;b&gt;, &lt;a&gt;, &lt;del&gt; 같은 HTML도 쓸 수 있어요." },
+    { k: "thumb", label: "썸네일", type: "image", cls: "c6",
+      pathOf: function (v) { return v ? "devlog/Thumb/" + v : ""; },
+      target: function (file, root) { var no = $("#f_no", root).value || nextLogNo(); var n = no + "." + extOf(file); return { path: "devlog/Thumb/" + n, value: n }; },
+      posterKey: "poster",
+      help: "파일은 <b>devlog/Thumb/번호.확장자</b>로 저장됩니다. GIF를 넣으면 가벼운 정지 이미지도 자동으로 만들어서, 사이트에서는 마우스를 올렸을 때만 재생돼요.", ph: "파일명 (예: 43.gif)" },
+    { k: "poster", type: "hidden" }
+  ];
+  if (interlude) spec.push(
+    { k: "events", label: "기간 중 있었던 일 (한 줄에 하나: 날짜 | 이름 | 결과 | 색)", type: "lines", cls: "c6", rows: 4,
+      ph: "2026.07 | 청강게임대전 | 우수상 | excel",
+      toLine: function (e) { return [e.date, e.name, e.result, e.tier].filter(function (x) { return x != null; }).join(" | "); },
+      fromLine: function (l) { var p = l.split("|").map(function (s) { return s.trim(); }); var o = { date: p[0], name: p[1] || "", result: p[2] || "" }; if (p[3]) o.tier = p[3]; return o; },
+      help: "색: gold · silver · bronze · excel · merit (비우면 회색)" });
+  spec.push({ k: "url", label: "상세 글 주소", cls: "c6", help: "아래 [상세 글 쓰기]로 만들면 자동으로 채워집니다.", ph: "devlog/43.html" });
+
+  var form = editorShell(isNew ? "새 데브로그" : (interlude ? "인터루드" : "#" + d.no + " " + d.title), "",
+    '<button class="btn" id="edPost">' + (d.url ? "상세 글 수정" : "상세 글 쓰기") + '</button>');
+  buildForm(d, spec, form);
+  $("#f_kind", form).addEventListener("change", function () {
+    if (this.value === "interlude" && !confirm("'인터루드'는 긴 공백 기간을 요약하는 특별 카드예요 (썸네일 없이 점선 박스로 표시).\n일반 로그라면 '일반'을 유지하세요. 바꿀까요?")) { this.value = ""; return; }
+    readForm(d, spec, form); EDITORS.devlogs(d);
+  });
+  var prev = document.createElement("div"); prev.className = "c6";
+  prev.innerHTML = '<div class="px" style="margin-bottom:6px">요약 미리보기</div><div class="preview-desc" id="descPrev"></div>';
+  form.appendChild(prev);
+  function upd() { $("#descPrev").innerHTML = $("#f_desc", form).value || '<span class="dim">—</span>'; }
+  $("#f_desc", form).addEventListener("input", upd); upd();
+
+  $("#edApply").onclick = function () {
+    readForm(d, spec, form);
+    if (!d.title) { toast("제목을 입력하세요", "bad"); return; }
+    if (d.kind !== "interlude") delete d.events;
+    if (!d.tags) d.tags = [];
+    if (d.project === undefined) d.project = "";
+    commitItem(d, d.kind === "interlude" ? "인터루드" : "데브로그 #" + d.no);
+  };
+  bindDelete("데브로그");
+  $("#edPost").onclick = function () {
+    readForm(d, spec, form);
+    if (!d.title) { toast("먼저 제목을 입력하세요", "bad"); return; }
+    openPostWriter(d, function (url) { $("#f_url", form).value = url; $("#edApply").click(); });
+  };
+};
+
+/* =========================================================
+   프로젝트
+   ========================================================= */
+EDITORS.projects = function (p) {
+  var spec = [
+    { k: "title", label: "제목", cls: "c4" },
+    { k: "no", label: "번호", type: "number", cls: "c1" },
+    { k: "year", label: "연도", type: "number", cls: "c1" },
+    { k: "id", label: "id (주소용 영문)", cls: "c2", help: "비우면 제목으로 자동 생성. 한번 정하면 바꾸지 마세요.", ph: "random-br" },
+    { k: "status", label: "상태", type: "select", cls: "c1", opts: [["dev", "개발 중"], ["paused", "일시 중지"], ["done", "완료"]] },
+    { k: "dim", label: "분류", type: "select", cls: "c1", opts: ["3D", "2D", "Web", "UGC"] },
+    { k: "period", label: "기간 표시", cls: "c2", ph: "2026.01.23 ~ 01.27" },
+    { k: "main", label: "주력 프로젝트로 표시", type: "check", cls: "c3" },
+    { k: "sub", label: "부제", cls: "c3", ph: "1인칭 카툰 배틀로얄 · 멀티플레이" },
+    { k: "desc", label: "한 줄 설명 (카드)", type: "textarea", cls: "c6", rows: 2 },
+    { k: "long", label: "긴 설명 (대표작 · 상세 팝업, 선택)", type: "textarea", cls: "c6", rows: 3 },
+    { k: "points", label: "핵심 포인트 (대표작 첫 칸에 표시, 한 줄에 하나)", type: "lines", cls: "c6", rows: 3 },
+    { k: "tags", label: "태그", type: "tags", cls: "c6", sugg: allProjTags },
+    { k: "img", label: "대표 이미지", type: "image", cls: "c6",
+      pathOf: function (v) { return v || ""; },
+      target: function (file, root) { var no = $("#f_no", root).value || nextProjNo(); var n = "Image/project" + no + "." + extOf(file); return { path: n, value: n }; },
+      posterKey: "imgPoster", posterFull: true,
+      help: "파일은 <b>Image/project번호.확장자</b>로 저장됩니다. 16:9 권장. GIF면 정지 이미지를 자동으로 만들어요.", ph: "Image/project17.png" },
+    { k: "imgPoster", type: "hidden" },
+    { type: "section", label: "링크" },
+    { k: "link", label: "게임 링크", cls: "c3", ph: "https://bellocity.itch.io/..." },
+    { k: "linkLabel", label: "링크 버튼 이름", cls: "c1", ph: "플레이" },
+    { k: "pendingLabel", label: "링크 없을 때 문구", cls: "c2", ph: "공개 예정" },
+    { k: "dev", label: "개발 비화 / 일지 경로", cls: "c3", help: "아래 [개발 비화 쓰기]로 만들면 자동으로 채워집니다.", ph: "dev/dev17.html" },
+    { k: "devLabel", label: "버튼 이름", cls: "c1", ph: "개발 비화" },
+    { k: "logKey", label: "데브로그 프로젝트 이름", cls: "c2", help: "데브로그의 '프로젝트'와 같게", ph: "랜덤 초능력자 배틀로얄" },
+    { type: "section", label: "수상 · 게임잼 배지" },
+    { k: "award", label: "수상 배지", cls: "c2", ph: "부산 금상" },
+    { k: "awardTier", label: "배지 색", type: "select", cls: "c2", opts: [["", "—"], "gold", "silver", "bronze", "excel", "merit"] },
+    { k: "awardLevel", label: "전국 강조", type: "select", cls: "c2", opts: [["", "—"], ["national", "national"]] },
+    { k: "jam", label: "게임잼 배지", cls: "c3", ph: "웨루 게임잼 1R" }
+  ];
+  var form = editorShell(isNew ? "새 프로젝트" : "No." + p.no + " " + p.title, "",
+    '<button class="btn" id="edStory">' + (/^dev\//.test(p.dev || "") ? "개발 비화 수정" : "개발 비화 쓰기") + '</button>');
+  if (!p.dev) p.dev = "#"; if (!p.link) p.link = "#";
+  buildForm(p, spec, form);
+  function finalize() {
+    readForm(p, spec, form);
+    if (!p.id) p.id = slug(p.title) || "project-" + p.no;
+    if (!p.dev) p.dev = "#"; if (!p.link) p.link = "#";
+    return p;
+  }
+  $("#edApply").onclick = function () {
+    finalize();
+    if (!p.title) { toast("제목을 입력하세요", "bad"); return; }
+    var dup = S.projects.some(function (x, i) { return x.id === p.id && i !== selected; });
+    if (dup) { toast("같은 id가 이미 있어요: " + p.id, "bad"); return; }
+    commitItem(p, "프로젝트 " + p.title);
+  };
+  bindDelete("프로젝트");
+  $("#edStory").onclick = function () {
+    finalize();
+    if (!p.title) { toast("먼저 제목을 입력하세요", "bad"); return; }
+    openStoryWriter(p, function (path) { $("#f_dev", form).value = path; $("#edApply").click(); });
+  };
+};
+
+/* =========================================================
+   수상 / 게임잼 / 시즌
+   ========================================================= */
+EDITORS.awards = function (a) {
+  var spec = [
+    { k: "event", label: "대회 이름", cls: "c4", ph: "전국기능경기대회" },
+    { k: "year", label: "연도", type: "number", cls: "c2" },
+    { k: "level", label: "대회 등급", type: "select", cls: "c2", opts: [["national", "전국 대회"], ["contest", "공모전 · 게임대전"], ["regional", "지방 대회"], ["school", "교내 대회"]] },
+    { k: "field", label: "부문", cls: "c2", ph: "게임개발 직종" },
+    { k: "result", label: "결과", cls: "c1", ph: "금상" },
+    { k: "tier", label: "메달 색", type: "select", cls: "c1", opts: [["gold", "금"], ["silver", "은"], ["bronze", "동"], ["excel", "우수"], ["merit", "장려"]] },
+    { k: "project", label: "연결할 프로젝트", type: "select", cls: "c6", opts: projOpts(true) },
+    { type: "hint", label: "등급이 높은 대회가 메인에서 위에, 더 강조되어 보여요. 같은 등급 안에서는 최신 연도가 위." }
+  ];
+  var form = editorShell(isNew ? "새 수상" : a.event + " " + a.result);
+  buildForm(a, spec, form);
+  $("#edApply").onclick = function () { readForm(a, spec, form); if (!a.event) { toast("대회 이름을 입력하세요", "bad"); return; } commitItem(a, "수상 " + a.event); };
+  bindDelete("수상");
+};
+EDITORS.jams = function (j) {
+  var spec = [
+    { k: "event", label: "게임잼 이름", cls: "c4" },
+    { k: "date", label: "시기", cls: "c2", ph: "2026.05" },
+    { k: "theme", label: "주제", cls: "c2" },
+    { k: "result", label: "결과", cls: "c2", ph: "출품 / 2R 진출" },
+    { k: "highlight", label: "결과 강조", type: "check", cls: "c2" },
+    { k: "project", label: "연결할 프로젝트", type: "select", cls: "c6", opts: projOpts(true) },
+    { type: "hint", label: "목록 순서가 메인에 그대로 보여요. 왼쪽 ▲▼로 순서를 바꿀 수 있어요." }
+  ];
+  var form = editorShell(isNew ? "새 게임잼" : j.event);
+  buildForm(j, spec, form);
+  $("#edApply").onclick = function () { readForm(j, spec, form); if (!j.event) { toast("이름을 입력하세요", "bad"); return; } if (j.theme === undefined) j.theme = ""; if (j.date === undefined) j.date = ""; commitItem(j, "게임잼 " + j.event); };
+  bindDelete("게임잼");
+};
+EDITORS.seasons = function (s) {
+  var spec = [
+    { k: "id", label: "번호", type: "number", cls: "c1" },
+    { k: "name", label: "이름", cls: "c2", ph: "Season 3" },
+    { k: "title", label: "시즌 제목", cls: "c3", ph: "주력 프로젝트 이름 등" },
+    { k: "start", label: "시작일", type: "date", cls: "c2" },
+    { k: "end", label: "종료일 (끝난 시즌만)", type: "date", cls: "c2" },
+    { k: "desc", label: "소개", type: "textarea", cls: "c6", rows: 3 },
+    { type: "hint", label: "로그는 날짜로 시즌이 자동 분류돼요. 새 시즌을 만들면 이전 시즌에 종료일을 넣어 주세요. 데브로그 페이지는 시작일이 가장 늦은 시즌을 먼저 보여줘요." }
+  ];
+  var form = editorShell(isNew ? "새 시즌" : s.name + " · " + s.title);
+  buildForm(s, spec, form);
+  $("#edApply").onclick = function () { readForm(s, spec, form); if (!s.start) { toast("시작일을 입력하세요", "bad"); return; } commitItem(s, s.name); };
+  bindDelete("시즌");
+};
+
+/* =========================================================
+   프로필 · 대표작
+   ========================================================= */
+function editProfile() {
+  var P = clone(S.profile);
+  P._featured = (S.featured || []).slice();
+  var ed = $("#editor");
+  ed.innerHTML = '<div class="ed-head"><h2>프로필 · 대표작</h2><button class="btn pri" id="edApply">적용</button></div><div class="form" id="edForm"></div>';
+  var form = $("#edForm");
+  var spec = [
+    { k: "name", label: "이름", cls: "c2" },
+    { k: "nameEn", label: "영문 이름", cls: "c2" },
+    { k: "role", label: "역할", cls: "c2" },
+    { k: "email", label: "공개 이메일", cls: "c3" },
+    { k: "affiliation", label: "소속 (없으면 비워두기)", cls: "c3", ph: "OO대학교 게임공학과" },
+    { k: "socials", label: "소셜 링크 (한 줄에 하나: id | 이름 | 주소)", type: "lines", cls: "c6", rows: 4,
+      toLine: function (s) { return [s.id, s.label, s.url].join(" | "); },
+      fromLine: function (l) { var p = l.split("|").map(function (x) { return x.trim(); }); return { id: p[0], label: p[1] || p[0], url: p[2] || "" }; },
+      help: "id가 youtube · github · instagram · itch 이면 아이콘이 붙어요." },
+    { type: "section", label: "메인 대표작 (위에서부터 1번이 가장 크게)" }
+  ];
+  buildForm(P, spec, form);
+  var feat = document.createElement("div"); feat.className = "c6 stack"; feat.id = "featBox";
+  form.appendChild(feat);
+  function drawFeat() {
+    feat.innerHTML = P._featured.map(function (id, i) {
+      return '<div class="row"><span class="mono dim" style="width:22px">' + (i + 1) + '</span><select data-fi="' + i + '" style="flex:1">' +
+        projOpts(false).map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === id ? " selected" : "") + '>' + esc(o[1]) + '</option>'; }).join("") +
+        '</select><button class="btn sm" data-fm="' + i + '">▲</button><button class="btn sm danger" data-fx="' + i + '">빼기</button></div>';
+    }).join("") + '<div><button class="btn sm" id="featAdd">+ 대표작 추가</button></div>';
+    $$("[data-fi]", feat).forEach(function (s) { s.onchange = function () { P._featured[+s.getAttribute("data-fi")] = s.value; }; });
+    $$("[data-fm]", feat).forEach(function (b) { b.onclick = function () { var i = +b.getAttribute("data-fm"); if (!i) return; var t = P._featured[i - 1]; P._featured[i - 1] = P._featured[i]; P._featured[i] = t; drawFeat(); }; });
+    $$("[data-fx]", feat).forEach(function (b) { b.onclick = function () { P._featured.splice(+b.getAttribute("data-fx"), 1); drawFeat(); }; });
+    $("#featAdd").onclick = function () { if (S.projects[0]) { P._featured.push(S.projects[0].id); drawFeat(); } };
+  }
+  drawFeat();
+  $("#edApply").onclick = function () {
+    readForm(P, spec, form);
+    S.featured = P._featured.filter(function (id, i, a) { return id && a.indexOf(id) === i; });
+    delete P._featured;
+    if (P.affiliation === undefined) P.affiliation = "";
+    S.profile = P;
+    markDirty("프로필 · 대표작 수정");
+    toast("적용했어요. [게시]를 눌러야 반영됩니다.", "ok");
+    editProfile();
+  };
+}
+
+/* ---------- data.js 직접 편집 ---------- */
+function editRaw() {
+  var ed = $("#editor");
+  ed.innerHTML = '<div class="ed-head"><h2>data.js 직접 편집</h2><button class="btn pri" id="edApply">적용</button></div>' +
+    '<p class="note" style="margin:-8px 0 12px">폼으로 안 되는 걸 고칠 때만 쓰세요. 적용하면 문법을 검사한 뒤 반영돼요.</p>' +
+    '<textarea class="code" id="rawTa" spellcheck="false" style="min-height:70vh;font-size:12.5px"></textarea><p class="err" id="rawErr"></p>';
+  $("#rawTa").value = serializeData(S);
+  $("#edApply").onclick = function () {
+    try { S = parseData($("#rawTa").value); ["projects", "devlogs", "awards", "jams", "seasons", "featured"].forEach(function (k) { if (!S[k]) S[k] = []; }); }
+    catch (e) { $("#rawErr").textContent = "문법 오류: " + e.message; return; }
+    $("#rawErr").textContent = "";
+    markDirty("data.js 직접 수정"); updateCounts();
+    toast("적용했어요.", "ok");
+  };
+}
+
+/* =========================================================
+   마크다운 → HTML
+   ========================================================= */
+function inline(s) {
+  var codes = [];
+  s = s.replace(/`([^`]+)`/g, function (_, c) { codes.push(c); return "\u0000" + (codes.length - 1) + "\u0000"; });
+  s = esc(s)
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (_, t, u) { return '<a href="' + u + '"' + (/^https?:/.test(u) ? ' target="_blank" rel="noopener"' : "") + '>' + t + '</a>'; })
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/~~([^~]+)~~/g, "<del>$1</del>")
+    .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+  return s.replace(/\u0000(\d+)\u0000/g, function (_, i) { return "<code>" + esc(codes[+i]) + "</code>"; });
+}
+function mdToHtml(md) {
+  var lines = (md || "").replace(/\r/g, "").split("\n"), out = [], i = 0, para = [];
+  function flush() { if (para.length) { out.push("<p>" + inline(para.join(" ")) + "</p>"); para = []; } }
+  while (i < lines.length) {
+    var l = lines[i];
+    if (/^```/.test(l)) {
+      flush(); var buf = []; i++;
+      while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+      out.push("<pre><code>" + esc(buf.join("\n")) + "</code></pre>"); i++; continue;
+    }
+    var h = /^(#{1,4})\s+(.*)$/.exec(l);
+    if (h) { flush(); var lv = Math.max(2, h[1].length); out.push("<h" + lv + ">" + inline(h[2]) + "</h" + lv + ">"); i++; continue; }
+    if (/^\s*[-*]\s+/.test(l)) {
+      flush(); var items = [];
+      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) items.push("<li>" + inline(lines[i++].replace(/^\s*[-*]\s+/, "")) + "</li>");
+      out.push("<ul>" + items.join("") + "</ul>"); continue;
+    }
+    if (/^\s*\d+\.\s+/.test(l)) {
+      flush(); var oi = [];
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) oi.push("<li>" + inline(lines[i++].replace(/^\s*\d+\.\s+/, "")) + "</li>");
+      out.push("<ol>" + oi.join("") + "</ol>"); continue;
+    }
+    if (/^\s*!\[[^\]]*\]\([^)]+\)\s*$/.test(l)) { flush(); out.push(inline(l.trim()).replace("<img ", '<img class="story-img" ')); i++; continue; }
+    if (/^\s*<\/?[a-z][^>]*>/i.test(l)) { flush(); out.push(l); i++; continue; }
+    if (!l.trim()) { flush(); i++; continue; }
+    para.push(l.trim()); i++;
+  }
+  flush();
+  return out.join("\n");
+}
+/* ## 제목 단위로 <section class="section">을 나눔 */
+function sectioned(html) {
+  var parts = html.split(/(?=<h2>)/);
+  return parts.filter(function (p) { return p.trim(); }).map(function (p) {
+    return '      <section class="section">\n        ' + p.trim().replace(/\n/g, "\n        ") + '\n      </section>';
+  }).join("\n\n");
+}
+function mdEmbed(md) { return (md || "").replace(/<\/(script)/gi, "<\\/$1"); }
+function mdExtract(html) {
+  var m = /<script type="text\/markdown" id="md-source">\n?([\s\S]*?)<\/script>/.exec(html || "");
+  return m ? m[1].replace(/<\\\/(script)/gi, "</$1").replace(/\n$/, "") : null;
+}
+function metaExtract(html) {
+  var m = /<script type="application\/json" id="post-meta">([\s\S]*?)<\/script>/.exec(html || "");
+  try { return m ? JSON.parse(m[1]) : null; } catch (e) { return null; }
+}
+var HEAD = function (title) {
+  return '<!DOCTYPE html>\n<html lang="ko">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+    '  <title>' + esc(title) + ' · 벨로</title>\n  <meta name="theme-color" content="#0b0b0c">\n  <link rel="icon" href="../Image/profile.jpg">\n' +
+    '  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">\n' +
+    '  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Silkscreen&display=swap">\n' +
+    '  <link rel="stylesheet" href="../assets/css/site.css">\n  <link rel="stylesheet" href="../assets/css/story.css">\n</head>\n';
+};
+var FOOT = '  <footer id="footer" class="footer"></footer>\n  <script src="../assets/js/data.js"><\/script>\n  <script src="../assets/js/site.js"><\/script>\n';
+
+/* =========================================================
+   글쓰기 창 (데브로그 상세 글 / 개발 비화 공용)
+   ========================================================= */
+var W = null; // { mode, obj, meta, dir, onDone }
+
+function openWriter(opts) {
+  W = opts;
+  $("#wTitle").textContent = opts.heading;
+  $("#wFields").innerHTML = opts.fieldsHtml;
+  $("#wMd").value = opts.md || "";
+  $("#writer").classList.add("on");
+  document.body.style.overflow = "hidden";
+  if (opts.afterOpen) opts.afterOpen();
+  renderPreview();
+  $("#wMd").focus();
+}
+function closeWriter() { $("#writer").classList.remove("on"); document.body.style.overflow = ""; W = null; }
+$("#wCancel").onclick = function () { if (confirm("글쓰기 창을 닫을까요? (적용하지 않은 내용은 사라져요)")) closeWriter(); };
+$("#wSave").onclick = function () { if (W) W.save(); };
+var prevT;
+$("#wMd").addEventListener("input", function () { clearTimeout(prevT); prevT = setTimeout(renderPreview, 150); });
+$("#wFields").addEventListener("input", function () { clearTimeout(prevT); prevT = setTimeout(renderPreview, 150); });
+function renderPreview() {
+  if (!W) return;
+  var prev = $("#wPrev");
+  prev.innerHTML = W.previewHtml(mdToHtml($("#wMd").value));
+  $$("img", prev).forEach(function (im) {
+    var src = im.getAttribute("src"); if (!src || /^(https?:|blob:|data:)/.test(src)) return;
+    im.removeAttribute("src"); setImg(im, W.dir + src);
+  });
+}
+function insertAtCursor(before, after, placeholder) {
+  var ta = $("#wMd"), s = ta.selectionStart, e = ta.selectionEnd, sel = ta.value.slice(s, e) || placeholder || "";
+  ta.setRangeText(before + sel + (after || ""), s, e, "end");
+  ta.focus(); renderPreview();
+}
+$$(".w-tools [data-md]").forEach(function (b) {
+  b.onclick = function () {
+    var k = b.getAttribute("data-md");
+    if (k === "h2") insertAtCursor("\n## ", "\n", "제목");
+    else if (k === "h3") insertAtCursor("\n### ", "\n", "소제목");
+    else if (k === "b") insertAtCursor("**", "**", "굵게");
+    else if (k === "code") insertAtCursor("`", "`", "code");
+    else if (k === "pre") insertAtCursor("\n```\n", "\n```\n", "// 코드");
+    else if (k === "ul") insertAtCursor("\n- ", "\n", "항목");
+    else if (k === "link") insertAtCursor("[", "](https://)", "링크 텍스트");
+    else if (k === "img") pickFile(true, function (files) { files.forEach(writerImage); });
+  };
+});
+function writerImage(file) {
+  if (!W || !file || !/^image\//.test(file.type)) return;
+  readFileBytes(file).then(function (bytes) {
+    W.imgCount = (W.imgCount || 0) + 1;
+    var name = W.imgDir + "/" + Date.now().toString(36) + W.imgCount + "." + extOf(file);
+    addFile(W.dir + name, bytes, "글 이미지");
+    insertAtCursor("\n![](" + name + ")\n", "", "");
+  });
+}
+$("#wMd").addEventListener("paste", function (e) { var f = pasteImage(e); if (f) writerImage(f); });
+$("#wMd").addEventListener("dragover", function (e) { e.preventDefault(); });
+$("#wMd").addEventListener("drop", function (e) {
+  if (!e.dataTransfer.files.length) return;
+  e.preventDefault(); Array.prototype.slice.call(e.dataTransfer.files).forEach(writerImage);
+});
+
+/* ---------- 데브로그 상세 글 ---------- */
+function openPostWriter(d, onDone) {
+  var no = d.no != null ? d.no : "x" + d.date.replace(/\./g, "");
+  var path = "devlog/" + no + ".html";
+  var existing = pendingFiles[path] ? Promise.resolve(pendingFiles[path].content) : backend.read(path);
+  existing.then(function (html) {
+    var md = mdExtract(html), meta = metaExtract(html) || {};
+    if (html && md == null) {
+      if (!confirm(path + " 파일이 이미 있지만 이 도구로 만든 글이 아니에요.\n새로 쓰면 덮어씁니다. 계속할까요?")) return;
+    }
+    openWriter({
+      heading: "상세 글 · " + (d.no != null ? "#" + d.no + " " : "") + d.title,
+      dir: "devlog/", imgDir: "img" + no,
+      md: md != null ? md : "## 무엇을 만들었나\n\n\n## 어떻게 구현했나\n\n\n## 문제와 해결\n\n\n## 다음 작업\n- ",
+      fieldsHtml: '<label class="f full"><span>한 줄 요약 (글 맨 위 강조 박스)</span><input type="text" id="wSummary" value="' + esc(meta.summary || "") + '"></label>' +
+        '<label class="chk full"><input type="checkbox" id="wCover"' + (meta.cover !== false ? " checked" : "") + '> 썸네일을 글 맨 위에 크게 보여주기</label>',
+      previewHtml: function (body) {
+        var cover = $("#wCover").checked && d.thumb ? '<img src="Thumb/' + esc(d.thumb) + '">' : "";
+        var sum = $("#wSummary").value.trim();
+        return '<div class="px">Devlog ' + (d.no != null ? "#" + d.no : "") + (d.project ? " · " + esc(d.project) : "") + '</div>' +
+          '<h1>' + esc(d.title) + '</h1><div class="meta">' + esc(d.date) + (d.end ? " – " + esc(d.end) : "") + ((d.tags || []).length ? " · " + esc(d.tags.join(", ")) : "") + '</div>' +
+          cover + (sum ? '<div class="hl">' + esc(sum) + '</div>' : "") + body;
+      },
+      save: function () {
+        var body = mdToHtml($("#wMd").value), md = $("#wMd").value;
+        var summary = $("#wSummary").value.trim(), cover = $("#wCover").checked;
+        var projQ = d.project ? "?project=" + encodeURIComponent(d.project) : "";
+        var html = HEAD(d.title + " · 데브로그") +
+          '<body data-base="../" data-page="devlogs" data-story>\n  <header id="topbar" class="topbar"></header>\n\n  <main class="container">\n' +
+          '    <a class="back" href="../devlogs.html' + projQ + '">← 개발 일지</a>\n\n    <header class="header">\n' +
+          '      <p class="px-label">Devlog ' + (d.no != null ? "#" + d.no : "") + (d.project ? " · " + esc(d.project) : "") + '</p>\n' +
+          '      <h1>' + esc(d.title) + '</h1>\n      <div class="meta">\n        <span>' + esc(d.date) + (d.end ? " – " + esc(d.end) : "") + '</span>\n' +
+          ((d.tags || []).length ? '        <div class="meta-divider"></div>\n        <span>' + esc(d.tags.join(" · ")) + '</span>\n' : "") +
+          '      </div>\n    </header>\n\n' +
+          (cover && d.thumb ? '    <img class="story-img" src="Thumb/' + esc(d.thumb) + '" alt="' + esc(d.title) + '">\n\n' : "") +
+          '    <article class="content">\n' + (summary ? '      <div class="highlight">' + esc(summary) + '</div>\n\n' : "") +
+          sectioned(body) + '\n    </article>\n  </main>\n\n' + FOOT +
+          '  <script type="application/json" id="post-meta">' + JSON.stringify({ summary: summary, cover: cover }) + '<\/script>\n' +
+          '  <script type="text/markdown" id="md-source">\n' + mdEmbed(md) + '\n<\/script>\n</body>\n</html>\n';
+        addFile(path, html, "상세 글");
+        closeWriter();
+        onDone(path);
+      }
+    });
+  });
+}
+
+/* ---------- 개발 비화 ---------- */
+function openStoryWriter(p, onDone) {
+  var path = /^dev\/.+\.html$/.test(p.dev || "") ? p.dev : "dev/dev" + p.no + ".html";
+  var existing = pendingFiles[path] ? Promise.resolve(pendingFiles[path].content) : backend.read(path);
+  existing.then(function (html) {
+    var md = mdExtract(html), meta = metaExtract(html) || {};
+    if (html && md == null) {
+      if (!confirm(path + " 는 도구 밖에서 만든 페이지라 불러올 수 없어요.\n새로 쓰면 덮어씁니다. 계속할까요?\n(기존 내용을 유지하려면 취소 후 파일을 직접 수정하세요)")) return;
+    }
+    var gallery = (meta.gallery || []).slice();
+    var imgDir = "Dimage" + p.no;
+    openWriter({
+      heading: "개발 비화 · " + p.title,
+      dir: "dev/", imgDir: imgDir,
+      md: md != null ? md : "## 소개\n\n\n## 초기 기획\n\n\n## 개발 중 있었던 문제들\n\n\n## 빌드 완성 후 발견한 문제들\n### 1. \n\n\n## 느낀 점\n",
+      fieldsHtml:
+        '<label class="f"><span>기간</span><input type="text" id="wPeriod" value="' + esc(meta.period || p.period || "") + '" placeholder="2026. 1. 23 ~ 2026. 1. 27"></label>' +
+        '<label class="f"><span>부가 정보</span><input type="text" id="wExtra" value="' + esc(meta.extra || "") + '" placeholder="1인 개발 · 웨루 게임잼 1R"></label>' +
+        '<label class="f full"><span>한 줄 요약 (LOGLINE)</span><input type="text" id="wSummary" value="' + esc(meta.summary || "") + '"></label>' +
+        '<label class="f full"><span>사용한 기술 (쉼표로 구분)</span><input type="text" id="wTech" value="' + esc((meta.tech || ["C#", "Unity"]).join(", ")) + '"></label>' +
+        '<div class="full"><span class="px">스크린샷 갤러리 (위쪽 2열, 4장 권장)</span><div class="gallery-ed" id="wGal" style="margin-top:6px"></div></div>',
+      afterOpen: drawGal,
+      previewHtml: function (body) {
+        var sum = $("#wSummary").value.trim();
+        return '<div class="px">Dev Story · No.' + p2(p.no) + '</div><h1>' + esc(p.title) + ' 개발 비화</h1>' +
+          '<div class="meta">' + esc($("#wPeriod").value) + ($("#wExtra").value ? " · " + esc($("#wExtra").value) : "") + '</div>' +
+          (gallery.length ? '<div class="gal">' + gallery.map(function (g) { return '<img src="' + esc(g) + '">'; }).join("") + '</div>' : "") +
+          (sum ? '<div class="hl">' + esc(sum) + '</div>' : "") + body;
+      },
+      save: function () {
+        var body = mdToHtml($("#wMd").value), mdv = $("#wMd").value;
+        var m = { period: $("#wPeriod").value.trim(), extra: $("#wExtra").value.trim(), summary: $("#wSummary").value.trim(),
+          tech: $("#wTech").value.split(",").map(function (s) { return s.trim(); }).filter(Boolean), gallery: gallery };
+        var html = HEAD(p.title + " 개발 비화") +
+          '<body data-base="../" data-page="projects" data-story data-project="' + esc(p.id) + '">\n  <header id="topbar" class="topbar"></header>\n\n  <main class="container">\n' +
+          '    <a class="back" href="../projects.html">← 프로젝트 목록</a>\n\n    <header class="header">\n' +
+          '      <p class="px-label">Dev Story · No.' + p2(p.no) + '</p>\n      <h1>' + esc(p.title) + ' 개발 비화</h1>\n' +
+          '      <div class="meta">\n        <span>' + esc(m.period) + '</span>\n' +
+          (m.extra ? '        <div class="meta-divider"></div>\n        <span>' + esc(m.extra) + '</span>\n' : "") +
+          '        <span id="storyBadge"></span>\n      </div>\n      <div class="story-actions" id="storyActions"></div>\n    </header>\n\n' +
+          (gallery.length ? '    <section class="gallery">\n' + gallery.map(function (g, i) { return '      <img src="' + esc(g) + '" alt="' + esc(p.title) + ' 스크린샷 ' + (i + 1) + '">'; }).join("\n") + '\n    </section>\n\n' : "") +
+          '    <article class="content">\n' + (m.summary ? '      <div class="highlight">' + esc(m.summary) + '</div>\n\n' : "") +
+          sectioned(body) + '\n\n' +
+          (m.tech.length ? '      <section class="tech-section">\n        <h2>사용한 기술</h2>\n        <div class="tech-tags">\n' +
+            m.tech.map(function (t) { return '          <span class="tech-tag">' + esc(t) + '</span>'; }).join("\n") + '\n        </div>\n      </section>\n' : "") +
+          '    </article>\n\n    <nav class="story-nav" id="storyNav" aria-label="다른 개발 비화"></nav>\n  </main>\n\n' + FOOT +
+          '  <script type="application/json" id="post-meta">' + JSON.stringify(m) + '<\/script>\n' +
+          '  <script type="text/markdown" id="md-source">\n' + mdEmbed(mdv) + '\n<\/script>\n</body>\n</html>\n';
+        addFile(path, html, "개발 비화");
+        closeWriter();
+        onDone(path);
+      }
+    });
+    function drawGal() {
+      var box = $("#wGal");
+      box.innerHTML = gallery.map(function (g, i) {
+        return '<div class="g"><img data-path="dev/' + esc(g) + '" alt=""><div class="x"><button data-gl="' + i + '">◀</button><button data-gx="' + i + '">✕</button></div></div>';
+      }).join("") + '<button class="drop add" id="wGalAdd">+ 이미지</button>';
+      hydrateImgs(box);
+      $$("[data-gx]", box).forEach(function (b) { b.onclick = function () { gallery.splice(+b.getAttribute("data-gx"), 1); drawGal(); renderPreview(); }; });
+      $$("[data-gl]", box).forEach(function (b) { b.onclick = function () { var i = +b.getAttribute("data-gl"); if (!i) return; var t = gallery[i - 1]; gallery[i - 1] = gallery[i]; gallery[i] = t; drawGal(); renderPreview(); }; });
+      $("#wGalAdd").onclick = function () {
+        pickFile(true, function (files) {
+          Promise.all(files.map(function (f, k) {
+            return readFileBytes(f).then(function (bytes) {
+              var n = imgDir + "/" + Date.now().toString(36) + k + "." + extOf(f);
+              addFile("dev/" + n, bytes, "갤러리"); gallery.push(n);
+            });
+          })).then(function () { drawGal(); renderPreview(); });
+        });
+      };
+    }
+  });
+}
+
+/* =========================================================
+   게시
+   ========================================================= */
+$("#publishBtn").onclick = function () {
+  var files = Object.keys(pendingFiles).map(function (p) { return { path: p, note: pendingFiles[p].note }; });
+  if (dataDirty) files.unshift({ path: DATA_PATH, note: "데이터" });
+  $("#pubFiles").innerHTML = files.map(function (f) { return '<li><span>' + esc(f.path) + '</span><small>' + esc(f.note) + '</small></li>'; }).join("");
+  $("#pubDesc").textContent = backend.kind === "gh"
+    ? "아래 파일을 커밋 하나로 저장소에 올립니다. 사이트에는 보통 1분 안에 반영돼요."
+    : "아래 파일을 폴더에 저장합니다. 사이트에 올리려면 GitHub Desktop 등으로 커밋 · 푸시하세요.";
+  $("#pubMsg").value = changes.length ? changes.slice(0, 4).join(", ") + (changes.length > 4 ? " 외 " + (changes.length - 4) + "건" : "") : "사이트 업데이트";
+  $("#pubMsg").parentNode.style.display = backend.kind === "gh" ? "" : "none";
+  $("#pubErr").textContent = "";
+  $("#pubModal").classList.add("on");
+};
+$("#pubCancel").onclick = function () { $("#pubModal").classList.remove("on"); };
+$("#pubGo").onclick = function () {
+  var btn = this; btn.disabled = true; btn.textContent = "게시 중…";
+  var files = Object.keys(pendingFiles).map(function (p) { return { path: p, content: pendingFiles[p].content }; });
+  if (dataDirty) { sortLogs(); files.unshift({ path: DATA_PATH, content: serializeData(S) }); }
+  backend.writeAll(files, $("#pubMsg").value.trim() || "사이트 업데이트").then(function () {
+    Object.keys(pendingFiles).forEach(function (p) { if (pendingFiles[p].blobUrl) URL.revokeObjectURL(pendingFiles[p].blobUrl); });
+    pendingFiles = {}; dataDirty = false; changes = [];
+    updatePending();
+    $("#pubModal").classList.remove("on");
+    toast(backend.kind === "gh" ? "게시 완료! 1분쯤 뒤 사이트에서 확인하세요." : "폴더에 저장했어요. 커밋 · 푸시하면 반영됩니다.", "ok");
+  }).catch(function (e) {
+    $("#pubErr").textContent = e.message;
+  }).then(function () { btn.disabled = false; btn.textContent = "게시"; });
+};
+
+document.addEventListener("keydown", function (e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    e.preventDefault();
+    if (W) W.save(); else if ($("#edApply")) $("#edApply").click();
+  }
+});
+
+/* 테스트용 훅 */
+window.__admin = { start: start, LocalBackend: LocalBackend, GitHubBackend: GitHubBackend, serializeData: serializeData, parseData: parseData, mdToHtml: mdToHtml,
+  state: function () { return { S: S, pending: pendingFiles, dirty: dataDirty }; } };
+})();
+</script>
+</body>
+</html>
