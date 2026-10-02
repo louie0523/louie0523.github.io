@@ -9,7 +9,7 @@
   <meta property="og:title" content="벨로 · Game Developer">
   <meta property="og:description" content="Unity 게임 개발자 벨로의 포트폴리오. 진행 중인 프로젝트, 수상 경력, 게임잼, 개발 일지.">
   <meta property="og:image" content="Image/profile.jpg">
-  <meta name="theme-color" content="#0b0b0c">
+  <meta name="theme-color" content="#0d0c12">
   <link rel="icon" href="Image/profile.jpg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,49 +17,68 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Silkscreen&display=swap">
   <link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body data-page="home">
+<body data-page="home" class="play">
   <header id="topbar" class="topbar"></header>
 
   <main>
-    <!-- ============ HERO ============ -->
-    <section class="hero wrap">
+    <!-- ============ HERO : 플레이어 + 모니터 ============ -->
+    <section class="hero2 wrap">
       <div>
-        <p class="px-label">Player 1 · Game Developer</p>
-        <h1 class="hero-name">벨로<span>BELLO</span></h1>
+        <p class="ready"><i></i>PLAYER 1 READY</p>
+        <h1 class="hero-name" id="heroName">벨로<span>BELLO</span></h1>
         <p class="hero-lead">새로운 메커니즘을 구현하고, 세계관을 쌓아 올리는 걸 좋아하는 Unity 게임 개발자입니다.</p>
         <p class="hero-sub">공포, 퍼즐, 액션, 멀티플레이까지 장르를 가리지 않고 만들어 보고 있습니다. 언젠가 저만의 독특한 세계관을 가진 JRPG를 만드는 것이 목표입니다.</p>
-
-        <nav class="menu" aria-label="바로가기">
-          <a href="#featured"><span class="cur">▶</span>진행 중인 프로젝트<em>Continue</em></a>
-          <a href="projects.html"><span class="cur">▶</span>전체 프로젝트<em>Stage Select</em></a>
-          <a href="devlogs.html"><span class="cur">▶</span>개발 일지<em>Patch Notes</em></a>
-          <a href="#contact"><span class="cur">▶</span>연락하기<em>Contact</em></a>
-        </nav>
+        <div class="hud-stats" id="hudStats"></div>
+        <div class="cta-row">
+          <a class="btn pri big press" href="#shelf"><span class="arr">▶</span> PRESS START</a>
+          <a class="btn big" href="#contact">연락하기</a>
+        </div>
       </div>
 
-      <aside class="player-card hud" aria-label="프로필 요약">
-        <div class="pc-head"><span class="px-label">Player Data</span><span class="px-label">Slot 01</span></div>
-        <div class="pc-id">
-          <div class="pc-avatar"><img src="Image/profile.jpg" alt="벨로 프로필 사진" onerror="this.remove()"></div>
-          <div>
-            <strong>벨로</strong>
-            <span class="role">Unity Game Developer</span>
-            <span class="aff" id="pcAff"></span>
+      <div class="monitor" id="monitor" aria-label="BELLO OS 바탕화면">
+        <div class="mon-body" data-tilt="3">
+          <div class="mon-screen" id="monScreen">
+            <div class="boot" id="boot" aria-hidden="true"></div>
+            <div class="desk" id="desk">
+              <nav class="desk-icons" id="deskIcons" aria-label="바로가기 앱"></nav>
+              <div class="win" id="winPlayer">
+                <div class="win-bar"><span>PLAYER.EXE</span><button type="button" data-win-min aria-label="최소화">_</button><button type="button" data-win-close aria-label="닫기">×</button></div>
+                <div class="win-body">
+                  <div class="win-av"><img src="Image/profile.jpg" alt="벨로 프로필 사진" onerror="this.remove()"></div>
+                  <div>
+                    <strong>벨로</strong>
+                    <span class="role">Unity Game Developer</span>
+                    <span class="role" id="pcAff" style="display:block"></span>
+                  </div>
+                  <a class="win-quest" id="pcQuest" href="#shelf"></a>
+                </div>
+              </div>
+              <div class="taskbar">
+                <span class="tb-start">◆ START</span>
+                <button type="button" class="tb-item on" id="tbPlayer">PLAYER.EXE</button>
+                <span class="tb-clock" id="tbClock"></span>
+              </div>
+            </div>
           </div>
+          <div class="mon-chin"><span class="mon-brand">BELLOTRON 2026</span><span class="mon-knobs"><i></i><i></i><i class="led"></i></span></div>
         </div>
-        <dl class="pc-stats" id="pcStats"></dl>
-        <a class="pc-quest" id="pcQuest" href="#featured"></a>
-        <div class="pc-foot"><span>MAIN · Unity / C#</span><span>SINCE 2024</span></div>
-      </aside>
+        <div class="mon-stand"></div>
+        <div class="mon-base"></div>
+      </div>
     </section>
 
-    <!-- ============ FEATURED ============ -->
-    <section class="sec wrap" id="featured">
+    <!-- ============ 게임 진열장 (프로젝트) ============ -->
+    <section class="sec wrap" id="shelf">
       <div class="sec-head">
-        <span class="sec-no">01</span><h2>대표 프로젝트</h2><span class="px-label">Now Playing</span>
-        <a class="more" href="projects.html">전체 보기 →</a>
+        <span class="sec-no">01</span><h2>게임 진열장</h2><span class="px-label">Insert Disc</span>
+        <a class="more" href="projects.html">전체 <span id="projCount"></span>개 목록 →</a>
       </div>
-      <div class="feat-grid" id="featGrid"></div>
+      <div class="deck" id="deck" data-tilt="1.5"></div>
+      <div class="shelf-wrap">
+        <div class="shelf" id="shelfRow" role="listbox" aria-label="프로젝트 디스크"></div>
+        <div class="shelf-plank"></div>
+      </div>
+      <div class="shelf-hint"><span>디스크를 골라 넣기 · <span class="kbd">←</span><span class="kbd">→</span> 로 고르고 <span class="kbd">Enter</span> 실행</span><span>♪ = 작업하며 들은 곡 수록</span></div>
     </section>
 
     <!-- ============ AWARDS ============ -->
@@ -79,35 +98,26 @@
       </div>
     </section>
 
-    <!-- ============ PROJECTS ============ -->
-    <section class="sec wrap" id="projects">
-      <div class="sec-head">
-        <span class="sec-no">03</span><h2>프로젝트</h2><span class="px-label">Stage Select</span>
-        <a class="more" href="projects.html">전체 <span id="projCount"></span>개 보기 →</a>
-      </div>
-      <div class="proj-grid" id="projPreview"></div>
-    </section>
-
     <!-- ============ DEVLOG ============ -->
     <section class="sec wrap" id="devlog">
       <div class="sec-head">
-        <span class="sec-no">04</span><h2>최근 개발 일지</h2><span class="px-label">Patch Notes</span>
+        <span class="sec-no">03</span><h2>최근 개발 일지</h2><span class="px-label">Patch Notes</span>
         <a class="more" href="devlogs.html">전체 <span id="logCount"></span>개 보기 →</a>
       </div>
       <ul class="rlog-list" id="recentLogs"></ul>
     </section>
 
-    <!-- ============ LOADOUT ============ -->
+    <!-- ============ INVENTORY ============ -->
     <section class="sec wrap" id="stack">
       <div class="sec-head">
-        <span class="sec-no">05</span><h2>다루는 도구</h2><span class="px-label">Loadout</span>
+        <span class="sec-no">04</span><h2>인벤토리</h2><span class="px-label">Loadout</span>
       </div>
-      <div class="loadout">
-        <div class="slot"><span class="px-label">Engine</span><strong>Unity</strong><p>2D · 3D · URP<br>Cinemachine · Post-Processing</p></div>
-        <div class="slot"><span class="px-label">Language</span><strong>C#</strong><p>게임 시스템 · 매니저 구조<br>ScriptableObject</p></div>
-        <div class="slot"><span class="px-label">Network</span><strong>Photon Fusion 2</strong><p>Shared Mode 기반<br>멀티플레이</p></div>
-        <div class="slot"><span class="px-label">Systems</span><strong>연출 · 연동</strong><p>컷씬 · 애니메이팅<br>구글 스프레드시트 협업</p></div>
-        <div class="slot"><span class="px-label">Etc</span><strong>UGC · Web</strong><p>원신 별바다 세계 유즈맵<br>HTML / JS 툴</p></div>
+      <div class="inv">
+        <div class="item legend" data-tilt="6"><span class="rar">LEGENDARY · ENGINE</span><strong>Unity</strong><p>2D · 3D · URP<br>Cinemachine · Post-Processing</p></div>
+        <div class="item legend" data-tilt="6"><span class="rar">LEGENDARY · LANGUAGE</span><strong>C#</strong><p>게임 시스템 · 매니저 구조<br>ScriptableObject</p></div>
+        <div class="item epic" data-tilt="6"><span class="rar">EPIC · NETWORK</span><strong>Photon Fusion 2</strong><p>Shared Mode 기반<br>멀티플레이</p></div>
+        <div class="item rare" data-tilt="6"><span class="rar">RARE · SYSTEMS</span><strong>연출 · 연동</strong><p>컷씬 · 애니메이팅<br>구글 스프레드시트 협업</p></div>
+        <div class="item rare" data-tilt="6"><span class="rar">RARE · ETC</span><strong>UGC · Web</strong><p>원신 별바다 세계 유즈맵<br>HTML / JS 툴</p></div>
       </div>
     </section>
 
@@ -115,14 +125,14 @@
     <section class="sec wrap" id="contact">
       <div class="contact hud">
         <div>
-          <p class="px-label">Contact</p>
+          <p class="coin-row"><i class="coin"></i>INSERT COIN TO CONTINUE</p>
           <h2>궁금하거나 문의할것이 있다면<br>편하게 연락 주세요.</h2>
           <p>협업, 게임잼 팀업, 플레이 피드백 모두 환영합니다.</p>
         </div>
         <div>
           <div class="mail-row">
             <a class="mail" id="mailLink" href="mailto:louie07230723@gmail.com">louie07230723@gmail.com</a>
-            <button class="btn" id="copyMail" type="button">주소 복사</button>
+            <button class="btn pri" id="copyMail" type="button">주소 복사</button>
           </div>
           <div class="socials" id="socials"></div>
         </div>
