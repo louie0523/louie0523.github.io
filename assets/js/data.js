@@ -1,7 +1,7 @@
 /* =========================================================
    사이트 데이터 — 관리자 페이지(admin/)에서 편집하거나 직접 수정하세요.
    이미지 경로는 사이트 루트(index.html 위치) 기준입니다.
-   마지막 저장: 2026. 10. 2. 오전 4:21:27
+   마지막 저장: 2026. 10. 3. 오전 1:13:12
    ========================================================= */
 window.SITE = {
 
@@ -11,7 +11,6 @@ window.SITE = {
     "nameEn": "BELLO",
     "role": "Unity Game Developer",
     "email": "louie07230723@gmail.com",
-    "affiliation": "",
     "avatar": "Image/profile.jpg",
     "since": 2024,
     "socials": [
@@ -35,7 +34,9 @@ window.SITE = {
         "label": "itch.io",
         "url": "https://bellocity.itch.io"
       }
-    ]
+    ],
+    "secret": "업 업 다운 다운 레프트 라이트 레프트 라이프 B A!",
+    "affiliation": ""
   },
 
   /* 메인 상단 대표작 (projects의 id). 첫 번째가 가장 크게 표시 */
