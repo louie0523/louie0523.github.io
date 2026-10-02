@@ -185,6 +185,63 @@ details.help ol{margin:8px 0 0 18px;display:grid;gap:4px}
   .imgf{grid-template-columns:1fr}
   .grid2{grid-template-columns:1fr}
 }
+/* ---- CD 미리보기 (사이트와 같은 스타일) ---- */
+:root{--f-pixel:var(--fp);--text-3:var(--text3)}
+.cd-prev{display:flex;gap:16px;align-items:center}
+.cd-prev .cdx{width:150px;height:150px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))}
+.checks{display:flex;flex-wrap:wrap;gap:6px 14px}
+.cdx {
+  --rim: #0a0a0d;
+  position: relative; display: block; border-radius: 50%; overflow: hidden; container-type: inline-size;
+  background: #1b1922; box-shadow: none;
+  -webkit-mask: radial-gradient(circle closest-side, transparent 0 12%, #000 12.6%);
+          mask: radial-gradient(circle closest-side, transparent 0 12%, #000 12.6%);
+}
+.cdx::before, .cdx::after { content: none; }
+.cdx > i { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
+.cdx .art { background: var(--img, none) center / cover no-repeat, linear-gradient(135deg, #2e2b38, #17151d); }
+.cdx .sheen {
+  background:
+    conic-gradient(from 200deg, transparent 0 16%, rgba(255, 255, 255, .2) 23%, transparent 30%, transparent 66%, rgba(255, 255, 255, .13) 73%, transparent 80%),
+    radial-gradient(circle closest-side, transparent 0 60%, rgba(255, 255, 255, .05) 61% 62%, transparent 63% 78%, rgba(255, 255, 255, .05) 79% 80%, transparent 81%);
+}
+.cdx .ring { /* 투명 링 → 은색 허브 → 스택 링 → 인쇄면 → 바깥 테두리 */
+  background: radial-gradient(circle closest-side,
+    transparent 0 12.6%,
+    rgba(214, 220, 232, .55) 12.6% 14.2%,
+    rgba(120, 126, 140, .7) 14.2% 14.8%,
+    rgba(206, 210, 220, .92) 14.8% 24%,
+    rgba(255, 255, 255, .95) 24% 24.8%,
+    rgba(176, 181, 193, .95) 24.8% 31%,
+    rgba(12, 12, 16, .65) 31% 32.2%,
+    rgba(0, 0, 0, .12) 32.2% 33.5%,
+    transparent 33.5% 94.6%,
+    rgba(0, 0, 0, .35) 94.6% 95.2%,
+    var(--rim) 95.2% 100%);
+}
+.cdx em { position: absolute; inset: 0; display: grid; place-items: center; padding: 0 20%; padding-top: 46%; font-style: normal; font-size: 8cqw; font-weight: 700; line-height: 1.25; color: var(--text-3); text-align: center; }
+.cdx .cdtext { display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12%; }
+.cdx .cdtext span { font-family: var(--f-pixel); font-size: 5.6cqw; letter-spacing: .14em; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .8); white-space: nowrap; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
+
+/* 효과 (관리자에서 프로젝트별로 선택) */
+.cdx .f-holo { background: conic-gradient(from 0deg, #ff5fa2, #ffd23f, #39e3c5, #6aa8ff, #b18cff, #ff5fa2); mix-blend-mode: color-dodge; opacity: .42; }
+.cdx .f-gloss { background: linear-gradient(118deg, transparent 32%, rgba(255, 255, 255, .5) 44%, rgba(255, 255, 255, .08) 52%, transparent 60%), radial-gradient(circle at 30% 24%, rgba(255, 255, 255, .35), transparent 34%); mix-blend-mode: screen; }
+.cdx .f-vinyl { background: repeating-radial-gradient(circle, rgba(0, 0, 0, .28) 0 1px, rgba(255, 255, 255, .04) 1px 2px, transparent 2px 4px); }
+.cdx .f-glitter {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, .95) 0 .7px, transparent 1.2px) 0 0 / 11px 11px,
+    radial-gradient(circle, rgba(255, 240, 200, .9) 0 .6px, transparent 1.1px) 5px 6px / 13px 13px;
+  mix-blend-mode: screen; opacity: .55; animation: twinkle 2.4s ease-in-out infinite;
+}
+@keyframes twinkle { 50% { opacity: .2; } }
+.cdx.fx-matte .sheen { display: none; }
+.cdx.fx-matte .art { filter: saturate(.85) contrast(.95); }
+.cdx.fx-mono .art { filter: grayscale(1) contrast(1.08); }
+.cdx.fx-full .ring { /* 그림 디스크: 가운데까지 그림, 구멍과 테두리만 */
+  background: radial-gradient(circle closest-side, transparent 0 12.6%, rgba(255, 255, 255, .45) 12.6% 13.6%, transparent 13.6% 95%, var(--rim) 95.4% 100%);
+}
+
+
 </style>
 </head>
 <body>
@@ -721,6 +778,10 @@ function buildForm(obj, spec, root) {
           var val = Array.isArray(o) ? o[0] : o, lab = Array.isArray(o) ? o[1] : o;
           return '<option value="' + esc(val) + '"' + (String(v == null ? "" : v) === String(val) ? " selected" : "") + '>' + esc(lab) + '</option>';
         }).join("") + '</select>'; break;
+      case "checks":
+        inner = '<div class="checks" id="' + id + '">' + f.opts.map(function (o) {
+          return '<label class="chk"><input type="checkbox" value="' + esc(o[0]) + '"' + ((v || []).indexOf(o[0]) >= 0 ? " checked" : "") + '> ' + esc(o[1]) + '</label>';
+        }).join("") + '</div>'; break;
       case "hidden":
         return '<input type="hidden" id="' + id + '" value="' + esc(v == null ? "" : v) + '">';
       case "check":
@@ -758,6 +819,7 @@ function readForm(obj, spec, root) {
       case "date": v = dashToDot(el.value) || undefined; break;
       case "check": v = el.checked || undefined; break;
       case "tags": v = JSON.parse(el.getAttribute("data-tags") || "[]"); break;
+      case "checks": v = $$("input:checked", el).map(function (c) { return c.value; }); break;
       case "lines":
         v = el.value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
         if (f.fromLine) v = v.map(f.fromLine);
@@ -846,7 +908,7 @@ function initImage(f, root, obj) {
       var target = f.target(file, root);        // { path, value }
       addFile(target.path, bytes, "이미지");
       txt.value = target.value;
-      show();
+      txt.dispatchEvent(new Event("change", { bubbles: true }));
       var pin = f.posterKey ? $("#f_" + f.posterKey, root) : null;
       if (pin) {
         if (/\.gif$/i.test(target.path)) {
@@ -964,10 +1026,11 @@ EDITORS.devlogs = function (d) {
     { k: "no", label: "번호", type: "number", cls: "c1", help: "자동으로 다음 번호" },
     { k: "date", label: "날짜", type: "date", cls: "c2" },
     { k: "end", label: "끝 날짜 (여러 날이면)", type: "date", cls: "c2" },
-    { k: "kind", label: "종류", type: "select", cls: "c1", opts: [["", "일반"], ["interlude", "인터루드(공백 요약)"]] },
+    { k: "kind", label: "종류", type: "select", cls: "c1", opts: [["", "개발 일지"], ["diary", "개인 일지"], ["event", "행사 기록"], ["interlude", "인터루드(공백 요약)"]] },
     { k: "title", label: "제목", cls: "c6", ph: "예: 영혼 상점 UI 1차 구현" },
-    { k: "project", label: "프로젝트", type: "list", cls: "c3", opts: logProjects(), ph: "목록에서 고르거나 새 이름 입력" },
+    { k: "project", label: "프로젝트 (없으면 비워두기)", type: "list", cls: "c3", opts: logProjects(), ph: "개인 일지 · 행사 기록은 비워도 돼요" },
     { k: "minor", label: "짧은 기록 (휴식 등, 개수에 안 셈)", type: "check", cls: "c3" },
+    { k: "place", label: "장소 (행사 기록일 때)", cls: "c6", ph: "예: BIC 2026 · 부산 벡스코" },
     { k: "tags", label: "태그", type: "tags", cls: "c6", sugg: allTags },
     { k: "desc", label: "요약 (목록에 보이는 글)", type: "textarea", cls: "c6", rows: 4, help: "한두 문단. &lt;br&gt;, &lt;b&gt;, &lt;a&gt;, &lt;del&gt; 같은 HTML도 쓸 수 있어요." },
     { k: "thumb", label: "썸네일", type: "image", cls: "c6",
@@ -1032,12 +1095,22 @@ EDITORS.projects = function (p) {
     { k: "long", label: "긴 설명 (대표작 · 상세 팝업, 선택)", type: "textarea", cls: "c6", rows: 3 },
     { k: "points", label: "핵심 포인트 (대표작 첫 칸에 표시, 한 줄에 하나)", type: "lines", cls: "c6", rows: 3 },
     { k: "tags", label: "태그", type: "tags", cls: "c6", sugg: allProjTags },
+    { k: "bgm", label: "작업하며 들은 곡 (한 줄에 하나: 곡 제목 | 유튜브 링크)", type: "lines", cls: "c6", rows: 3,
+      ph: "곡 제목 - 아티스트 | https://youtu.be/xxxxxxxxxxx",
+      toLine: function (t) { return (t.title || "") + " | " + (t.url || ""); },
+      fromLine: function (l) { var i = l.lastIndexOf("|"); return i < 0 ? { title: "", url: l.trim() } : { title: l.slice(0, i).trim(), url: l.slice(i + 1).trim() }; },
+      help: "메인 진열장에서 이 디스크를 넣으면 수록곡으로 나오고, 누르면 재생돼요. 링크 끝에 ?t=60 처럼 시작 초를 붙일 수 있어요." },
     { k: "img", label: "대표 이미지", type: "image", cls: "c6",
       pathOf: function (v) { return v || ""; },
       target: function (file, root) { var no = $("#f_no", root).value || nextProjNo(); var n = "Image/project" + no + "." + extOf(file); return { path: n, value: n }; },
       posterKey: "imgPoster", posterFull: true,
       help: "파일은 <b>Image/project번호.확장자</b>로 저장됩니다. 16:9 권장. GIF면 정지 이미지를 자동으로 만들어요.", ph: "Image/project17.png" },
     { k: "imgPoster", type: "hidden" },
+    { type: "section", label: "CD 꾸미기 (메인 진열장 디스크)" },
+    { k: "cdFx", label: "효과 (여러 개 선택 가능)", type: "checks", cls: "c4",
+      opts: [["holo", "홀로그램"], ["gloss", "광택"], ["vinyl", "LP 결"], ["glitter", "반짝이"], ["matte", "무광"], ["mono", "흑백"], ["full", "가운데까지 그림"]] },
+    { k: "cdRim", label: "테두리 색", type: "select", cls: "c2", opts: [["", "검정 (기본)"], ["silver", "은색"], ["white", "흰색"], ["gold", "금색"], ["accent", "주황"], ["none", "없음"]] },
+    { k: "cdText", label: "디스크에 인쇄할 문구 (선택)", cls: "c3", ph: "BELLO · 2026" },
     { type: "section", label: "링크" },
     { k: "link", label: "게임 링크", cls: "c3", ph: "https://bellocity.itch.io/..." },
     { k: "linkLabel", label: "링크 버튼 이름", cls: "c1", ph: "플레이" },
@@ -1055,6 +1128,23 @@ EDITORS.projects = function (p) {
     '<button class="btn" id="edStory">' + (/^dev\//.test(p.dev || "") ? "개발 비화 수정" : "개발 비화 쓰기") + '</button>');
   if (!p.dev) p.dev = "#"; if (!p.link) p.link = "#";
   buildForm(p, spec, form);
+  // CD 미리보기
+  var cdWrap = document.createElement("div"); cdWrap.className = "c3 cd-prev";
+  cdWrap.innerHTML = '<span class="px">미리보기</span><span id="cdPrev"></span>';
+  var anchor = $("#f_cdText", form).closest("label");
+  anchor.parentNode.insertBefore(cdWrap, anchor.nextSibling);
+  function drawCd() {
+    var q = readForm(clone(p), spec, form);
+    var RIMS = { black: "#0a0a0d", silver: "#b9bec9", white: "#f1f1f4", gold: "#d6ae55", accent: "#ff5b2e", none: "transparent" };
+    var fx = q.cdFx || [], img = q.imgPoster && /\.gif$/i.test(q.img || "") ? q.imgPoster : q.img;
+    var html = '<span class="cdx' + fx.map(function (f) { return " fx-" + f; }).join("") + (img ? "" : " blank") + '" style="--rim:' + (RIMS[q.cdRim || "black"]) + '">' +
+      '<i class="art"></i><i class="sheen"></i>' + fx.map(function (f) { return '<i class="fx f-' + f + '"></i>'; }).join("") +
+      (img ? "" : '<em>' + esc(q.title || "") + '</em>') + (q.cdText ? '<i class="cdtext"><span>' + esc(q.cdText) + '</span></i>' : "") + '<i class="ring"></i></span>';
+    $("#cdPrev").innerHTML = html;
+    if (img) imgSrc(img).then(function (u) { var el = $("#cdPrev .cdx"); if (el && u) el.style.setProperty("--img", "url('" + u + "')"); });
+  }
+  form.addEventListener("input", drawCd); form.addEventListener("change", drawCd);
+  drawCd();
   function finalize() {
     readForm(p, spec, form);
     if (!p.id) p.id = slug(p.title) || "project-" + p.no;
@@ -1145,6 +1235,14 @@ function editProfile() {
       toLine: function (s) { return [s.id, s.label, s.url].join(" | "); },
       fromLine: function (l) { var p = l.split("|").map(function (x) { return x.trim(); }); return { id: p[0], label: p[1] || p[0], url: p[2] || "" }; },
       help: "id가 youtube · github · instagram · itch 이면 아이콘이 붙어요." },
+    { type: "section", label: "이스터에그 (↑↑↓↓←→←→BA)" },
+    { k: "secret", label: "secret.txt 내용 (메인 모니터의 비밀 문서)", type: "textarea", cls: "c6", rows: 5,
+      ph: "비워두면 기본 문구(코나미 커맨드 힌트)가 나와요.", help: "줄바꿈은 그대로 보이고, **이렇게** 감싸면 굵게 표시돼요." },
+    { k: "burger", label: "떨어질 햄버거 이미지", type: "image", cls: "c4",
+      pathOf: function (v) { return v || ""; },
+      target: function (file) { var n = "Image/burger." + extOf(file); return { path: n, value: n }; },
+      help: "배경이 투명한 PNG 권장. 비우면 Image/burger.png를 쓰고, 그것도 없으면 기본 햄버거 그림이 나와요.", ph: "Image/burger.png" },
+    { k: "burgerCount", label: "한 번에 떨어지는 개수", type: "number", cls: "c2", help: "기본 36, 최대 120" },
     { type: "section", label: "메인 대표작 (위에서부터 1번이 가장 크게)" }
   ];
   buildForm(P, spec, form);
