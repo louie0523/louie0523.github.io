@@ -112,6 +112,7 @@ function siteMain() {
         '<nav class="nav" aria-label="주요 메뉴">' +
         '<a href="' + BASE + 'projects.html" data-k="projects">프로젝트</a>' +
         '<a href="' + BASE + 'devlogs.html" data-k="devlogs">데브로그</a>' +
+        '<a href="' + BASE + 'notes.html" data-k="notes">노트</a>' +
         '<a href="' + BASE + 'index.html#awards" data-k="awards" class="hide-sm">수상</a>' +
         '<a href="' + BASE + 'index.html#contact" data-k="contact">연락</a>' +
         '</nav>' +
@@ -236,6 +237,13 @@ function siteMain() {
       ach("mail");
     });
     if ($("#hudStats") || $("#shelfRow")) playHome(P, logCount);
+    var rn = $("#recentNotes");
+    if (rn) {
+      var ns = notesSorted().slice(0, 3);
+      var sec = rn.closest("section");
+      if (!ns.length) { if (sec) sec.style.display = "none"; }
+      else { rn.innerHTML = ns.map(function (n) { return noteCard(n, true); }).join(""); set("noteCount", (S.notes || []).length); }
+    }
   }
 
   /* =========================================================
@@ -255,6 +263,7 @@ function siteMain() {
     cart: ["..CCCCCCCC..", "..CccccccC..", "..CcKKKKcC..", "..CcKWWKcC..", "..CcKKKKcC..", "..CccccccC..", "..CcCcCcCC..", "..CCCCCCCC..", "...C.C.C....", "............"],
     secret: ["..KKKKKK....", "..KWWWWKK...", "..KWWWWKWK..", "..KWOOOWKK..", "..KWWWOWWK..", "..KWWOOWWK..", "..KWWWWWWK..", "..KWWOWWWK..", "..KWWWWWWK..", "..KKKKKKKK.."],
     star: ["......y.....", ".....yy.....", ".....yyy....", "yyyyyyyyyyyy", ".yyyyyyyyyy.", "..yyyyyyyy..", "..yyyyyyyy..", ".yyyy..yyyy.", ".yyy....yyy.", ".y........y."],
+    memo: ["YYYYYYYYYY..", "YyyyyyyyyY..", "YyKKKKKKyY..", "YyyyyyyyyY..", "YyKKKKKyyY..", "YyyyyyyyyY..", "YyKKKKKKyYY.", "YyyyyyyyyyYY", "YyyyyyyyYYY.", "YYYYYYYYY..."],
     disc: ["...SSSSSS...", "..SccccccS..", ".SccCCCCccS.", ".ScCC..CCcS.", ".ScC.KK.CcS.", ".ScC.KK.CcS.", ".ScCC..CCcS.", ".SccCCCCccS.", "..SccccccS..", "...SSSSSS..."]
   };
   function px(name) {
@@ -289,7 +298,7 @@ function siteMain() {
       { label: "프로젝트", icon: "folder", href: "#shelf" },
       { label: "데브로그", icon: "note", href: BASE + "devlogs.html" },
       { label: "수상", icon: "trophy", href: "#awards" },
-      { label: "전체 목록", icon: "disc", href: BASE + "projects.html" },
+      { label: "노트", icon: "memo", href: BASE + "notes.html" },
       { label: "메일", icon: "mail", href: "#contact" }
     ];
     (P.socials || []).forEach(function (s) { apps.push({ label: s.label, icon: socialIcon[s.id] || "cart", href: s.url, ext: true }); });
@@ -401,7 +410,13 @@ function siteMain() {
   /* YouTube 링크 → 영상 id / 시작 초 */
   function ytId(u) { var m = /(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([\w-]{11})/.exec(u || ""); return m ? m[1] : null; }
   function ytStart(u) { var m = /[?&](?:t|start)=(\d+)/.exec(u || ""); return m ? +m[1] : 0; }
-  function tracksOf(p) { var b = p.bgm; if (!b) return []; return (Array.isArray(b) ? b : [b]).filter(function (t) { return t && ytId(t.url); }); }
+  function ytList(u) { var m = /[?&]list=([\w-]+)/.exec(u || ""); return m ? m[1] : null; }
+  function ytEmbed(u) {   // 영상 / 재생목록 / 재생목록 속 영상 모두 지원
+    var id = ytId(u), list = ytList(u), st = ytStart(u);
+    var q = "autoplay=1&rel=0&playsinline=1" + (st ? "&start=" + st : "") + (list ? "&list=" + list : "");
+    return "https://www.youtube-nocookie.com/embed/" + (id || "videoseries") + "?" + q;
+  }
+  function tracksOf(p) { var b = p.bgm; if (!b) return []; return (Array.isArray(b) ? b : [b]).filter(function (t) { return t && (ytId(t.url) || ytList(t.url)); }); }
 
   /* ---------- CD 디스크 (공용) ----------
      project.cdFx   : ["holo","gloss","vinyl","glitter","matte","mono","full"] 중 여러 개
@@ -458,8 +473,7 @@ function siteMain() {
       var btn = $$(".trk", deck)[k];
       if (btn && btn.classList.contains("on")) { stopMusic(); return; }
       stopMusic();
-      var id = ytId(t.url), st = ytStart(t.url);
-      $("#ytBox", deck).innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1' + (st ? "&start=" + st : "") + '" title="' + esc(t.title || "수록곡") + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+      $("#ytBox", deck).innerHTML = '<iframe src="' + esc(ytEmbed(t.url)) + '" title="' + esc(t.title || "수록곡") + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
       $(".disc2", deck).classList.add("playing");
       if (btn) { btn.classList.add("on"); btn.querySelector(".st").textContent = "■"; }
       $(".player-led span", deck).textContent = "TRACK " + pad(k + 1);
@@ -478,7 +492,7 @@ function siteMain() {
         tags(p.tags) + actions(p) +
         (tr.length ? '<div class="tracks"><div class="tr-head">작업하며 들은 곡</div>' +
           tr.map(function (t, k) {
-            return '<button type="button" class="trk" data-tr="' + k + '"><span class="no">' + pad(k + 1) + '</span><span class="tt">' + esc(t.title || "Track " + (k + 1)) + '</span><span class="st">▶</span></button>';
+            return '<button type="button" class="trk" data-tr="' + k + '"><span class="no">' + pad(k + 1) + '</span><span class="tt">' + esc(t.title || (ytId(t.url) ? "Track " + (k + 1) : "재생목록")) + '</span><span class="st">▶</span></button>';
           }).join("") + '<div class="yt" id="ytBox"></div></div>' : "") +
         '</div>';
       $$(".trk", deck).forEach(function (b) { b.onclick = function () { playTrack(p, +b.getAttribute("data-tr")); }; });
@@ -540,6 +554,63 @@ function siteMain() {
       else if (e.key === "ArrowLeft") { e.preventDefault(); select(Math.max(0, cur - 1), true); }
     });
     if (list.length) select(0);
+  }
+
+  /* =========================================================
+     노트 (팁 · 트러블슈팅 · 코드 정리 · 일상)
+     ========================================================= */
+  var NOTE_CAT = { tip: "꿀팁", trouble: "트러블슈팅", code: "코드 정리", daily: "일상" };
+  function noteCat(n) { return NOTE_CAT[n.cat] || n.cat || "기타"; }
+  function notesSorted() {
+    return (S.notes || []).slice().sort(function (a, b) {
+      if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
+      return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.no || 0) - (a.no || 0);
+    });
+  }
+  function noteCard(n, compact) {
+    var href = n.url ? url(n.url) : null, tag = href ? "a" : "div";
+    var cover = n.cover ? media(n.cover, n.title) : "";
+    return '<' + tag + ' class="note-card rv' + (cover && !compact ? " has-cover" : "") + '"' + (href ? ' href="' + esc(href) + '"' : "") + '>' +
+      '<div class="nc-body"><div class="nc-top"><span class="nc-cat c-' + esc(n.cat || "etc") + '"><i></i>' + esc(noteCat(n)) + '</span>' +
+      '<time>' + esc(n.date) + '</time>' + (n.pinned && !compact ? '<span class="nc-pin">PINNED</span>' : "") + '</div>' +
+      '<h3>' + esc(n.title) + '</h3>' + (n.summary ? '<p>' + esc(n.summary) + '</p>' : "") +
+      (!compact && (n.tags || []).length ? tags(n.tags) : "") +
+      (href ? '<span class="nc-more">읽기 →</span>' : "") + '</div>' +
+      (cover && !compact ? '<div class="nc-cover">' + cover + '</div>' : "") + '</' + tag + '>';
+  }
+  function notesPage() {
+    var all = notesSorted(), st = { cat: "all", tag: "all", q: "" };
+    var params = new URLSearchParams(location.search);
+    if (params.get("cat")) st.cat = params.get("cat");
+    if (params.get("tag")) st.tag = params.get("tag");
+    set("noteTotal", all.length);
+    var cats = []; all.forEach(function (n) { var c = n.cat || "etc"; if (cats.indexOf(c) < 0) cats.push(c); });
+    var order = ["tip", "trouble", "code", "daily"];
+    cats.sort(function (a, b) { var x = order.indexOf(a), y = order.indexOf(b); return (x < 0 ? 9 : x) - (y < 0 ? 9 : y); });
+    function draw() {
+      set("noteCats", '<button class="chip' + (st.cat === "all" ? " on" : "") + '" data-c="all">전체<small>' + all.length + '</small></button>' +
+        cats.map(function (c) {
+          var n = all.filter(function (x) { return (x.cat || "etc") === c; }).length;
+          return '<button class="chip' + (st.cat === c ? " on" : "") + '" data-c="' + esc(c) + '">' + esc(NOTE_CAT[c] || (c === "etc" ? "기타" : c)) + '<small>' + n + '</small></button>';
+        }).join(""));
+      var tc = {}; all.forEach(function (n) { (n.tags || []).forEach(function (t) { tc[t] = (tc[t] || 0) + 1; }); });
+      var tl = Object.keys(tc).sort(function (a, b) { return tc[b] - tc[a]; }).slice(0, 16);
+      set("noteTags", tl.length ? tl.map(function (t) { return '<button class="ntag' + (st.tag === t ? " on" : "") + '" data-t="' + esc(t) + '">#' + esc(t) + '</button>'; }).join("") : "");
+      var q = st.q.trim().toLowerCase();
+      var items = all.filter(function (n) {
+        if (st.cat !== "all" && (n.cat || "etc") !== st.cat) return false;
+        if (st.tag !== "all" && (n.tags || []).indexOf(st.tag) < 0) return false;
+        if (q && (n.title + " " + (n.summary || "") + " " + (n.tags || []).join(" ")).toLowerCase().indexOf(q) < 0) return false;
+        return true;
+      });
+      set("noteList", items.length ? items.map(function (n) { return noteCard(n); }).join("")
+        : '<div class="empty">' + (all.length ? "조건에 맞는 노트가 없습니다." : "아직 노트가 없어요. 관리자 페이지 → 노트에서 첫 글을 써보세요.") + '</div>');
+      reveal();
+    }
+    $("#noteCats").addEventListener("click", function (e) { var b = e.target.closest("[data-c]"); if (!b) return; st.cat = b.getAttribute("data-c"); draw(); });
+    $("#noteTags").addEventListener("click", function (e) { var b = e.target.closest("[data-t]"); if (!b) return; var t = b.getAttribute("data-t"); st.tag = st.tag === t ? "all" : t; draw(); });
+    var tm; $("#noteSearch").addEventListener("input", function (e) { clearTimeout(tm); tm = setTimeout(function () { st.q = e.target.value; draw(); }, 120); });
+    draw();
   }
 
   function projectsPage() {
@@ -785,7 +856,36 @@ function siteMain() {
   }
 
   /* ---------- story pages (dev/*.html, devlog/*.html) ---------- */
+  /* 코드 블록: 간단한 하이라이트 + 복사 버튼 */
+  var KW = "abstract as async await base bool break byte case catch char class const continue decimal default delegate do double else enum event explicit extern false finally float for foreach get goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed set short static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using var virtual void volatile while yield let function export import from".split(" ");
+  function hiCode(src) {
+    var out = "", re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(\b\d+(?:\.\d+)?f?\b)|(\b[A-Za-z_]\w*\b)|([\s\S])/g, m;
+    while ((m = re.exec(src))) {
+      if (m[1]) out += '<span class="hl-c">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="hl-s">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="hl-n">' + esc(m[3]) + '</span>';
+      else if (m[4]) out += KW.indexOf(m[4]) >= 0 ? '<span class="hl-k">' + m[4] + '</span>' : /^[A-Z]/.test(m[4]) ? '<span class="hl-t">' + m[4] + '</span>' : m[4];
+      else out += esc(m[5]);
+    }
+    return out;
+  }
+  function codeBlocks() {
+    $$(".section pre, .content pre").forEach(function (pre) {
+      if (pre.getAttribute("data-ready")) return; pre.setAttribute("data-ready", "1");
+      var code = pre.querySelector("code") || pre, raw = code.textContent;
+      code.innerHTML = hiCode(raw);
+      var b = document.createElement("button"); b.type = "button"; b.className = "copy-btn"; b.textContent = "복사";
+      b.onclick = function () {
+        var done = function () { b.textContent = "복사됨 ✓"; setTimeout(function () { b.textContent = "복사"; }, 1400); };
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(raw).then(done);
+        else { var t = document.createElement("textarea"); t.value = raw; document.body.appendChild(t); t.select(); try { document.execCommand("copy"); done(); } catch (e) {} t.remove(); }
+      };
+      pre.appendChild(b);
+    });
+  }
+
   function storyPage() {
+    codeBlocks();
     // 이미지 확대 보기
     var imgs = document.querySelectorAll(".gallery img, .story-img");
     if (imgs.length) {
@@ -897,6 +997,7 @@ function siteMain() {
   if (PAGE === "home") home();
   if (PAGE === "projects" && $("#projGrid")) projectsPage();
   if (PAGE === "devlogs" && $("#timeline")) devlogsPage();
+  if (PAGE === "notes" && $("#noteList")) notesPage();
   if (body.hasAttribute("data-story")) storyPage();
   reveal();
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>노트 · 벨로</title>
+  <meta name="description" content="벨로의 노트 — Unity 꿀팁, 트러블슈팅, 코드 정리, 개발 일상 기록.">
+  <meta name="theme-color" content="#0d0c12">
+  <link rel="icon" href="Image/profile.jpg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Silkscreen&display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body data-page="notes">
+  <header id="topbar" class="topbar"></header>
+
+  <main class="wrap">
+    <header class="page-head">
+      <p class="px-label">Notes</p>
+      <h1>노트</h1>
+      <p>개발하다 알게 된 꿀팁, 황당했던 일, 코드 정리, 그리고 소소한 일상까지. 총 <b id="noteTotal"></b>개의 글.</p>
+    </header>
+
+    <div class="note-bar">
+      <div class="filters" id="noteCats" role="toolbar" aria-label="카테고리"></div>
+      <input class="search" id="noteSearch" type="search" placeholder="노트 검색" aria-label="노트 검색">
+    </div>
+    <div class="note-tags" id="noteTags"></div>
+    <div class="note-list" id="noteList"></div>
+  </main>
+
+  <footer id="footer" class="footer"></footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>

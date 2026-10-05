@@ -150,6 +150,9 @@ details.help ol{margin:8px 0 0 18px;display:grid;gap:4px}
 .art pre{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;overflow:auto;margin:12px 0 16px}
 .art pre code{background:none;border:0;padding:0}
 .art a{text-decoration:underline;text-decoration-color:var(--accent)}
+.art .callout{margin:14px 0;padding:12px 16px;border-radius:6px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--text3)}
+.art .callout.tip{border-left-color:#e9c25a}.art .callout.warn{border-left-color:#ef7b8c}.art .callout.info{border-left-color:#5fc9b4}
+.art .callout p{margin:0}.art .cl-label{display:block;font-family:var(--fp);font-size:10px;letter-spacing:.12em;color:var(--text3);margin-bottom:4px}
 .art .gal{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
 .art .gal img{margin:0;aspect-ratio:16/10;object-fit:cover;width:100%}
 
@@ -290,6 +293,7 @@ details.help ol{margin:8px 0 0 18px;display:grid;gap:4px}
   <nav class="side">
     <div class="logo"><i></i>BELLO ADMIN</div>
     <button class="tab" data-tab="devlogs">데브로그<small id="cnt-devlogs"></small></button>
+    <button class="tab" data-tab="notes">노트<small id="cnt-notes"></small></button>
     <button class="tab" data-tab="projects">프로젝트<small id="cnt-projects"></small></button>
     <button class="tab" data-tab="awards">수상<small id="cnt-awards"></small></button>
     <button class="tab" data-tab="jams">게임잼<small id="cnt-jams"></small></button>
@@ -338,7 +342,7 @@ details.help ol{margin:8px 0 0 18px;display:grid;gap:4px}
       <div class="w-tools">
         <button data-md="h2">제목(##)</button><button data-md="h3">소제목(###)</button>
         <button data-md="b">굵게</button><button data-md="code">코드</button><button data-md="pre">코드 블록</button>
-        <button data-md="ul">목록</button><button data-md="link">링크</button><button data-md="img">이미지 넣기</button>
+        <button data-md="ul">목록</button><button data-md="link">링크</button><button data-md="tip">팁 박스</button><button data-md="img">이미지 넣기</button>
       </div>
       <textarea class="w-md" id="wMd" spellcheck="false" placeholder="## 무엇을 만들었나&#10;이번에 추가한 기능...&#10;&#10;## 문제와 해결&#10;### 1. 문제 이름&#10;..."></textarea>
     </div>
@@ -537,7 +541,7 @@ function parseData(src) {
   return w.SITE;
 }
 function serializeData(site) {
-  var order = ["profile", "featured", "seasons", "awards", "jams", "projects", "devlogs"];
+  var order = ["profile", "featured", "seasons", "awards", "jams", "projects", "devlogs", "notes"];
   Object.keys(site).forEach(function (k) { if (order.indexOf(k) < 0) order.push(k); });
   var notes = {
     profile: "프로필 · 연락처 · 소셜 링크",
@@ -546,7 +550,8 @@ function serializeData(site) {
     awards: "수상 — level: national > contest > regional > school / tier: gold silver bronze excel merit",
     jams: "게임잼",
     projects: "프로젝트 — status: dev | paused | done / dim: 2D 3D Web UGC",
-    devlogs: "데브로그 (최신이 위)"
+    devlogs: "데브로그 (최신이 위)",
+    notes: "노트 — cat: tip(꿀팁) | trouble(트러블슈팅) | code(코드 정리) | daily(일상) | etc"
   };
   var out = [
     "/* =========================================================",
@@ -625,7 +630,7 @@ function start(b) {
     if (src == null) throw new Error(DATA_PATH + " 파일을 찾을 수 없습니다. 저장소/폴더를 확인하세요.");
     backend = b;
     S = parseData(src);
-    ["projects", "devlogs", "awards", "jams", "seasons", "featured"].forEach(function (k) { if (!S[k]) S[k] = []; });
+    ["projects", "devlogs", "awards", "jams", "seasons", "featured", "notes"].forEach(function (k) { if (!S[k]) S[k] = []; });
     if (!S.profile) S.profile = {};
     $("#connect").style.display = "none";
     $("#app").classList.add("on");
@@ -641,6 +646,7 @@ function start(b) {
    ========================================================= */
 var TABS = {
   devlogs: { title: "데브로그", arr: function () { return S.devlogs; } },
+  notes: { title: "노트", arr: function () { return S.notes; } },
   projects: { title: "프로젝트", arr: function () { return S.projects; } },
   awards: { title: "수상", arr: function () { return S.awards; }, ordered: true },
   jams: { title: "게임잼", arr: function () { return S.jams; }, ordered: true },
@@ -662,7 +668,7 @@ function switchTab(t) {
   else { renderList(); $("#editor").innerHTML = '<div class="editor-empty">왼쪽에서 항목을 고르거나 새로 만드세요.</div>'; }
 }
 function updateCounts() {
-  ["devlogs", "projects", "awards", "jams", "seasons"].forEach(function (k) { $("#cnt-" + k).textContent = (S[k] || []).length; });
+  ["devlogs", "notes", "projects", "awards", "jams", "seasons"].forEach(function (k) { $("#cnt-" + k).textContent = (S[k] || []).length; });
 }
 $("#listSearch").addEventListener("input", renderList);
 
@@ -707,6 +713,7 @@ function describe(t, it) {
     img: it.poster ? "devlog/Thumb/" + it.poster : it.thumb ? "devlog/Thumb/" + it.thumb : "", title: it.title,
     meta: (it.kind === "interlude" ? "INTERLUDE" : "#" + it.no) + " · " + it.date + (it.project ? " · " + it.project : "")
   };
+  if (t === "notes") return { img: it.cover || "", title: (it.pinned ? "[고정] " : "") + it.title, meta: it.date + " · " + (NOTE_CAT[it.cat] || it.cat || "기타") + (it.url ? "" : " · 본문 없음") };
   if (t === "projects") return { img: it.imgPoster || it.img || "", title: it.title, meta: "No." + it.no + " · " + ({ dev: "개발 중", paused: "일시 중지", done: "완료" }[it.status] || it.status) + " · " + (it.dim || "") };
   if (t === "awards") return { title: it.event + " " + it.result, meta: it.year + " · " + ({ national: "전국", contest: "공모전", regional: "지방", school: "교내" }[it.level] || it.level || "") };
   if (t === "jams") return { title: it.event, meta: (it.date || "—") + " · " + (it.result || "") };
@@ -718,7 +725,7 @@ function renderList() {
   var html = arr.map(function (it, i) {
     var d = describe(tab, it);
     if (q && (d.title + " " + d.meta + " " + stripHtml(it.desc || "")).toLowerCase().indexOf(q) < 0) return "";
-    var hasImg = tab === "devlogs" || tab === "projects";
+    var hasImg = tab === "devlogs" || tab === "projects" || tab === "notes";
     return '<button class="item' + (hasImg ? "" : " noimg") + (selected === i ? " on" : "") + '" data-i="' + i + '">' +
       (hasImg ? '<span class="th">' + (d.img ? '<img data-path="' + esc(d.img) + '" alt="">' : "") + '</span>' : "") +
       '<span><b>' + esc(d.title || "(제목 없음)") + '</b><small>' + esc(d.meta) + '</small></span>' +
@@ -960,6 +967,7 @@ function commitItem(obj, label) {
   }
   if (tab === "devlogs") { sortLogs(); selected = S.devlogs.indexOf(obj); }
   if (tab === "projects") { S.projects.sort(function (a, b) { return (b.no || 0) - (a.no || 0); }); selected = S.projects.indexOf(obj); }
+  if (tab === "notes") { S.notes.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.no || 0) - (a.no || 0); }); selected = S.notes.indexOf(obj); }
   if (tab === "seasons") { S.seasons.sort(function (a, b) { return a.start < b.start ? 1 : -1; }); selected = S.seasons.indexOf(obj); }
   isNew = false;
   updateCounts(); renderList();
@@ -1018,6 +1026,44 @@ var NEW = {
 };
 
 var EDITORS = {};
+var NOTE_CAT = { tip: "꿀팁", trouble: "트러블슈팅", code: "코드 정리", daily: "일상", etc: "기타" };
+NEW.notes = function () {
+  var no = S.notes.reduce(function (m, n) { return Math.max(m, n.no || 0); }, 0) + 1;
+  return { no: no, date: today(), cat: "tip", title: "", summary: "", tags: [] };
+};
+EDITORS.notes = function (n) {
+  var spec = [
+    { k: "title", label: "제목", cls: "c4", ph: "예: Rigidbody가 벽을 뚫고 지나갈 때" },
+    { k: "date", label: "날짜", type: "date", cls: "c1" },
+    { k: "no", label: "번호", type: "number", cls: "c1" },
+    { k: "cat", label: "카테고리", type: "select", cls: "c2", opts: [["tip", "꿀팁"], ["trouble", "트러블슈팅 · 황당한 일"], ["code", "코드 정리"], ["daily", "일상"], ["etc", "기타"]] },
+    { k: "pinned", label: "목록 맨 위에 고정", type: "check", cls: "c2" },
+    { k: "tags", label: "태그", type: "tags", cls: "c6", sugg: function () {
+      var c = {}; S.notes.forEach(function (x) { (x.tags || []).forEach(function (t) { c[t] = (c[t] || 0) + 1; }); });
+      return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).concat(["Unity", "C#", "Shader", "Physics", "UI", "Editor", "Fusion"]).filter(function (t, i, a) { return a.indexOf(t) === i; });
+    } },
+    { k: "summary", label: "요약 (목록 카드에 보이는 글)", type: "textarea", cls: "c6", rows: 3 },
+    { k: "cover", label: "커버 이미지 (선택)", type: "image", cls: "c6",
+      pathOf: function (v) { return v || ""; },
+      target: function (file, root) { var no = $("#f_no", root).value || 0; var pth = "note/img" + no + "/cover." + extOf(file); return { path: pth, value: pth }; },
+      help: "카드 오른쪽에 작게 들어가요. 없어도 괜찮아요.", ph: "note/img1/cover.png" },
+    { k: "url", label: "본문 주소", cls: "c6", help: "[본문 쓰기]로 만들면 자동으로 채워져요.", ph: "note/1.html" }
+  ];
+  var form = editorShell(isNew ? "새 노트" : n.title, "", '<button class="btn" id="edNote">' + (n.url ? "본문 수정" : "본문 쓰기") + '</button>');
+  buildForm(n, spec, form);
+  $("#edApply").onclick = function () {
+    readForm(n, spec, form);
+    if (!n.title) { toast("제목을 입력하세요", "bad"); return; }
+    if (!n.tags) n.tags = [];
+    commitItem(n, "노트 " + n.title);
+  };
+  bindDelete("노트");
+  $("#edNote").onclick = function () {
+    readForm(n, spec, form);
+    if (!n.title) { toast("먼저 제목을 입력하세요", "bad"); return; }
+    openNoteWriter(n, function (u) { $("#f_url", form).value = u; $("#edApply").click(); });
+  };
+};
 
 EDITORS.devlogs = function (d) {
   var interlude = d.kind === "interlude";
@@ -1099,7 +1145,7 @@ EDITORS.projects = function (p) {
       ph: "곡 제목 - 아티스트 | https://youtu.be/xxxxxxxxxxx",
       toLine: function (t) { return (t.title || "") + " | " + (t.url || ""); },
       fromLine: function (l) { var i = l.lastIndexOf("|"); return i < 0 ? { title: "", url: l.trim() } : { title: l.slice(0, i).trim(), url: l.slice(i + 1).trim() }; },
-      help: "메인 진열장에서 이 디스크를 넣으면 수록곡으로 나오고, 누르면 재생돼요. 링크 끝에 ?t=60 처럼 시작 초를 붙일 수 있어요." },
+      help: "메인 진열장에서 이 디스크를 넣으면 수록곡으로 나오고, 누르면 재생돼요. 링크 끝에 ?t=60 처럼 시작 초를 붙일 수 있어요. YouTube 재생목록 링크(…list=…)를 넣으면 재생목록 전체가 재생돼요." },
     { k: "img", label: "대표 이미지", type: "image", cls: "c6",
       pathOf: function (v) { return v || ""; },
       target: function (file, root) { var no = $("#f_no", root).value || nextProjNo(); var n = "Image/project" + no + "." + extOf(file); return { path: n, value: n }; },
@@ -1280,7 +1326,7 @@ function editRaw() {
     '<textarea class="code" id="rawTa" spellcheck="false" style="min-height:70vh;font-size:12.5px"></textarea><p class="err" id="rawErr"></p>';
   $("#rawTa").value = serializeData(S);
   $("#edApply").onclick = function () {
-    try { S = parseData($("#rawTa").value); ["projects", "devlogs", "awards", "jams", "seasons", "featured"].forEach(function (k) { if (!S[k]) S[k] = []; }); }
+    try { S = parseData($("#rawTa").value); ["projects", "devlogs", "awards", "jams", "seasons", "featured", "notes"].forEach(function (k) { if (!S[k]) S[k] = []; }); }
     catch (e) { $("#rawErr").textContent = "문법 오류: " + e.message; return; }
     $("#rawErr").textContent = "";
     markDirty("data.js 직접 수정"); updateCounts();
@@ -1308,9 +1354,19 @@ function mdToHtml(md) {
   while (i < lines.length) {
     var l = lines[i];
     if (/^```/.test(l)) {
-      flush(); var buf = []; i++;
+      flush(); var buf = [], lang = l.replace(/^```/, "").trim(); i++;
       while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
-      out.push("<pre><code>" + esc(buf.join("\n")) + "</code></pre>"); i++; continue;
+      out.push("<pre><code" + (lang ? ' class="lang-' + esc(lang) + '"' : "") + ">" + esc(buf.join("\n")) + "</code></pre>"); i++; continue;
+    }
+    if (/^>\s?/.test(l)) {
+      flush(); var q = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) q.push(lines[i++].replace(/^>\s?/, ""));
+      var km = /^(TIP|WARN|INFO|NOTE)\b[:\s]*/i.exec(q[0] || ""), kind = km ? km[1].toLowerCase() : "";
+      if (km) q[0] = q[0].slice(km[0].length);
+      var labels = { tip: "TIP", warn: "WARNING", info: "INFO", note: "NOTE" };
+      out.push('<blockquote class="callout' + (kind ? " " + (kind === "note" ? "info" : kind) : "") + '">' + (kind ? '<span class="cl-label">' + labels[kind] + '</span>' : "") +
+        q.join("\n").split(/\n\s*\n/).map(function (para) { return "<p>" + inline(para.replace(/\n/g, " ")) + "</p>"; }).join("") + '</blockquote>');
+      continue;
     }
     var h = /^(#{1,4})\s+(.*)$/.exec(l);
     if (h) { flush(); var lv = Math.max(2, h[1].length); out.push("<h" + lv + ">" + inline(h[2]) + "</h" + lv + ">"); i++; continue; }
@@ -1336,7 +1392,8 @@ function mdToHtml(md) {
 function sectioned(html) {
   var parts = html.split(/(?=<h2>)/);
   return parts.filter(function (p) { return p.trim(); }).map(function (p) {
-    return '      <section class="section">\n        ' + p.trim().replace(/\n/g, "\n        ") + '\n      </section>';
+    // <pre> 안의 줄 앞에 공백이 들어가면 코드 들여쓰기가 망가지므로 들여쓰지 않음
+    return '      <section class="section">\n' + p.trim() + '\n      </section>';
   }).join("\n\n");
 }
 function mdEmbed(md) { return (md || "").replace(/<\/(script)/gi, "<\\/$1"); }
@@ -1400,9 +1457,10 @@ $$(".w-tools [data-md]").forEach(function (b) {
     else if (k === "h3") insertAtCursor("\n### ", "\n", "소제목");
     else if (k === "b") insertAtCursor("**", "**", "굵게");
     else if (k === "code") insertAtCursor("`", "`", "code");
-    else if (k === "pre") insertAtCursor("\n```\n", "\n```\n", "// 코드");
+    else if (k === "pre") insertAtCursor("\n```csharp\n", "\n```\n", "// 코드");
     else if (k === "ul") insertAtCursor("\n- ", "\n", "항목");
     else if (k === "link") insertAtCursor("[", "](https://)", "링크 텍스트");
+    else if (k === "tip") insertAtCursor("\n> TIP ", "\n", "핵심을 한 줄로");
     else if (k === "img") pickFile(true, function (files) { files.forEach(writerImage); });
   };
 });
@@ -1462,6 +1520,51 @@ function openPostWriter(d, onDone) {
           '  <script type="application/json" id="post-meta">' + JSON.stringify({ summary: summary, cover: cover }) + '<\/script>\n' +
           '  <script type="text/markdown" id="md-source">\n' + mdEmbed(md) + '\n<\/script>\n</body>\n</html>\n';
         addFile(path, html, "상세 글");
+        closeWriter();
+        onDone(path);
+      }
+    });
+  });
+}
+
+/* ---------- 노트 본문 ---------- */
+var NOTE_TPL = {
+  tip: "## 이런 상황에서\n\n\n## 이렇게 하면 된다\n\n```csharp\n// 코드\n```\n\n> TIP 핵심을 한 줄로\n",
+  trouble: "## 무슨 일이 있었나\n\n\n## 원인\n\n\n## 해결\n\n> WARN 다음에 또 안 당하려면\n",
+  code: "## 무엇을 위한 코드인가\n\n\n## 코드\n\n```csharp\n\n```\n\n## 사용법\n- \n",
+  daily: "",
+  etc: ""
+};
+function openNoteWriter(n, onDone) {
+  var path = "note/" + n.no + ".html";
+  var existing = pendingFiles[path] ? Promise.resolve(pendingFiles[path].content) : backend.read(path);
+  existing.then(function (html) {
+    var md = mdExtract(html);
+    if (html && md == null && !confirm(path + " 파일이 이미 있지만 이 도구로 만든 글이 아니에요.\n새로 쓰면 덮어씁니다. 계속할까요?")) return;
+    var catLabel = NOTE_CAT[n.cat] || n.cat || "기타";
+    openWriter({
+      heading: "노트 · " + n.title,
+      dir: "note/", imgDir: "img" + n.no,
+      md: md != null ? md : (NOTE_TPL[n.cat] || ""),
+      fieldsHtml: '<p class="note full">마크다운으로 써요. <b>```csharp</b> 코드 블록은 사이트에서 색이 입혀지고 복사 버튼이 붙어요. <b>&gt; TIP</b> / <b>&gt; WARN</b> / <b>&gt; INFO</b> 로 시작하면 강조 박스가 돼요.</p>',
+      previewHtml: function (body) {
+        return '<div class="px">Note · ' + esc(catLabel) + '</div><h1>' + esc(n.title) + '</h1>' +
+          '<div class="meta">' + esc(n.date) + ((n.tags || []).length ? " · #" + n.tags.map(esc).join(" #") : "") + '</div>' +
+          (n.summary ? '<div class="hl">' + esc(n.summary) + '</div>' : "") + body;
+      },
+      save: function () {
+        var mdv = $("#wMd").value, body = mdToHtml(mdv);
+        var html2 = HEAD(n.title + " · 노트") +
+          '<body data-base="../" data-page="notes" data-story>\n  <header id="topbar" class="topbar"></header>\n\n  <main class="container">\n' +
+          '    <a class="back" href="../notes.html?cat=' + encodeURIComponent(n.cat || "etc") + '">← 노트</a>\n\n    <header class="header">\n' +
+          '      <p class="px-label">Note · ' + esc(catLabel) + '</p>\n      <h1>' + esc(n.title) + '</h1>\n      <div class="meta">\n        <span>' + esc(n.date) + '</span>\n' +
+          ((n.tags || []).length ? '        <div class="meta-divider"></div>\n        <span>#' + n.tags.map(esc).join(" #") + '</span>\n' : "") +
+          '      </div>\n    </header>\n\n' +
+          (n.cover ? '    <img class="story-img" src="' + esc(n.cover.replace(/^note\//, "")) + '" alt="">\n\n' : "") +
+          '    <article class="content">\n' + (n.summary ? '      <div class="highlight" data-label="SUMMARY">' + esc(n.summary) + '</div>\n\n' : "") +
+          sectioned(body) + '\n    </article>\n  </main>\n\n' + FOOT +
+          '  <script type="text/markdown" id="md-source">\n' + mdEmbed(mdv) + '\n<\/script>\n</body>\n</html>\n';
+        addFile(path, html2, "노트");
         closeWriter();
         onDone(path);
       }
