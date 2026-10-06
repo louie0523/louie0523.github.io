@@ -192,6 +192,51 @@ details.help ol{margin:8px 0 0 18px;display:grid;gap:4px}
 :root{--f-pixel:var(--fp);--text-3:var(--text3)}
 .cd-prev{display:flex;gap:16px;align-items:center}
 .cd-prev .cdx{width:150px;height:150px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))}
+.fd {
+  --body: #1e1c24; --edge: rgba(255, 255, 255, .07);
+  position: relative; display: block; width: 100%; aspect-ratio: 1 / 1.04; container-type: inline-size;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--body) 88%, #fff) 0%, var(--body) 40%, color-mix(in srgb, var(--body) 85%, #000) 100%);
+  clip-path: polygon(0 0, 91% 0, 100% 6%, 100% 100%, 0 100%);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px var(--edge);
+}
+.fd > i, .fd > span { position: absolute; }
+.fd-hub { display: none; }
+.fd-shutter {
+  left: 24%; top: 0; width: 50%; height: 33%;
+  background: linear-gradient(180deg, #e3e6ec, #a9aeb8 70%, #c4c8d0);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25), 0 1px 2px rgba(0, 0, 0, .3);
+}
+.fd-shutter i { position: absolute; left: 16%; top: 14%; width: 24%; height: 64%; background: #15131a; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .8); }
+.fd-label {
+  left: 9%; right: 9%; top: 40%; bottom: 0; display: flex; flex-direction: column;
+  background: #f1eee6; border-radius: 2px 2px 0 0; padding: 3.5% 4% 4%;
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, .15);
+}
+.fd-strip {
+  flex: none; display: block; padding-bottom: 2.5%; margin-bottom: 3.5%;
+  border-bottom: 1px solid #c9c4b8;
+  font-family: var(--fm); font-size: 6.2cqw; font-weight: 600; color: #34313b; line-height: 1.25;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fd-img { position: relative; flex: 1; min-height: 0; overflow: hidden; border-radius: 1px; background: #1b1922; }
+.fd-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fd-img em { display: none; }
+.fd-img.none em {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+  font-style: normal; font-family: var(--fp); font-size: 6.4cqw; line-height: 1.5; letter-spacing: .08em; color: #8a8496;
+  background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255, 255, 255, .03) 6px 12px), #1b1922;
+}
+.fd-notch { left: 3%; bottom: 3%; width: 4.5%; height: 4.5%; background: #0d0c11; border-radius: 1px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05); }
+.fd-black { --body: #1e1c24; }
+.fd-grey { --body: #7f838d; }
+.fd-blue { --body: #2c5592; }
+.fd-red { --body: #9b3036; }
+.fd-yellow { --body: #c9a136; }
+.fd-green { --body: #3a7550; }
+.fd-clear { --body: rgba(180, 196, 214, .38); --edge: rgba(255, 255, 255, .25); backdrop-filter: blur(2px); }
+
+
 .checks{display:flex;flex-wrap:wrap;gap:6px 14px}
 .cdx {
   --rim: #0a0a0d;
@@ -295,6 +340,7 @@ details.help ol{margin:8px 0 0 18px;display:grid;gap:4px}
     <button class="tab" data-tab="devlogs">데브로그<small id="cnt-devlogs"></small></button>
     <button class="tab" data-tab="notes">노트<small id="cnt-notes"></small></button>
     <button class="tab" data-tab="projects">프로젝트<small id="cnt-projects"></small></button>
+    <button class="tab" data-tab="music">음악<small id="cnt-music"></small></button>
     <button class="tab" data-tab="awards">수상<small id="cnt-awards"></small></button>
     <button class="tab" data-tab="jams">게임잼<small id="cnt-jams"></small></button>
     <button class="tab" data-tab="seasons">시즌<small id="cnt-seasons"></small></button>
@@ -541,7 +587,7 @@ function parseData(src) {
   return w.SITE;
 }
 function serializeData(site) {
-  var order = ["profile", "featured", "seasons", "awards", "jams", "projects", "devlogs", "notes"];
+  var order = ["profile", "featured", "seasons", "awards", "jams", "projects", "devlogs", "notes", "music"];
   Object.keys(site).forEach(function (k) { if (order.indexOf(k) < 0) order.push(k); });
   var notes = {
     profile: "프로필 · 연락처 · 소셜 링크",
@@ -551,6 +597,7 @@ function serializeData(site) {
     jams: "게임잼",
     projects: "프로젝트 — status: dev | paused | done / dim: 2D 3D Web UGC",
     devlogs: "데브로그 (최신이 위)",
+    music: "음악 CD — tracks: [{ title, url(유튜브 영상/재생목록) }], cdFx · cdRim · cdText = 디스크 꾸미기",
     notes: "노트 — cat: tip(꿀팁) | trouble(트러블슈팅) | code(코드 정리) | daily(일상) | etc"
   };
   var out = [
@@ -630,7 +677,7 @@ function start(b) {
     if (src == null) throw new Error(DATA_PATH + " 파일을 찾을 수 없습니다. 저장소/폴더를 확인하세요.");
     backend = b;
     S = parseData(src);
-    ["projects", "devlogs", "awards", "jams", "seasons", "featured", "notes"].forEach(function (k) { if (!S[k]) S[k] = []; });
+    ["projects", "devlogs", "awards", "jams", "seasons", "featured", "notes", "music"].forEach(function (k) { if (!S[k]) S[k] = []; });
     if (!S.profile) S.profile = {};
     $("#connect").style.display = "none";
     $("#app").classList.add("on");
@@ -648,6 +695,7 @@ var TABS = {
   devlogs: { title: "데브로그", arr: function () { return S.devlogs; } },
   notes: { title: "노트", arr: function () { return S.notes; } },
   projects: { title: "프로젝트", arr: function () { return S.projects; } },
+  music: { title: "음악 (CD 컬렉션)", arr: function () { return S.music; } },
   awards: { title: "수상", arr: function () { return S.awards; }, ordered: true },
   jams: { title: "게임잼", arr: function () { return S.jams; }, ordered: true },
   seasons: { title: "시즌", arr: function () { return S.seasons; }, ordered: true },
@@ -668,7 +716,7 @@ function switchTab(t) {
   else { renderList(); $("#editor").innerHTML = '<div class="editor-empty">왼쪽에서 항목을 고르거나 새로 만드세요.</div>'; }
 }
 function updateCounts() {
-  ["devlogs", "notes", "projects", "awards", "jams", "seasons"].forEach(function (k) { $("#cnt-" + k).textContent = (S[k] || []).length; });
+  ["devlogs", "notes", "projects", "music", "awards", "jams", "seasons"].forEach(function (k) { $("#cnt-" + k).textContent = (S[k] || []).length; });
 }
 $("#listSearch").addEventListener("input", renderList);
 
@@ -713,6 +761,7 @@ function describe(t, it) {
     img: it.poster ? "devlog/Thumb/" + it.poster : it.thumb ? "devlog/Thumb/" + it.thumb : "", title: it.title,
     meta: (it.kind === "interlude" ? "INTERLUDE" : "#" + it.no) + " · " + it.date + (it.project ? " · " + it.project : "")
   };
+  if (t === "music") return { img: it.cover || "", title: it.title, meta: (it.artist || "") + " · " + ((it.tracks || []).length) + "곡" };
   if (t === "notes") return { img: it.cover || "", title: (it.pinned ? "[고정] " : "") + it.title, meta: it.date + " · " + (NOTE_CAT[it.cat] || it.cat || "기타") + (it.url ? "" : " · 본문 없음") };
   if (t === "projects") return { img: it.imgPoster || it.img || "", title: it.title, meta: "No." + it.no + " · " + ({ dev: "개발 중", paused: "일시 중지", done: "완료" }[it.status] || it.status) + " · " + (it.dim || "") };
   if (t === "awards") return { title: it.event + " " + it.result, meta: it.year + " · " + ({ national: "전국", contest: "공모전", regional: "지방", school: "교내" }[it.level] || it.level || "") };
@@ -725,7 +774,7 @@ function renderList() {
   var html = arr.map(function (it, i) {
     var d = describe(tab, it);
     if (q && (d.title + " " + d.meta + " " + stripHtml(it.desc || "")).toLowerCase().indexOf(q) < 0) return "";
-    var hasImg = tab === "devlogs" || tab === "projects" || tab === "notes";
+    var hasImg = tab === "devlogs" || tab === "projects" || tab === "notes" || tab === "music";
     return '<button class="item' + (hasImg ? "" : " noimg") + (selected === i ? " on" : "") + '" data-i="' + i + '">' +
       (hasImg ? '<span class="th">' + (d.img ? '<img data-path="' + esc(d.img) + '" alt="">' : "") + '</span>' : "") +
       '<span><b>' + esc(d.title || "(제목 없음)") + '</b><small>' + esc(d.meta) + '</small></span>' +
@@ -967,6 +1016,7 @@ function commitItem(obj, label) {
   }
   if (tab === "devlogs") { sortLogs(); selected = S.devlogs.indexOf(obj); }
   if (tab === "projects") { S.projects.sort(function (a, b) { return (b.no || 0) - (a.no || 0); }); selected = S.projects.indexOf(obj); }
+  if (tab === "music") { S.music.sort(function (a, b) { return (a.date || "") < (b.date || "") ? 1 : -1; }); selected = S.music.indexOf(obj); }
   if (tab === "notes") { S.notes.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.no || 0) - (a.no || 0); }); selected = S.notes.indexOf(obj); }
   if (tab === "seasons") { S.seasons.sort(function (a, b) { return a.start < b.start ? 1 : -1; }); selected = S.seasons.indexOf(obj); }
   isNew = false;
@@ -1027,6 +1077,61 @@ var NEW = {
 
 var EDITORS = {};
 var NOTE_CAT = { tip: "꿀팁", trouble: "트러블슈팅", code: "코드 정리", daily: "일상", etc: "기타" };
+NEW.music = function () {
+  var no = S.music.reduce(function (m, n) { return Math.max(m, n.no || 0); }, 0) + 1;
+  return { no: no, date: today(), title: "", artist: "", tracks: [], tags: [] };
+};
+EDITORS.music = function (m) {
+  var spec = [
+    { k: "title", label: "CD 제목 (앨범 · 플레이리스트 이름)", cls: "c4", ph: "예: 밤샘 작업용" },
+    { k: "date", label: "날짜", type: "date", cls: "c1" },
+    { k: "no", label: "번호", type: "number", cls: "c1" },
+    { k: "artist", label: "아티스트 / 부제", cls: "c3", ph: "예: 여러 아티스트" },
+    { k: "project", label: "같이 만든 프로젝트 (선택)", type: "select", cls: "c3", opts: projOpts(true) },
+    { k: "tracks", label: "수록곡 (한 줄에 하나: 곡 제목 | 유튜브 링크)", type: "lines", cls: "c6", rows: 5,
+      ph: "곡 제목 - 아티스트 | https://youtu.be/xxxxxxxxxxx\n플레이리스트 | https://www.youtube.com/playlist?list=PL...",
+      toLine: function (t) { return (t.title || "") + " | " + (t.url || ""); },
+      fromLine: function (l) { var i = l.lastIndexOf("|"); return i < 0 ? { title: "", url: l.trim() } : { title: l.slice(0, i).trim(), url: l.slice(i + 1).trim() }; },
+      help: "영상 링크, 재생목록 링크 모두 돼요. 링크 끝에 ?t=60 처럼 시작 초를 붙일 수 있어요." },
+    { k: "memo", label: "메모 (이 음악에 대한 한마디)", type: "textarea", cls: "c6", rows: 3 },
+    { k: "tags", label: "태그", type: "tags", cls: "c6", sugg: function () { var c = {}; S.music.forEach(function (x) { (x.tags || []).forEach(function (t) { c[t] = 1; }); }); return Object.keys(c).concat(["Lo-fi", "OST", "J-pop", "밤샘", "집중"]).filter(function (t, i, a) { return a.indexOf(t) === i; }); } },
+    { k: "cover", label: "CD 그림 (앨범 커버)", type: "image", cls: "c6",
+      pathOf: function (v) { return v || ""; },
+      target: function (file, root) { var no = $("#f_no", root).value || 0; var pth = "music/cover" + no + "." + extOf(file); return { path: pth, value: pth }; },
+      posterKey: "coverPoster", posterFull: true,
+      help: "정사각형 이미지 권장. 디스크 인쇄면에 들어가요.", ph: "music/cover1.png" },
+    { k: "coverPoster", type: "hidden" },
+    { type: "section", label: "CD 꾸미기" },
+    { k: "cdFx", label: "효과 (여러 개 선택 가능)", type: "checks", cls: "c4",
+      opts: [["holo", "홀로그램"], ["gloss", "광택"], ["vinyl", "LP 결"], ["glitter", "반짝이"], ["matte", "무광"], ["mono", "흑백"], ["full", "가운데까지 그림"]] },
+    { k: "cdRim", label: "테두리 색", type: "select", cls: "c2", opts: [["", "검정 (기본)"], ["silver", "은색"], ["white", "흰색"], ["gold", "금색"], ["accent", "주황"], ["none", "없음"]] },
+    { k: "cdText", label: "디스크에 인쇄할 문구 (선택)", cls: "c3", ph: "VOL.1" }
+  ];
+  var form = editorShell(isNew ? "새 CD" : m.title);
+  buildForm(m, spec, form);
+  var cdWrap = document.createElement("div"); cdWrap.className = "c3 cd-prev";
+  cdWrap.innerHTML = '<span class="px">미리보기</span><span id="cdPrev"></span>';
+  var anchor = $("#f_cdText", form).closest("label");
+  anchor.parentNode.insertBefore(cdWrap, anchor.nextSibling);
+  function drawCd() {
+    var q = readForm(clone(m), spec, form);
+    var RIMS = { black: "#0a0a0d", silver: "#b9bec9", white: "#f1f1f4", gold: "#d6ae55", accent: "#ff5b2e", none: "transparent" };
+    var fx = q.cdFx || [], img = q.coverPoster && /\.gif$/i.test(q.cover || "") ? q.coverPoster : q.cover;
+    $("#cdPrev").innerHTML = '<span class="cdx' + fx.map(function (f) { return " fx-" + f; }).join("") + (img ? "" : " blank") + '" style="--rim:' + RIMS[q.cdRim || "black"] + '">' +
+      '<i class="art"></i><i class="sheen"></i>' + fx.map(function (f) { return '<i class="fx f-' + f + '"></i>'; }).join("") +
+      (img ? "" : '<em>' + esc(q.title || "") + '</em>') + (q.cdText ? '<i class="cdtext"><span>' + esc(q.cdText) + '</span></i>' : "") + '<i class="ring"></i></span>';
+    if (img) imgSrc(img).then(function (u) { var el = $("#cdPrev .cdx"); if (el && u) el.style.setProperty("--img", "url('" + u + "')"); });
+  }
+  form.addEventListener("input", drawCd); form.addEventListener("change", drawCd);
+  drawCd();
+  $("#edApply").onclick = function () {
+    readForm(m, spec, form);
+    if (!m.title) { toast("제목을 입력하세요", "bad"); return; }
+    if (!m.tracks) m.tracks = []; if (!m.tags) m.tags = [];
+    commitItem(m, "음악 " + m.title);
+  };
+  bindDelete("음악");
+};
 NEW.notes = function () {
   var no = S.notes.reduce(function (m, n) { return Math.max(m, n.no || 0); }, 0) + 1;
   return { no: no, date: today(), cat: "tip", title: "", summary: "", tags: [] };
@@ -1152,11 +1257,9 @@ EDITORS.projects = function (p) {
       posterKey: "imgPoster", posterFull: true,
       help: "파일은 <b>Image/project번호.확장자</b>로 저장됩니다. 16:9 권장. GIF면 정지 이미지를 자동으로 만들어요.", ph: "Image/project17.png" },
     { k: "imgPoster", type: "hidden" },
-    { type: "section", label: "CD 꾸미기 (메인 진열장 디스크)" },
-    { k: "cdFx", label: "효과 (여러 개 선택 가능)", type: "checks", cls: "c4",
-      opts: [["holo", "홀로그램"], ["gloss", "광택"], ["vinyl", "LP 결"], ["glitter", "반짝이"], ["matte", "무광"], ["mono", "흑백"], ["full", "가운데까지 그림"]] },
-    { k: "cdRim", label: "테두리 색", type: "select", cls: "c2", opts: [["", "검정 (기본)"], ["silver", "은색"], ["white", "흰색"], ["gold", "금색"], ["accent", "주황"], ["none", "없음"]] },
-    { k: "cdText", label: "디스크에 인쇄할 문구 (선택)", cls: "c3", ph: "BELLO · 2026" },
+    { type: "section", label: "플로피 디스크 (메인 진열장)" },
+    { k: "fdColor", label: "디스크 색", type: "select", cls: "c2", opts: [["", "검정 (기본)"], ["grey", "회색"], ["blue", "파랑"], ["red", "빨강"], ["yellow", "노랑"], ["green", "초록"], ["clear", "반투명"]],
+      help: "라벨에는 대표 이미지가 들어가요. 이미지가 없으면 NOT YET / COMING SOON이 표시돼요." },
     { type: "section", label: "링크" },
     { k: "link", label: "게임 링크", cls: "c3", ph: "https://bellocity.itch.io/..." },
     { k: "linkLabel", label: "링크 버튼 이름", cls: "c1", ph: "플레이" },
@@ -1174,23 +1277,21 @@ EDITORS.projects = function (p) {
     '<button class="btn" id="edStory">' + (/^dev\//.test(p.dev || "") ? "개발 비화 수정" : "개발 비화 쓰기") + '</button>');
   if (!p.dev) p.dev = "#"; if (!p.link) p.link = "#";
   buildForm(p, spec, form);
-  // CD 미리보기
-  var cdWrap = document.createElement("div"); cdWrap.className = "c3 cd-prev";
-  cdWrap.innerHTML = '<span class="px">미리보기</span><span id="cdPrev"></span>';
-  var anchor = $("#f_cdText", form).closest("label");
-  anchor.parentNode.insertBefore(cdWrap, anchor.nextSibling);
-  function drawCd() {
+  // 플로피 미리보기
+  var fdWrap = document.createElement("div"); fdWrap.className = "c2 cd-prev";
+  fdWrap.innerHTML = '<span id="fdPrev" style="width:130px;display:block"></span>';
+  var anchor = $("#f_fdColor", form).closest("label");
+  anchor.parentNode.insertBefore(fdWrap, anchor.nextSibling);
+  function drawFd() {
     var q = readForm(clone(p), spec, form);
-    var RIMS = { black: "#0a0a0d", silver: "#b9bec9", white: "#f1f1f4", gold: "#d6ae55", accent: "#ff5b2e", none: "transparent" };
-    var fx = q.cdFx || [], img = q.imgPoster && /\.gif$/i.test(q.img || "") ? q.imgPoster : q.img;
-    var html = '<span class="cdx' + fx.map(function (f) { return " fx-" + f; }).join("") + (img ? "" : " blank") + '" style="--rim:' + (RIMS[q.cdRim || "black"]) + '">' +
-      '<i class="art"></i><i class="sheen"></i>' + fx.map(function (f) { return '<i class="fx f-' + f + '"></i>'; }).join("") +
-      (img ? "" : '<em>' + esc(q.title || "") + '</em>') + (q.cdText ? '<i class="cdtext"><span>' + esc(q.cdText) + '</span></i>' : "") + '<i class="ring"></i></span>';
-    $("#cdPrev").innerHTML = html;
-    if (img) imgSrc(img).then(function (u) { var el = $("#cdPrev .cdx"); if (el && u) el.style.setProperty("--img", "url('" + u + "')"); });
+    var img = q.imgPoster && /\.gif$/i.test(q.img || "") ? q.imgPoster : q.img;
+    $("#fdPrev").innerHTML = '<span class="fd fd-' + (q.fdColor || "black") + '"><i class="fd-shutter"><i></i></i>' +
+      '<span class="fd-label"><span class="fd-strip">' + esc(q.title || "") + '</span><span class="fd-img' + (img ? "" : " none") + '">' +
+      (img ? '<img alt="">' : "") + '<em>NOT YET<br>COMING SOON</em></span></span><i class="fd-notch"></i></span>';
+    var im = $("#fdPrev img"); if (im) setImg(im, img);
   }
-  form.addEventListener("input", drawCd); form.addEventListener("change", drawCd);
-  drawCd();
+  form.addEventListener("input", drawFd); form.addEventListener("change", drawFd);
+  drawFd();
   function finalize() {
     readForm(p, spec, form);
     if (!p.id) p.id = slug(p.title) || "project-" + p.no;
@@ -1326,7 +1427,7 @@ function editRaw() {
     '<textarea class="code" id="rawTa" spellcheck="false" style="min-height:70vh;font-size:12.5px"></textarea><p class="err" id="rawErr"></p>';
   $("#rawTa").value = serializeData(S);
   $("#edApply").onclick = function () {
-    try { S = parseData($("#rawTa").value); ["projects", "devlogs", "awards", "jams", "seasons", "featured", "notes"].forEach(function (k) { if (!S[k]) S[k] = []; }); }
+    try { S = parseData($("#rawTa").value); ["projects", "devlogs", "awards", "jams", "seasons", "featured", "notes", "music"].forEach(function (k) { if (!S[k]) S[k] = []; }); }
     catch (e) { $("#rawErr").textContent = "문법 오류: " + e.message; return; }
     $("#rawErr").textContent = "";
     markDirty("data.js 직접 수정"); updateCounts();

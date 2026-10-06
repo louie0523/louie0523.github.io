@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>음악 · 벨로</title>
+  <meta name="description" content="벨로가 작업하며 듣는 음악 모음.">
+  <meta name="theme-color" content="#0d0c12">
+  <link rel="icon" href="Image/profile.jpg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Silkscreen&display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body data-page="music" class="play">
+  <header id="topbar" class="topbar"></header>
+
+  <main class="wrap">
+    <header class="page-head">
+      <p class="px-label">Now Playing</p>
+      <h1>음악</h1>
+      <p>작업하면서 듣는 노래들을 CD로 모아뒀어요. 총 <b id="musicTotal"></b>장.</p>
+    </header>
+
+    <div class="deck" id="musicDeck" data-tilt="1.5"></div>
+    <div class="shelf-wrap">
+      <div class="shelf" id="musicRow" role="listbox" aria-label="CD 목록"></div>
+      <div class="shelf-plank"></div>
+    </div>
+    <div class="shelf-hint"><span>CD를 골라 넣기 · <span class="kbd">←</span><span class="kbd">→</span> 로 고르기</span><span>곡을 누르면 재생돼요</span></div>
+  </main>
+
+  <footer id="footer" class="footer"></footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>

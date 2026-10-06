@@ -1128,3 +1128,82 @@ a.note-card:hover .nc-more { color: var(--accent-2); }
   .note-bar .search { width: 100%; }
 }
 @media (max-width: 520px) { .note-card.has-cover { grid-template-columns: 1fr; } .nc-cover { order: -1; } }
+
+/* =========================================================
+   플로피 디스크 (프로젝트 진열장)
+   ========================================================= */
+.fd {
+  --body: #1e1c24; --edge: rgba(255, 255, 255, .07);
+  position: relative; display: block; width: 100%; aspect-ratio: 1 / 1.04; container-type: inline-size;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--body) 88%, #fff) 0%, var(--body) 40%, color-mix(in srgb, var(--body) 85%, #000) 100%);
+  clip-path: polygon(0 0, 91% 0, 100% 6%, 100% 100%, 0 100%);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px var(--edge);
+}
+.fd > i, .fd > span { position: absolute; }
+.fd-hub { display: none; }
+.fd-shutter {
+  left: 24%; top: 0; width: 50%; height: 33%;
+  background: linear-gradient(180deg, #e3e6ec, #a9aeb8 70%, #c4c8d0);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25), 0 1px 2px rgba(0, 0, 0, .3);
+}
+.fd-shutter i { position: absolute; left: 16%; top: 14%; width: 24%; height: 64%; background: #15131a; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .8); }
+.fd-label {
+  left: 9%; right: 9%; top: 40%; bottom: 0; display: flex; flex-direction: column;
+  background: #f1eee6; border-radius: 2px 2px 0 0; padding: 3.5% 4% 4%;
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, .15);
+}
+.fd-strip {
+  flex: none; display: block; padding-bottom: 2.5%; margin-bottom: 3.5%;
+  border-bottom: 1px solid #c9c4b8;
+  font-family: var(--f-mono); font-size: 6.2cqw; font-weight: 600; color: #34313b; line-height: 1.25;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fd-img { position: relative; flex: 1; min-height: 0; overflow: hidden; border-radius: 1px; background: #1b1922; }
+.fd-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fd-img em { display: none; }
+.fd-img.none em {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+  font-style: normal; font-family: var(--f-pixel); font-size: 6.4cqw; line-height: 1.5; letter-spacing: .08em; color: #8a8496;
+  background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255, 255, 255, .03) 6px 12px), #1b1922;
+}
+.fd-notch { left: 3%; bottom: 3%; width: 4.5%; height: 4.5%; background: #0d0c11; border-radius: 1px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05); }
+.fd-black { --body: #1e1c24; }
+.fd-grey { --body: #7f838d; }
+.fd-blue { --body: #2c5592; }
+.fd-red { --body: #9b3036; }
+.fd-yellow { --body: #c9a136; }
+.fd-green { --body: #3a7550; }
+.fd-clear { --body: rgba(180, 196, 214, .38); --edge: rgba(255, 255, 255, .25); backdrop-filter: blur(2px); }
+
+/* 진열장 아이템 */
+.fdi { flex: 0 0 124px; width: 124px; min-width: 0; text-align: left; scroll-snap-align: start; }
+.fdi .fd { filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .45)); transition: transform .3s cubic-bezier(.2, .9, .2, 1); }
+.fdi:hover .fd { transform: translateY(-6px) rotate(-2deg); }
+.fdi.on .fd { transform: translateY(-8px); }
+.fdi { position: relative; }
+.fdi.on::before { content: ""; position: absolute; left: -6px; right: -6px; top: -14px; height: calc(124px * 1.04 + 12px); border: 2px solid var(--text); border-radius: 6px; pointer-events: none; }
+.fdi:focus-visible { outline: none; }
+.fdi:focus-visible::before { content: ""; position: absolute; left: -6px; right: -6px; top: -14px; height: calc(124px * 1.04 + 12px); border: 2px solid var(--accent); border-radius: 6px; }
+.fdi.on .cd-title { color: var(--text); }
+
+/* 덱: 큰 플로피 + 드라이브 */
+.fd-stage { align-items: center; }
+.fd-big { width: 84%; margin: 0 auto; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .5)); position: relative; z-index: 1; }
+.drive {
+  width: 100%; margin-top: -4px; padding: 14px 14px 10px; border-radius: 10px;
+  background: linear-gradient(180deg, #24212b, #18161d); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 10px 24px rgba(0, 0, 0, .35);
+}
+.drive-slot { display: block; height: 6px; margin: 0 8% 10px; border-radius: 3px; background: #0b0a0e; box-shadow: inset 0 1px 2px rgba(0, 0, 0, .9), 0 1px 0 rgba(255, 255, 255, .05); }
+.drive .player-led { padding: 0 2px; }
+.deck.loading .player-led i { background: var(--live); box-shadow: 0 0 8px var(--live); animation: pulse .18s steps(2) infinite; }
+
+/* 음악 페이지 */
+.deck.is-playing .disc2 { animation: spin 3.6s linear infinite; }
+.music-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .fdi { flex-basis: 104px; width: 104px; }
+  .fdi.on::before, .fdi:focus-visible::before { height: calc(104px * 1.04 + 12px); }
+  .fd-big { width: 78%; }
+}
+@media (prefers-reduced-motion: reduce) { .deck.is-playing .disc2 { animation: none; } }

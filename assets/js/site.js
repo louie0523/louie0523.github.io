@@ -113,6 +113,7 @@ function siteMain() {
         '<a href="' + BASE + 'projects.html" data-k="projects">프로젝트</a>' +
         '<a href="' + BASE + 'devlogs.html" data-k="devlogs">데브로그</a>' +
         '<a href="' + BASE + 'notes.html" data-k="notes">노트</a>' +
+        '<a href="' + BASE + 'music.html" data-k="music" class="hide-sm">음악</a>' +
         '<a href="' + BASE + 'index.html#awards" data-k="awards" class="hide-sm">수상</a>' +
         '<a href="' + BASE + 'index.html#contact" data-k="contact">연락</a>' +
         '</nav>' +
@@ -299,6 +300,7 @@ function siteMain() {
       { label: "데브로그", icon: "note", href: BASE + "devlogs.html" },
       { label: "수상", icon: "trophy", href: "#awards" },
       { label: "노트", icon: "memo", href: BASE + "notes.html" },
+      { label: "음악", icon: "disc", href: BASE + "music.html" },
       { label: "메일", icon: "mail", href: "#contact" }
     ];
     (P.socials || []).forEach(function (s) { apps.push({ label: s.label, icon: socialIcon[s.id] || "cart", href: s.url, ext: true }); });
@@ -438,122 +440,169 @@ function siteMain() {
   }
   window.__discHTML = discHTML;
 
-  function shelf() {
-    var row = $("#shelfRow"), deck = $("#deck"); if (!row || !deck) return;
-    var feat = (S.featured || []).filter(function (id) { return byId[id]; });
-    var list = feat.map(function (id) { return byId[id]; })
-      .concat(projects.slice().sort(function (a, b) { return b.no - a.no; }).filter(function (p) { return feat.indexOf(p.id) < 0; }));
-    var cur = -1, seen = {}, need = Math.ceil(list.length * 0.75);
-    function label(p) {
-      if (feat.indexOf(p.id) >= 0) return "대표작";
-      if (p.award) return p.award;
-      if (p.status === "dev") return "개발 중";
-      return "";
-    }
-
-    row.innerHTML = list.map(function (p, i) {
-      var lb = label(p);
-      return '<button class="cd" type="button" role="option" data-i="' + i + '" aria-label="' + esc(p.title) + '">' +
-        '<span class="cd-shadow">' + discHTML(p, "cd-disc") + '</span>' +
-        '<span class="cd-title">' + esc(p.title) + '</span>' +
-        '<span class="cd-meta">' + esc([p.dim, p.year].filter(Boolean).join(" · ")) +
-        (lb ? ' <b>' + esc(lb) + '</b>' : "") + (tracksOf(p).length ? ' <span class="cd-note" title="수록곡 있음">♪</span>' : "") + '</span></button>';
-    }).join("");
-    set("projCount", projects.length);
+  /* =========================================================
+     디스크 랙 (공용 엔진): 진열 → 선택 → 덱에 넣기 → 수록곡 재생
+     ========================================================= */
+  function rack(o) {
+    var row = o.row, deck = o.deck, list = o.list, cur = -1, seen = {}, need = Math.ceil(list.length * 0.75), swapping = 0;
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    row.innerHTML = list.map(o.item).join("");
 
     function stopMusic() {
-      var box = $("#ytBox", deck); if (box) box.innerHTML = "";
-      var d = $(".disc2", deck); if (d) d.classList.remove("playing");
-      $$(".trk", deck).forEach(function (b) { b.classList.remove("on"); b.querySelector(".st").textContent = "▶"; });
-      var led = $(".player-led span", deck); if (led) led.textContent = "STANDBY";
+      var box = $(".yt", deck); if (box) box.innerHTML = "";
       deck.classList.remove("is-playing");
+      $$(".trk", deck).forEach(function (b) { b.classList.remove("on"); b.querySelector(".st").textContent = "▶"; });
+      var led = $(".led-txt", deck); if (led) led.textContent = o.idle || "STANDBY";
     }
     function playTrack(p, k) {
-      var t = tracksOf(p)[k]; if (!t) return;
+      var t = (o.tracks || tracksOf)(p)[k]; if (!t) return;
       var btn = $$(".trk", deck)[k];
       if (btn && btn.classList.contains("on")) { stopMusic(); return; }
       stopMusic();
-      $("#ytBox", deck).innerHTML = '<iframe src="' + esc(ytEmbed(t.url)) + '" title="' + esc(t.title || "수록곡") + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-      $(".disc2", deck).classList.add("playing");
-      if (btn) { btn.classList.add("on"); btn.querySelector(".st").textContent = "■"; }
-      $(".player-led span", deck).textContent = "TRACK " + pad(k + 1);
+      $(".yt", deck).innerHTML = '<iframe src="' + esc(ytEmbed(t.url)) + '" title="' + esc(t.title || "수록곡") + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
       deck.classList.add("is-playing");
+      if (btn) { btn.classList.add("on"); btn.querySelector(".st").textContent = "■"; }
+      var led = $(".led-txt", deck); if (led) led.textContent = "TRACK " + pad(k + 1);
     }
-
+    function trackList(p, head) {
+      var tr = tracksOf(p);
+      if (!tr.length) return "";
+      return '<div class="tracks"><div class="tr-head">' + esc(head) + '</div>' +
+        tr.map(function (t, k) {
+          return '<button type="button" class="trk" data-tr="' + k + '"><span class="no">' + pad(k + 1) + '</span><span class="tt">' + esc(t.title || (ytId(t.url) ? "Track " + (k + 1) : "재생목록")) + '</span><span class="st">▶</span></button>';
+        }).join("") + '<div class="yt"></div></div>';
+    }
     function draw(p, i) {
-      var isFeat = feat.indexOf(p.id) >= 0, tr = tracksOf(p);
-      deck.innerHTML =
-        '<div class="player"><div class="platter">' + discHTML(p, "disc2") + '</div>' +
-        '<div class="player-led"><i></i><span>' + (tr.length ? "STANDBY" : "NO AUDIO") + '</span><b>DISC ' + pad(i + 1) + ' / ' + pad(list.length) + '</b></div></div>' +
-        '<div class="deck-info"><div class="deck-top">' + (isFeat ? '<span class="pick">대표작</span>' : "") + statusChip(p) + badge(p) + '</div>' +
-        '<h3>' + esc(p.title) + '</h3>' + (p.sub ? '<p class="sub">' + esc(p.sub) + '</p>' : "") +
-        '<p class="desc">' + esc(p.long || p.desc) + '</p>' +
-        (p.points ? '<ul class="points">' + p.points.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + '</ul>' : "") +
-        tags(p.tags) + actions(p) +
-        (tr.length ? '<div class="tracks"><div class="tr-head">작업하며 들은 곡</div>' +
-          tr.map(function (t, k) {
-            return '<button type="button" class="trk" data-tr="' + k + '"><span class="no">' + pad(k + 1) + '</span><span class="tt">' + esc(t.title || (ytId(t.url) ? "Track " + (k + 1) : "재생목록")) + '</span><span class="st">▶</span></button>';
-          }).join("") + '<div class="yt" id="ytBox"></div></div>' : "") +
-        '</div>';
+      deck.innerHTML = o.deck_(p, i, list.length, trackList);
       $$(".trk", deck).forEach(function (b) { b.onclick = function () { playTrack(p, +b.getAttribute("data-tr")); }; });
     }
-    function select(i, focus) {
-      if (i < 0 || i >= list.length || i === cur) return;
-      var first = cur < 0;
-      cur = i;
-      $$(".cd", row).forEach(function (c, k) { c.classList.toggle("on", k === i); c.setAttribute("aria-selected", k === i); });
-      var el = row.children[i];
-      if (focus) el.focus({ preventScroll: true });
-      if (!first) el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-      seen[list[i].id] = 1;
-      if (Object.keys(seen).length >= need) ach("collector");
-      if (first) { draw(list[i], i); return; }
-      stopMusic();
-      swapTo(list[i], i);
-    }
-    var swapping = 0;
     function swapTo(p, i) {
-      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var old = $(".disc2", deck), token = ++swapping;
+      var old = $(o.big, deck), token = ++swapping;
       if (reduce || !old || !old.animate) { draw(p, i); return; }
-      // 1) 지금 디스크를 살짝 들어 올려 치움
-      var out = old.animate([
-        { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1 },
-        { transform: "translate(22%,-26%) rotate(50deg) scale(1.04)", opacity: 0 }
-      ], { duration: 220, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" });
       var info = $(".deck-info", deck);
-      if (info) info.animate([{ opacity: 1 }, { opacity: 0, transform: "translateY(6px)" }], { duration: 180, fill: "forwards" });
+      if (info) info.animate([{ opacity: 1 }, { opacity: 0, transform: "translateY(6px)" }], { duration: 170, fill: "forwards" });
+      var out = old.animate(o.out, { duration: 220, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" });
       out.onfinish = function () {
         if (token !== swapping) return;
         draw(p, i);
-        // 2) 새 디스크를 위에서 내려 플래터에 "촥" 안착
-        var d = $(".disc2", deck), pl = $(".platter", deck), inf = $(".deck-info", deck);
-        d.animate([
-          { transform: "translate(-14%,-34%) rotate(-120deg) scale(1.1)", opacity: 0, offset: 0 },
-          { transform: "translate(-2%,-4%) rotate(-14deg) scale(1.02)", opacity: 1, offset: 0.62 },
-          { transform: "translate(0,0) rotate(0deg) scale(.985)", offset: 0.84 },
-          { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1, offset: 1 }
-        ], { duration: 520, easing: "cubic-bezier(.22,.7,.3,1)" });
-        if (pl) pl.animate([
-          { transform: "scale(1)" }, { transform: "scale(1)", offset: 0.6 }, { transform: "scale(.985)", offset: 0.78 }, { transform: "scale(1)" }
-        ], { duration: 560, easing: "ease-out" });
+        var el = $(o.big, deck), inf = $(".deck-info", deck);
+        el.animate(o.in_, { duration: 520, easing: "cubic-bezier(.22,.7,.3,1)" });
+        if (o.after) o.after(deck);
         if (inf) inf.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { duration: 320, delay: 120, easing: "ease-out", fill: "backwards" });
       };
     }
-    function run() {
-      var p = list[cur], link = url(p.link), dev = url(p.dev);
-      if (link) window.open(link, "_blank", "noopener"); else if (dev) location.href = dev;
+    function select(i, focus) {
+      if (i < 0 || i >= list.length || i === cur) return;
+      var first = cur < 0; cur = i;
+      $$(o.sel, row).forEach(function (c, k) { c.classList.toggle("on", k === i); c.setAttribute("aria-selected", k === i); });
+      var el = row.children[i];
+      if (focus) el.focus({ preventScroll: true });
+      if (!first) el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+      if (o.collect) { seen[i] = 1; if (Object.keys(seen).length >= need) ach("collector"); }
+      if (first) { draw(list[i], i); return; }
+      stopMusic(); swapTo(list[i], i);
     }
     row.addEventListener("click", function (e) {
-      var c = e.target.closest(".cd"); if (!c) return;
+      var c = e.target.closest(o.sel); if (!c) return;
       var i = +c.getAttribute("data-i");
-      if (i === cur) run(); else select(i);
+      if (i === cur) { if (o.run) o.run(list[cur]); } else select(i);
     });
     row.addEventListener("keydown", function (e) {
       if (e.key === "ArrowRight") { e.preventDefault(); select(Math.min(list.length - 1, cur + 1), true); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); select(Math.max(0, cur - 1), true); }
     });
     if (list.length) select(0);
+    return { select: select };
+  }
+
+  /* ---------- 플로피 디스크 (프로젝트) ---------- */
+  var FD_COLORS = ["black", "grey", "blue", "red", "yellow", "green", "clear"];
+  function floppyHTML(p, cls) {
+    var im = discImg(p), col = FD_COLORS.indexOf(p.fdColor) >= 0 ? p.fdColor : "black";
+    return '<span class="fd fd-' + col + ' ' + (cls || "") + '">' +
+      '<i class="fd-shutter"><i></i></i><i class="fd-hub"></i>' +
+      '<span class="fd-label"><span class="fd-strip">' + esc(p.title) + '</span>' +
+      '<span class="fd-img' + (im ? "" : " none") + '">' +
+      (im ? '<img src="' + esc(im) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'none\');this.remove()">' : "") +
+      '<em>NOT YET<br>COMING SOON</em></span></span><i class="fd-notch"></i></span>';
+  }
+  window.__floppyHTML = floppyHTML;
+
+  function shelf() {
+    var row = $("#shelfRow"), deck = $("#deck"); if (!row || !deck) return;
+    var feat = (S.featured || []).filter(function (id) { return byId[id]; });
+    var list = feat.map(function (id) { return byId[id]; })
+      .concat(projects.slice().sort(function (a, b) { return b.no - a.no; }).filter(function (p) { return feat.indexOf(p.id) < 0; }));
+    function label(p) { return feat.indexOf(p.id) >= 0 ? "대표작" : p.award ? p.award : p.status === "dev" ? "개발 중" : ""; }
+    set("projCount", projects.length);
+    rack({
+      row: row, deck: deck, list: list, sel: ".fdi", big: ".fd-big", collect: true, idle: "READY",
+      item: function (p, i) {
+        var lb = label(p);
+        return '<button class="fdi" type="button" role="option" data-i="' + i + '" aria-label="' + esc(p.title) + '">' +
+          floppyHTML(p) + '<span class="cd-title">' + esc(p.title) + '</span>' +
+          '<span class="cd-meta">' + esc([p.dim, p.year].filter(Boolean).join(" · ")) + (lb ? ' <b>' + esc(lb) + '</b>' : "") + '</span></button>';
+      },
+      deck_: function (p, i, n, trackList) {
+        var isFeat = feat.indexOf(p.id) >= 0;
+        return '<div class="player fd-stage"><div class="fd-big">' + floppyHTML(p, "big") + '</div>' +
+          '<div class="drive"><i class="drive-slot"></i><div class="player-led"><i></i><span class="led-txt">READY</span><b>DISK ' + pad(i + 1) + ' / ' + pad(n) + '</b></div></div></div>' +
+          '<div class="deck-info"><div class="deck-top">' + (isFeat ? '<span class="pick">대표작</span>' : "") + statusChip(p) + badge(p) + '</div>' +
+          '<h3>' + esc(p.title) + '</h3>' + (p.sub ? '<p class="sub">' + esc(p.sub) + '</p>' : "") +
+          '<p class="desc">' + esc(p.long || p.desc) + '</p>' +
+          (p.points ? '<ul class="points">' + p.points.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + '</ul>' : "") +
+          tags(p.tags) + actions(p) + trackList(p, "작업하며 들은 곡") + '</div>';
+      },
+      out: [{ transform: "translateY(0) scale(1)", opacity: 1 }, { transform: "translateY(26%) scale(.94)", opacity: 0 }],
+      in_: [
+        { transform: "translateY(30%) scale(.94)", opacity: 0, offset: 0 },
+        { transform: "translateY(-4%) scale(1.01)", opacity: 1, offset: 0.65 },
+        { transform: "translateY(0) scale(1)", opacity: 1, offset: 1 }
+      ],
+      after: function (d) { d.classList.add("loading"); setTimeout(function () { d.classList.remove("loading"); }, 700); },
+      run: function (p) { var link = url(p.link), dev = url(p.dev); if (link) window.open(link, "_blank", "noopener"); else if (dev) location.href = dev; }
+    });
+  }
+
+  /* =========================================================
+     음악 (CD 컬렉션) — music.html
+     data.js의 music: [{ no, title, artist, cover, date, memo, tags, tracks:[{title,url}], project, cdFx, cdRim, cdText }]
+     ========================================================= */
+  function musicPage() {
+    var row = $("#musicRow"), deck = $("#musicDeck"); if (!row || !deck) return;
+    var all = (S.music || []).slice().sort(function (a, b) { return (a.date || "") < (b.date || "") ? 1 : -1; });
+    set("musicTotal", all.length);
+    if (!all.length) { deck.innerHTML = '<div class="empty" style="grid-column:1/-1">아직 등록된 음악이 없어요. 관리자 페이지 → 음악에서 첫 CD를 추가해 보세요.</div>'; return; }
+    function asDisc(m) { return { title: m.title, img: m.cover, imgPoster: m.coverPoster, cdFx: m.cdFx, cdRim: m.cdRim, cdText: m.cdText, bgm: m.tracks }; }
+    rack({
+      row: row, deck: deck, list: all, sel: ".cd", big: ".disc2", idle: "STANDBY",
+      tracks: function (m) { return tracksOf(asDisc(m)); },
+      item: function (m, i) {
+        return '<button class="cd" type="button" role="option" data-i="' + i + '" aria-label="' + esc(m.title) + '">' +
+          '<span class="cd-shadow">' + discHTML(asDisc(m), "cd-disc") + '</span>' +
+          '<span class="cd-title">' + esc(m.title) + '</span><span class="cd-meta">' + esc(m.artist || "") +
+          (tracksOf(asDisc(m)).length ? ' <span class="cd-note">♪ ' + tracksOf(asDisc(m)).length + '</span>' : "") + '</span></button>';
+      },
+      deck_: function (m, i, n, trackList) {
+        var pr = byId[m.project];
+        return '<div class="player"><div class="platter">' + discHTML(asDisc(m), "disc2") + '</div>' +
+          '<div class="player-led"><i></i><span class="led-txt">STANDBY</span><b>CD ' + pad(i + 1) + ' / ' + pad(n) + '</b></div></div>' +
+          '<div class="deck-info"><div class="deck-top">' + (m.date ? '<span class="mono dim" style="font-size:12px">' + esc(m.date) + '</span>' : "") + '</div>' +
+          '<h3>' + esc(m.title) + '</h3>' + (m.artist ? '<p class="sub">' + esc(m.artist) + '</p>' : "") +
+          (m.memo ? '<p class="desc">' + esc(m.memo).replace(/\n/g, "<br>") + '</p>' : "") +
+          ((m.tags || []).length ? tags(m.tags) : "") +
+          (pr ? '<p class="desc" style="font-size:13.5px">이 음악과 함께 만든 프로젝트 · <a class="log-more" href="' + BASE + 'projects.html#' + esc(pr.id) + '">' + esc(pr.title) + ' →</a></p>' : "") +
+          trackList(asDisc(m), "수록곡") + '</div>';
+      },
+      out: [{ transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1 }, { transform: "translate(22%,-26%) rotate(50deg) scale(1.04)", opacity: 0 }],
+      in_: [
+        { transform: "translate(-14%,-34%) rotate(-120deg) scale(1.1)", opacity: 0, offset: 0 },
+        { transform: "translate(-2%,-4%) rotate(-14deg) scale(1.02)", opacity: 1, offset: 0.62 },
+        { transform: "translate(0,0) rotate(0deg) scale(.985)", offset: 0.84 },
+        { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1, offset: 1 }
+      ],
+      after: function (d) { var pl = $(".platter", d); if (pl) pl.animate([{ transform: "scale(1)" }, { transform: "scale(1)", offset: .6 }, { transform: "scale(.985)", offset: .78 }, { transform: "scale(1)" }], { duration: 560 }); }
+    });
   }
 
   /* =========================================================
@@ -998,6 +1047,7 @@ function siteMain() {
   if (PAGE === "projects" && $("#projGrid")) projectsPage();
   if (PAGE === "devlogs" && $("#timeline")) devlogsPage();
   if (PAGE === "notes" && $("#noteList")) notesPage();
+  if (PAGE === "music") musicPage();
   if (body.hasAttribute("data-story")) storyPage();
   reveal();
 }
