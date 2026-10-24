@@ -1,7 +1,7 @@
 /* =========================================================
    사이트 데이터 — 관리자 페이지(admin/)에서 편집하거나 직접 수정하세요.
    이미지 경로는 사이트 루트(index.html 위치) 기준입니다.
-   마지막 저장: 2026. 10. 23. 오후 9:09:18
+   마지막 저장: 2026. 10. 25. 오전 4:20:27
    ========================================================= */
 window.SITE = {
 
@@ -100,6 +100,7 @@ window.SITE = {
 
   /* 데브로그 (최신이 위) */
   devlogs: [
+    {"no":64,"date":"2026.10.25","project":"랜덤 초능력자 배틀로얄","tags":["Game System"],"title":"거신병 디테일 추가","desc":"체스의 거신병의 디테일( 모션 프레임에 맞는 판정, 다른 모션중 다른 모션 불가 등)을 작업했습니다.","thumb":"64.png"},
     {"no":63,"date":"2026.10.23","project":"랜덤 초능력자 배틀로얄","tags":["Game System"],"title":"손가락 끝 리깅 매커니즘 변경 및 스킬 모델링 추가중","desc":"손가락 끝마디가 항상 꺽이는 문제를 발견했고, 이를 수정함과 동시에 기존 모션도 전부 수정했습니다. \n또한 체스의 거신병 모델링을 추가했습니다.( 애니메이팅은 안함)","thumb":"63.png"},
     {"no":62,"date":"2026.10.23","project":"랜덤 초능력자 배틀로얄","tags":["Game System"],"title":"신 능력 13종 프로토타입 추가","desc":"신 랜덤 능력 13종을 추가했습니다!","thumb":"62.png"},
     {"no":61,"date":"2026.10.22","project":"랜덤 초능력자 배틀로얄","tags":["Game System","Vfx"],"title":"보이스 채팅 및 등용문 상태이상 추가","desc":"경기/팀 보이스 및 채팅 기능 프로토타입을 포톤 보이스 2로 구현하고, 일부 랜덤 능력의 특수 변신 상태 등용문 추가","thumb":"61.png"},
@@ -166,10 +167,12 @@ window.SITE = {
     {"no":1,"date":"2026.01.13","project":"Baldo Master","tags":["UI"],"thumb":"1.png","title":"데미지 인디케이터 매니저","desc":"유닛이 피해를 입으면 피해값과, 피해량에 비례한 크기의 숫자가 나오게 했습니다."}
   ],
 
+  /* 노트 — cat: tip(꿀팁) | trouble(트러블슈팅) | code(코드 정리) | daily(일상) | etc */
   notes: [
     {"no":1,"date":"2026.10.06","cat":"tip","title":"무료 이미지 업스케일링 툴","summary":"https://www.waifu2x.net/\n빠르고 가볍게 업스케일링이 가능하다.","tags":["Tool"],"cover":"note/img1/cover.jpg"}
   ],
 
+  /* 음악 CD — tracks: [{ title, url(유튜브 영상/재생목록) }], cdFx · cdRim · cdText = 디스크 꾸미기 */
   music: [
     {"no":1,"date":"2026.10.06","title":"흥을 돈는 작업용","artist":"Aaron_park","tracks":[{"title":"맘껏 뛰어 노는 하우스","url":"https://www.youtube.com/watch?v=6UpfMOSqHQQ&list=RD6UpfMOSqHQQ&start_radio=1"},{"title":"그래도 가야해","url":"https://www.youtube.com/watch?v=wc6P0aoNb3Y&list=RDwc6P0aoNb3Y&start_radio=1&rv=6UpfMOSqHQQ"},{"title":"긴장과 이완","url":"https://www.youtube.com/watch?v=MWVNF2Utsro&list=RDMWVNF2Utsro&start_radio=1&t=16s"}],"tags":["집중"],"memo":"마음이 편안해져요!","cover":"music/cover1.png","cdFx":["holo","full"]}
   ]
